@@ -1,0 +1,6 @@
+target/
+.idea/
+*.iml
+src/main/resources/db.properties
+src/main/resources/mail.properties
+src/main/resources/google.properties

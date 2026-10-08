@@ -1,0 +1,5 @@
+# SQL Server connection
+# Change these values to match your SQL Server / SSMS 22 setup.
+db.url=jdbc:sqlserver://localhost:1433;databaseName=MangaZ;encrypt=true;trustServerCertificate=true
+db.username=sa
+db.password=YOUR_SQL_SERVER_PASSWORD
