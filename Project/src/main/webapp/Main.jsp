@@ -1,7 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.mangaz.model.User" %>
 <%!
-<%!
     private static String esc(String s) {
         if (s == null) return "";
         StringBuilder sb = new StringBuilder(s.length() + 16);
