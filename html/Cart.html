@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giỏ hàng - MangaVault Collector Exchange</title>
+    <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Google Material Symbols Outlined -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- File CSS riêng biệt -->
+    <link rel="stylesheet" href="../css/Cart.css">
+</head>
+
+<body class="site-body">
+
+    <header class="site-header">
+        <div class="header-inner"> <!-- Brand Logo --> <a class="brand-identity" href="#">
+                <div class="brand-icon-box"> <span class="material-symbols-outlined">menu_book</span> </div>
+                <div class="brand-text-group"> <span class="brand-title">MANGAZ</span> <span
+                        class="brand-subtitle">COLLECTOR EXCHANGE</span> </div>
+            </a> <!-- Search Input -->
+            <div class="search-container">
+                <div class="search-field"> <span class="search-prefix-icon"> <span
+                            class="material-symbols-outlined">search</span> </span> <input class="search-input-control"
+                        placeholder="Tìm kiếm truyện, bài đăng và users" type="text" />
+                </div>
+            </div> <!-- Navigation Links -->
+            <nav class="main-navigation"> <a class="nav-item active-nav" href="#">Trang chủ</a>
+                <div class="nav-dropdown-trigger"> <span>Khám phá</span> <span
+                        class="material-symbols-outlined icon-expand">expand_more</span> </div> <a
+                    class="nav-item live-auction-link" href="#"> <span class="pulse-status-dot"></span> <span>Đấu
+                        giá</span> </a> <a class="nav-item" href="#">Cộng đồng</a>
+            </nav> <!-- Action Buttons & Utilities -->
+            <div class="header-utilities"> <button class="btn-trade-post" type="button"> <span
+                        class="material-symbols-outlined">add_circle</span> <span>Đăng bài / Trade</span> </button>
+                <div class="icon-utility-button" title="Yêu thích"> <span
+                        class="material-symbols-outlined">favorite_border</span> <span class="utility-badge">2</span>
+                </div>
+                <div class="icon-utility-button" title="Giỏ hàng"> <span
+                        class="material-symbols-outlined">shopping_cart</span> <span class="utility-badge">1</span>
+                </div>
+                <div class="icon-utility-button" title="Thông báo"> <span
+                        class="material-symbols-outlined">notifications</span> <span class="utility-badge">0</span>
+                </div> <!-- Profile Avatar Trigger -->
+                <div class="user-avatar-trigger"> <img alt="User profile avatar image" class="user-avatar-img"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbxKavvR8kUjvRe_85K1vxKIgd4X86LdgGPiu_SkKlzkmzcXB4fOx5vrolj97DVgsrVm_dhA8v6P6lAQuJ8Bv5vzRoWp-_TxJf8PfMNH8oSc5G9qJgn3zgFD0JadKnt0pMIrdWesa3Jm1sN2yr0ah2CIcSApzWEURl1teMgwpWL98wV54jA0VIgIcvQmp2JOFx0ERJdQPpxjIMDNWNBMhoP0z7vOmmxUGgsYkywIM" />
+                    <span class="material-symbols-outlined icon-chevron">expand_more</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    <main class="cart-page-container">
+        <!-- Nút quay lại tiếp tục mua hàng -->
+        <div class="back-navigation-bar">
+            <a href="#" class="btn-continue-shopping">
+                <span class="material-symbols-outlined">chevron_left</span>
+                <span>Tiếp tục mua</span>
+            </a>
+        </div>
+
+        <hr class="cart-header-divider">
+
+        <!-- BỐ CỤC 2 CỘT CHÍNH: DANH SÁCH MẶT HÀNG & THẺ CHI TIẾT TỔNG KẾT -->
+        <div class="cart-layout-grid">
+
+            <!-- CỘT TRÁI: DANH SÁCH CÁC ẤN PHẨM TRONG GIỎ HÀNG -->
+            <section class="cart-items-column">
+                <div class="cart-title-block">
+                    <h1 class="cart-heading">Giỏ hàng</h1>
+                    <div class="cart-item-count">Sản phẩm : 3</div>
+                </div>
+
+                <div class="cart-items-list">
+                    <!-- Sản phẩm 1: One Piece - Tập 1 (2003) -->
+                    <article class="cart-item-card">
+                        <div class="item-main-details">
+                            <div class="item-thumb-box">
+                                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=150&q=80"
+                                    alt="One Piece - Tập 1 (Ấn bản đầu tiên 2003)" class="item-thumb-img">
+                            </div>
+                            <div class="item-text-info">
+                                <h2 class="item-title">One Piece – Tập 1 (Ấn bản đầu tiên 2003)</h2>
+                                <span class="item-publisher">NXB Kim Đồng</span>
+                            </div>
+                        </div>
+                        <div class="item-actions-cluster">
+                            <span class="item-price">450.000 đ</span>
+                            <button class="btn-item-delete" type="button" title="Xóa khỏi giỏ hàng">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Sản phẩm 2: Slam Dunk - Tập 31 Kết Thúc -->
+                    <article class="cart-item-card">
+                        <div class="item-main-details">
+                            <div class="item-thumb-box">
+                                <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=150&q=80"
+                                    alt="Slam Dunk - Tập 31 Kết Thúc (Bản In Đầu Trẻ)" class="item-thumb-img">
+                            </div>
+                            <div class="item-text-info">
+                                <h2 class="item-title">Slam Dunk – Tập 31 Kết Thúc (Bản In Đầu Trẻ)</h2>
+                                <span class="item-publisher">NXB Trẻ</span>
+                            </div>
+                        </div>
+                        <div class="item-actions-cluster">
+                            <span class="item-price">1.250.000 đ</span>
+                            <button class="btn-item-delete" type="button" title="Xóa khỏi giỏ hàng">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </article>
+
+                    <!-- Sản phẩm 3: Vua Trò Chơi (Yu-Gi-Oh!) - Tập 1 (2001) -->
+                    <article class="cart-item-card">
+                        <div class="item-main-details">
+                            <div class="item-thumb-box">
+                                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=150&q=80"
+                                    alt="Vua Trò Chơi (Yu-Gi-Oh!) - Tập 1 (2001)" class="item-thumb-img">
+                            </div>
+                            <div class="item-text-info">
+                                <h2 class="item-title">Vua Trò Chơi (Yu-Gi-Oh!) – Tập 1 (2001)</h2>
+                                <span class="item-publisher">NXB Kim Đồng</span>
+                            </div>
+                        </div>
+                        <div class="item-actions-cluster">
+                            <span class="item-price">620.000 đ</span>
+                            <button class="btn-item-delete" type="button" title="Xóa khỏi giỏ hàng">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <!-- CỘT PHẢI: THẺ TÓM TẮT & THANH TOÁN (CHI TIẾT GIỎ HÀNG) -->
+            <aside class="cart-summary-column">
+                <div class="cart-summary-card">
+                    <div class="summary-header-row">
+                        <h2 class="summary-title">Chi tiết giỏ hàng</h2>
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
+                            alt="Avatar khách hàng" class="user-summary-avatar-img">
+                    </div>
+
+                    <div class="summary-breakdown-list">
+                        <div class="summary-row">
+                            <span class="summary-row-label">Tạm tính :</span>
+                            <span class="summary-row-val">2.320.000 đ</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-row-label">Phí vận chuyển :</span>
+                            <span class="summary-row-val">0 đ</span>
+                        </div>
+                        <div class="summary-row total-row">
+                            <span class="summary-row-label">Tổng (Tax incl.) :</span>
+                            <span class="summary-row-val">2.320.000 đ</span>
+                        </div>
+                    </div>
+
+                    <button class="btn-checkout-now" type="button">
+                        <span>Thanh Toán</span>
+                        <span class="material-symbols-outlined">arrow_forward</span>
+                    </button>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="site-main-footer">
+        <div class="footer-inner-shell">
+            <div class="footer-top-columns"> <!-- Brand Description -->
+                <div class="footer-brand-column">
+                    <div class="footer-brand-title">MangaVault</div>
+                    <p class="footer-brand-mission"> Sàn giao dịch truyện tranh, ấn bản hiếm &amp; vật phẩm sưu tầm
+                        xác thực bản quyền số 1 tại Đông Nam Á. </p>
+                    <div class="escrow-cert-tag"> <span class="material-symbols-outlined">verified_user</span>
+                        <span>100% Bảo Chứng Escrow</span>
+                    </div>
+                </div> <!-- Col 1 -->
+                <div class="footer-nav-column">
+                    <h4 class="footer-col-header">DANH MỤC LƯU TRỮ</h4>
+                    <ul class="footer-nav-list">
+                        <li><a class="footer-link-item" href="#">Shonen Originals</a></li>
+                        <li><a class="footer-link-item" href="#">Seinen Masterpieces</a></li>
+                        <li><a class="footer-link-item" href="#">Shojo Vintage Classics</a></li>
+                        <li><a class="footer-link-item" href="#">Tankōbon First Editions</a></li>
+                    </ul>
+                </div> <!-- Col 2 -->
+                <div class="footer-nav-column">
+                    <h4 class="footer-col-header">DỊCH VỤ COLLECTOR</h4>
+                    <ul class="footer-nav-list">
+                        <li><a class="footer-link-item" href="#">Đấu Giá Trực Tiếp</a></li>
+                        <li><a class="footer-link-item" href="#">Thẩm Định &amp; Đóng Slab</a></li>
+                        <li><a class="footer-link-item" href="#">Lịch Private Drops</a></li>
+                        <li><a class="footer-link-item" href="#">Ký Quỹ Ví Vault</a></li>
+                    </ul>
+                </div> <!-- Col 3 -->
+                <div class="footer-nav-column">
+                    <h4 class="footer-col-header">KÝ QUỸ &amp; PHÁP LÝ</h4>
+                    <ul class="footer-nav-list">
+                        <li><a class="footer-link-item" href="#">Bảo Hiểm Ký Quỹ Escrow</a></li>
+                        <li><a class="footer-link-item" href="#">Quy Trình Giám Định CGC/CBCS</a></li>
+                        <li><a class="footer-link-item" href="#">Chính Sách Hoàn Tiền 100%</a></li>
+                        <li><a class="footer-link-item" href="#">Điều Khoản Sử Dụng Sàn</a></li>
+                    </ul>
+                </div> <!-- Col 4 -->
+                <div class="footer-nav-column">
+                    <h4 class="footer-col-header">TRUNG TÂM HỖ TRỢ</h4>
+                    <ul class="footer-nav-list">
+                        <li><a class="footer-link-item" href="#">Yêu Cầu Hỗ Trợ 24/7</a></li>
+                        <li><a class="footer-link-item" href="#">Quy Chuẩn Đóng Gói Manga</a></li>
+                        <li><a class="footer-link-item" href="#">Tra Cứu Mã Chứng Thư (API)</a></li>
+                        <li><a class="footer-link-item" href="#">Quan Hệ Đối Tác &amp; NXB</a></li>
+                    </ul>
+                </div>
+            </div> <!-- Footer Bottom Bar -->
+            <div class="footer-legal-bar">
+                <p>© 2025 MangaVault Exchange Inc. Mọi quyền được bảo lưu.</p>
+                <p class="footer-security-tags"> <span>Bảo mật dữ liệu ISO 27001</span> <span>•</span> <span>Chứng
+                        thực chữ ký số SHA-256</span> </p>
+            </div>
+        </div>
+    </footer> <!-- END: SiteFooter -->
+</body>
+
+</html>
