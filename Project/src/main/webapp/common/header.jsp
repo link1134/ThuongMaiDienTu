@@ -66,6 +66,7 @@
         color: #2654dc;
         text-decoration: none;
     }
+
     .user-menu-logout {
         display: block;
         padding: 12px 16px;
@@ -74,15 +75,41 @@
         color: #dc2626;
         text-decoration: none;
     }
+
     .user-menu-logout:hover {
         background: #fef2f2;
     }
+
     .user-menu-item:hover {
         background: #fef2f2;
     }
+    /* Nút Đăng nhập / Đăng ký khi chưa đăng nhập */
+    .btn-login_register {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 14px;
+        border: none;
+        border-radius: 8px;
+        background-color: var(--color-blue-accent);
+        color: #ffffff;
+        font-family: var(--font-sans);
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        cursor: pointer;
+        box-shadow: var(--shadow-sm);
+        transition: background-color 0.15s ease;
+    }
+    .btn-login_register:hover {
+        background-color: var(--color-primary-dark);
+        color: #ffffff;
+    }
 </style>
 <header class="site-header">
-    <div class="header-inner"> <!-- Brand Logo --> <a class="brand-identity" href="${pageContext.request.contextPath}/main">
+    <div class="header-inner"> <!-- Brand Logo --> <a class="brand-identity"
+                                                      href="${pageContext.request.contextPath}/main">
         <div class="brand-icon-box"><span class="material-symbols-outlined">menu_book</span></div>
         <div class="brand-text-group"><span class="brand-title">MANGAZ</span> <span
                 class="brand-subtitle">COLLECTOR EXCHANGE</span></div>
@@ -112,35 +139,80 @@
             <div class="icon-utility-button" title="Thông báo"> <span
                     class="material-symbols-outlined">notifications</span> <span class="utility-badge">0</span>
             </div> <!-- Profile Avatar Trigger -->
-            <div class="user-menu${not empty sessionScope.user ? ' is-logged-in' : ''}" id="userMenu">
-                <div class="user-avatar-trigger" id="userAvatarTrigger" data-logged-in="${not empty sessionScope.user}"
-                     data-login-url="${pageContext.request.contextPath}/Login.jsp" role="button" tabindex="0"
-                     aria-haspopup="${not empty sessionScope.user}">
-                    <img alt="User profile avatar image" class="user-avatar-img"
-                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbxKavvR8kUjvRe_85K1vxKIgd4X86LdgGPiu_SkKlzkmzcXB4fOx5vrolj97DVgsrVm_dhA8v6P6lAQuJ8Bv5vzRoWp-_TxJf8PfMNH8oSc5G9qJgn3zgFD0JadKnt0pMIrdWesa3Jm1sN2yr0ah2CIcSApzWEURl1teMgwpWL98wV54jA0VIgIcvQmp2JOFx0ERJdQPpxjIMDNWNBMhoP0z7vOmmxUGgsYkywIM"/>
-                    <span class="material-symbols-outlined icon-chevron">expand_more</span></div>
-                <c:if test="${not empty sessionScope.user}">
-                    <div class="user-menu-dropdown">
-                        <div class="user-menu-panel">
-                            <div class="user-menu-info">
-                                <p class="user-menu-name"><c:out
-                                        value="${not empty fn:trim(sessionScope.user.fullName) ? fn:trim(sessionScope.user.fullName) : sessionScope.user.username}"/>
-                                </p>
-                                <p class="user-menu-username">@<c:out value="${sessionScope.user.username}"/>
-                                </p>
-                                <p class="user-menu-email"><c:out value="${sessionScope.user.email}"/>
-                                </p>
 
+            <c:choose>
+                <%-- Đã đăng nhập --%>
+                <c:when test="${not empty sessionScope.user}">
+                    <div class="user-menu is-logged-in" id="userMenu">
+                        <div class="user-avatar-trigger"
+                             id="userAvatarTrigger"
+                             data-logged-in="true"
+                             role="button"
+                             tabindex="0"
+                             aria-haspopup="true">
+
+                            <img alt="User profile avatar image"
+                                 class="user-avatar-img"
+                                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbxKavvR8kUjvRe_85K1vxKIgd4X86LdgGPiu_SkKlzkmzcXB4fOx5vrolj97DVgsrVm_dhA8v6P6lAQuJ8Bv5vzRoWp-_TxJf8PfMNH8oSc5G9qJgn3zgFD0JadKnt0pMIrdWesa3Jm1sN2yr0ah2CIcSApzWEURl1teMgwpWL98wV54jA0VIgIcvQmp2JOFx0ERJdQPpxjIMDNWNBMhoP0z7vOmmxUGgsYkywIM"/>
+
+                            <span class="material-symbols-outlined icon-chevron">
+                    expand_more
+                </span>
+                        </div>
+
+                        <div class="user-menu-dropdown">
+                            <div class="user-menu-panel">
+                                <div class="user-menu-info">
+                                    <p class="user-menu-name">
+                                        <c:out value="${not empty fn:trim(sessionScope.user.fullName)
+                                ? fn:trim(sessionScope.user.fullName)
+                                : sessionScope.user.username}"/>
+                                    </p>
+
+                                    <p class="user-menu-username">
+                                        @<c:out value="${sessionScope.user.username}"/>
+                                    </p>
+
+                                    <p class="user-menu-email">
+                                        <c:out value="${sessionScope.user.email}"/>
+                                    </p>
+                                </div>
+
+                                    <%-- Chỉ Admin mới thấy mục này --%>
+                                <c:if test="${sessionScope.user.role eq 'Admin'}">
+                                    <a class="user-menu-item"
+                                       href="${pageContext.request.contextPath}/admin/categories">
+                            <span class="material-symbols-outlined"
+                                  style="font-size: 18px; vertical-align: middle; margin-right: 6px;">
+                                admin_panel_settings
+                            </span>
+                                        Admin page
+                                    </a>
+                                </c:if>
+
+                                <a class="user-menu-item"
+                                   href="${pageContext.request.contextPath}/profile">
+                                    Profile
+                                </a>
+
+                                <a class="user-menu-logout"
+                                   href="${pageContext.request.contextPath}/logout">
+                                    Đăng xuất
+                                </a>
                             </div>
-                            <a class="user-menu-item" href="${pageContext.request.contextPath}/profile">Profile</a>
-                            <a class="user-menu-logout" href="${pageContext.request.contextPath}/logout">Đăng xuất
-
-                            </a>
-
                         </div>
                     </div>
-                </c:if>
-            </div>
+                </c:when>
+
+                <%-- Chưa đăng nhập --%>
+                <c:otherwise>
+                    <a class="btn-login_register"
+                       href="${pageContext.request.contextPath}/Login.jsp">
+                        Đăng nhập/Đăng ký
+                    </a>
+                </c:otherwise>
+            </c:choose>
+
         </div>
     </div>
 </header>

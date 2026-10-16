@@ -138,3 +138,10 @@ ADD
     DateOfBirth DATE NULL,
     Gender NVARCHAR(20) NULL,
     UpdatedAt DATETIME2 NULL;
+ALTER TABLE Users
+ADD Role NVARCHAR(10) NOT NULL
+    DEFAULT N'User';
+
+ALTER TABLE Users
+ADD CONSTRAINT CK_Users_Role
+CHECK (Role IN (N'Admin', N'User'));

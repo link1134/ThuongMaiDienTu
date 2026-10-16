@@ -22,7 +22,7 @@ public class UserDAO {
                 rs.getBoolean("Enabled"),
                 rs.getTimestamp("CreatedAt")
         );
-
+        user.setRole(rs.getString("Role"));
         user.setAvatarUrl(rs.getString("AvatarUrl"));
         user.setPhoneNumber(rs.getString("PhoneNumber"));
         user.setDateOfBirth(rs.getDate("DateOfBirth"));

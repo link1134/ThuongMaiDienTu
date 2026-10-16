@@ -16,6 +16,7 @@ public class User implements Serializable {
     private Date dateOfBirth;
     private String gender;
     private Timestamp updatedAt;
+    private String role = "User";
     public User() {
     }
     public User(int id, String username, String email, String password, String fullName,
@@ -28,6 +29,13 @@ public class User implements Serializable {
         this.emailVerified = emailVerified;
         this.enabled = enabled;
         this.createdAt = createdAt;
+    }
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
     public int getId() {
         return id;

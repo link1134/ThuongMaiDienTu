@@ -19,45 +19,7 @@
 </head>
 
 <body class="site-body">
-<header class="site-header">
-    <div class="header-inner"> <!-- Brand Logo --> <a class="brand-identity" href="#">
-        <div class="brand-icon-box"><span class="material-symbols-outlined">menu_book</span></div>
-        <div class="brand-text-group"><span class="brand-title">MANGAZ</span> <span
-                class="brand-subtitle">COLLECTOR EXCHANGE</span></div>
-    </a> <!-- Search Input -->
-        <div class="search-container">
-            <div class="search-field"> <span class="search-prefix-icon"> <span
-                    class="material-symbols-outlined">search</span> </span> <input class="search-input-control"
-                                                                                   placeholder="Tìm kiếm truyện, bài đăng và users"
-                                                                                   type="text"/>
-            </div>
-        </div> <!-- Navigation Links -->
-        <nav class="main-navigation"><a class="nav-item active-nav" href="#">Trang chủ</a>
-            <div class="nav-dropdown-trigger"><span>Khám phá</span> <span
-                    class="material-symbols-outlined icon-expand">expand_more</span></div>
-            <a
-                    class="nav-item live-auction-link" href="#"> <span class="pulse-status-dot"></span> <span>Đấu
-                        giá</span> </a> <a class="nav-item" href="#">Cộng đồng</a>
-        </nav> <!-- Action Buttons & Utilities -->
-        <div class="header-utilities">
-            <button class="btn-trade-post" type="button"> <span
-                    class="material-symbols-outlined">add_circle</span> <span>Đăng bài / Trade</span></button>
-            <div class="icon-utility-button" title="Yêu thích"> <span
-                    class="material-symbols-outlined">favorite_border</span> <span class="utility-badge">2</span>
-            </div>
-            <div class="icon-utility-button" title="Giỏ hàng"> <span
-                    class="material-symbols-outlined">shopping_cart</span> <span class="utility-badge">1</span>
-            </div>
-            <div class="icon-utility-button" title="Thông báo"> <span
-                    class="material-symbols-outlined">notifications</span> <span class="utility-badge">0</span>
-            </div> <!-- Profile Avatar Trigger -->
-            <div class="user-avatar-trigger"><img alt="User profile avatar image" class="user-avatar-img"
-                                                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbxKavvR8kUjvRe_85K1vxKIgd4X86LdgGPiu_SkKlzkmzcXB4fOx5vrolj97DVgsrVm_dhA8v6P6lAQuJ8Bv5vzRoWp-_TxJf8PfMNH8oSc5G9qJgn3zgFD0JadKnt0pMIrdWesa3Jm1sN2yr0ah2CIcSApzWEURl1teMgwpWL98wV54jA0VIgIcvQmp2JOFx0ERJdQPpxjIMDNWNBMhoP0z7vOmmxUGgsYkywIM"/>
-                <span class="material-symbols-outlined icon-chevron">expand_more</span>
-            </div>
-        </div>
-    </div>
-</header>
+<jsp:include page="/common/header.jsp"/>
 <!-- VÙNG NỘI DUNG CHÍNH TRANG QUẢN TRỊ ADMIN -->
 <main class="admin-page-container">
     <div class="admin-layout-grid"> <!-- CỘT TRÁI: SIDEBAR QUẢN TRỊ ADMIN -->
@@ -246,10 +208,15 @@
                                         </td>
                                         <td>
                                             <div class="action-buttons-cell">
-                                                <a href="${pageContext.request.contextPath}/admin/categories?action=edit&id=${cat.categoryId}" class="btn-row-action" title="Chỉnh sửa" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                                <a href="${pageContext.request.contextPath}/admin/categories?action=edit&id=${cat.categoryId}"
+                                                   class="btn-row-action" title="Chỉnh sửa"
+                                                   style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                                     <span class="material-symbols-outlined">edit</span>
                                                 </a>
-                                                <a href="${pageContext.request.contextPath}/admin/categories?action=delete&id=${cat.categoryId}" class="btn-row-action" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn chuyển thể loại này sang trạng thái Tạm ẩn?');" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                                <a href="${pageContext.request.contextPath}/admin/categories?action=delete&id=${cat.categoryId}"
+                                                   class="btn-row-action" title="Xóa"
+                                                   onclick="return confirm('Bạn có chắc chắn muốn chuyển thể loại này sang trạng thái Tạm ẩn?');"
+                                                   style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                                     <span class="material-symbols-outlined">delete</span>
                                                 </a>
                                                 <button type="button" class="btn-row-action" title="Chi tiết">
