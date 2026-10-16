@@ -83,6 +83,7 @@ CREATE TABLE dbo.Categories (
                                 Description NVARCHAR(500) NULL,
                                 ParentCategoryID INT NULL,
                                 Status BIT NOT NULL CONSTRAINT DF_Categories_Status DEFAULT 1, -- 1: Hiển thị, 0: Ẩn
+                                IsDeleted BIT NOT NULL CONSTRAINT DF_Categories_IsDeleted DEFAULT 0,
                                 CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Categories_CreatedAt DEFAULT SYSDATETIME(),
                                 UpdatedAt DATETIME2 NULL,
                                 CONSTRAINT FK_Categories_Parent FOREIGN KEY (ParentCategoryID) REFERENCES dbo.Categories(CategoryID)
@@ -117,4 +118,68 @@ CREATE TABLE dbo.Conditions (
                                 ConditionName NVARCHAR(100) NOT NULL,
                                 Description NVARCHAR(255) NULL
 );
+GO
+DELETE FROM dbo.CategoryPublisher;
+DELETE FROM dbo.Categories;
+DELETE FROM dbo.Publishers;
+--Insert du lieu mau
+INSERT INTO dbo.Publishers (PublisherCode, PublisherName, Country, Description, Website, FoundedYear, Status)
+VALUES
+    ('PUB-VN-01', N'NXB Kim Đồng', N'Việt Nam', N'Nhà xuất bản sách, truyện tranh hàng đầu Việt Nam dành cho thiếu nhi và giới trẻ.', 'https://nxbkimdong.com.vn', 1957, 1),
+    ('PUB-VN-02', N'NXB Trẻ', N'Việt Nam', N'Đơn vị xuất bản uy tín với nhiều bộ manga bản quyền kinh điển.', 'https://nxbtre.com.vn', 1981, 1),
+    ('PUB-VN-03', N'IPM', N'Việt Nam', N'Công ty truyền thông & xuất bản truyện tranh, light novel nổi tiếng.', 'https://ipm.vn', 2004, 1),
+    ('PUB-VN-04', N'Nhã Nam', N'Việt Nam', N'Nhà xuất bản văn học, tiểu thuyết và manga chọn lọc.', 'https://nhanam.vn', 2005, 1),
+    ('PUB-JP-01', N'Shueisha', N'Nhật Bản', N'Tập đoàn xuất bản sở hữu tạp chí Weekly Shōnen Jump và nhiều tựa manga siêu phẩm.', 'https://www.shueisha.co.jp', 1925, 1),
+    ('PUB-JP-02', N'Kodansha', N'Nhật Bản', N'Nhà xuất bản lâu đời và lớn nhất Nhật Bản với Weekly Shōnen Magazine.', 'https://www.kodansha.co.jp', 1909, 1),
+    ('PUB-JP-03', N'Shogakukan', N'Nhật Bản', N'NXB nổi tiếng sở hữu tạp chí Shōnen Sunday và các manga huyền thoại.', 'https://www.shogakukan.co.jp', 1922, 1),
+    ('PUB-JP-04', N'Square Enix Gangan', N'Nhật Bản', N'Đơn vị phát hành manga qua thương hiệu Gangan Comics.', 'https://magazine.jp.square-enix.com', 1991, 1),
+    ('PUB-JP-05', N'Kadokawa', N'Nhật Bản', N'Tập đoàn truyền thông, light novel và xuất bản manga hàng đầu Nhật Bản.', 'https://www.kadokawa.co.jp', 1945, 1),
+    ('PUB-JP-06', N'Hakusensha', N'Nhật Bản', N'NXB chuyên các dòng manga Shojo và Josei nổi tiếng.', 'https://www.hakusensha.co.jp', 1973, 1);
+GO
+
+INSERT INTO dbo.Categories (CategoryCode, CategoryName, Description, ParentCategoryID, Status, IsDeleted)
+VALUES
+    ('CAT-SHN-01', N'Shonen Manga', N'Manga hướng tới đối tượng độc giả nam thiếu niên, tập trung vào hành động, tình bạn và sự nỗ lực.', NULL, 1, 0),
+    ('CAT-SNN-02', N'Seinen Masterpieces', N'Manga dành cho nam giới trưởng thành, chủ đề sâu sắc, tâm lý và hiện thực.', NULL, 1, 0),
+    ('CAT-SHJ-03', N'Shojo Vintage Classics', N'Manga dành cho nữ giới trẻ tuổi, tập trung vào tình cảm lãng mạn và mối quan hệ.', NULL, 1, 0),
+    ('CAT-JOS-04', N'Josei Drama & Lifestyle', N'Manga dành cho phụ nữ trưởng thành, phản ánh cuộc sống thực tế, công việc và tình yêu.', NULL, 1, 0),
+    ('CAT-ACT-05', N'Hành Động & Phiêu Lưu', N'Các bộ truyện với nhịp độ nhanh, chiến đấu gay cấn và hành trình khám phá thế giới.', NULL, 1, 0),
+    ('CAT-FNT-06', N'Kỳ Ảo & Phép Thuật (Fantasy)', N'Thế giới phép thuật, rồng, quái vật và các yếu tố siêu nhiên huyền bí.', NULL, 1, 0),
+    ('CAT-SCF-07', N'Viễn Tưởng & Mecha (Sci-Fi)', N'Chủ đề du hành không gian, người máy, công nghệ tương lai và dystopian.', NULL, 1, 0),
+    ('CAT-SLO-08', N'Lát Cắt Cuộc Sống (Slice of Life)', N'Những câu chuyện nhẹ nhàng, đời thường, học đường và tình cảm gia đình.', NULL, 1, 0),
+    ('CAT-ROM-09', N'Tình Cảm Lãng Mạn (Romance)', N'Chủ đề tình yêu ngọt ngào, những hiểu lầm hài hước và quá trình trưởng thành.', NULL, 1, 0),
+    ('CAT-MYS-10', N'Trinh Thám & Bí Ẩn (Mystery)', N'Các vụ án hóc hiểm, suy luận tâm lý và giải mã những bí ẩn ly kỳ.', NULL, 1, 0),
+    ('CAT-HRR-11', N'Kinh Dị & Giật Gân (Horror)', N'Yếu tố rùng rợn, giật gân, tâm lý tối sáng và thử thách lòng dũng cảm.', NULL, 1, 0),
+    ('CAT-SPRT-12', N'Thể Thao & Đồng Đội (Sports)', N'Bóng đá, bóng rổ, cầu lông... đề cao tinh thần đồng đội và nỗ lực.', NULL, 1, 0),
+    ('CAT-ISEK-13', N'Chuyển Sinh & Dị Giới (Isekai)', N'Nhân vật chính xuyên không/chuyển sinh sang thế giới mới với năng lực đặc biệt.', NULL, 1, 0),
+    ('CAT-BOX-14', N'Boxset & Ấn Bản Đặc Biệt', N'Các bộ sưu tập trọn bộ trọn gói, bản giới hạn kèm quà tặng sưu tầm.', NULL, 1, 0),
+    ('CAT-TST-15', N'Thể Loạt Tạm Ẩn Mẫu', N'Danh mục dùng để kiểm tra hiển thị trạng thái Tạm ẩn trên trang Admin.', NULL, 0, 0);
+GO
+
+INSERT INTO dbo.CategoryPublisher (CategoryID, PublisherID)
+VALUES
+-- Shonen Manga (ID 1): Kim Đồng (1), Shueisha (5), Kodansha (6)
+(1, 1), (1, 5), (1, 6),
+-- Seinen Masterpieces (ID 2): NXB Trẻ (2), Kodansha (6), Hakusensha (10)
+(2, 2), (2, 6), (2, 10),
+-- Shojo Vintage Classics (ID 3): Kim Đồng (1), Hakusensha (10), Shogakukan (7)
+(3, 1), (3, 7), (3, 10),
+-- Josei Drama & Lifestyle (ID 4): NXB Trẻ (2), Hakusensha (10)
+(4, 2), (4, 10),
+-- Hành Động & Phiêu Lưu (ID 5): Kim Đồng (1), IPM (3), Shueisha (5), Square Enix (8)
+(5, 1), (5, 3), (5, 5), (5, 8),
+-- Kỳ Ảo & Phép Thuật (ID 6): IPM (3), Kadokawa (9), Square Enix (8)
+(6, 3), (6, 8), (6, 9),
+-- Viễn Tưởng & Mecha (ID 7): NXB Trẻ (2), Kodansha (6)
+(7, 2), (7, 6),
+-- Lát Cắt Cuộc Sống (ID 8): Kim Đồng (1), Nhã Nam (4), Shogakukan (7)
+(8, 1), (8, 4), (8, 7),
+-- Tình Cảm Lãng Mạn (ID 9): IPM (3), Hakusensha (10), Shueisha (5)
+(9, 3), (9, 5), (9, 10),
+-- Trinh Thám & Bí Ẩn (ID 10): NXB Trẻ (2), Nhã Nam (4), Shogakukan (7)
+(10, 2), (10, 4), (10, 7),
+-- Thể Thao & Đồng Đội (ID 12): Kim Đồng (1), Shueisha (5)
+(12, 1), (12, 5),
+-- Chuyển Sinh & Dị Giới (ID 13): IPM (3), Kadokawa (9)
+(13, 3), (13, 9);
 GO
