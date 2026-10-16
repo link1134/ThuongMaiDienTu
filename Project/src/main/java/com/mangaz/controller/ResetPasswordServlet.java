@@ -1,11 +1,9 @@
 package com.mangaz.controller;
-
 import com.mangaz.service.AuthService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
-
 @WebServlet("/reset-password")
 public class ResetPasswordServlet extends HttpServlet {
     private final AuthService authService = new AuthService();

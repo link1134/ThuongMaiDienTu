@@ -183,3 +183,30 @@ VALUES
 -- Chuyển Sinh & Dị Giới (ID 13): IPM (3), Kadokawa (9)
 (13, 3), (13, 9);
 GO
+CREATE TABLE DeliveryAddresses (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    RecipientName NVARCHAR(100) NOT NULL,
+    PhoneNumber NVARCHAR(20) NOT NULL,
+    CityProvince NVARCHAR(100) NOT NULL,
+    Ward NVARCHAR(100) NOT NULL,
+    AddressDetail NVARCHAR(255) NULL,
+    IsDefault BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_DeliveryAddresses_Users
+        FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+ALTER TABLE Users
+ADD
+    AvatarUrl NVARCHAR(500) NULL,
+    PhoneNumber NVARCHAR(20) NULL,
+    DateOfBirth DATE NULL,
+    Gender NVARCHAR(20) NULL,
+    UpdatedAt DATETIME2 NULL;
+ALTER TABLE Users
+ADD Role NVARCHAR(10) NOT NULL
+    DEFAULT N'User';
+
+ALTER TABLE Users
+ADD CONSTRAINT CK_Users_Role
+CHECK (Role IN (N'Admin', N'User'));
