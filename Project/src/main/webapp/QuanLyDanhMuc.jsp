@@ -239,17 +239,22 @@
                                                 </c:when>
                                                 <c:otherwise>
                                     <span class="status-indicator-badge hidden">
-                                        <span class="status-dot-bullet"></span> <span>Tạm ẩn</span>
+                                        <span class="status-dot-bullet"></span> <span>Tạm ẩn </span>
                                     </span>
                                                 </c:otherwise>
                                             </c:choose>
                                         </td>
                                         <td>
                                             <div class="action-buttons-cell">
-                                                <a href="${pageContext.request.contextPath}/admin/categories?action=edit&id=${cat.categoryId}" class="btn-row-action" title="Chỉnh sửa" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                                <a href="${pageContext.request.contextPath}/admin/categories?action=edit&id=${cat.categoryId}"
+                                                   class="btn-row-action" title="Chỉnh sửa"
+                                                   style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                                     <span class="material-symbols-outlined">edit</span>
                                                 </a>
-                                                <a href="${pageContext.request.contextPath}/admin/categories?action=delete&id=${cat.categoryId}" class="btn-row-action" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn chuyển thể loại này sang trạng thái Tạm ẩn?');" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                                <a href="${pageContext.request.contextPath}/admin/categories?action=delete&id=${cat.categoryId}"
+                                                   class="btn-row-action" title="Xóa"
+                                                   onclick="return confirm('Bạn có chắc chắn muốn xóa thể loại này ?');"
+                                                   style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                                     <span class="material-symbols-outlined">delete</span>
                                                 </a>
                                                 <button type="button" class="btn-row-action" title="Chi tiết">
@@ -270,26 +275,39 @@
                         </c:choose>
                         </tbody>
                     </table>
-                </div> <!-- Dải Phân Trang -->
-                <div class="admin-pagination-row">
-
-                    <div class="pagination-controls-group">
-                        <button type="button" class="btn-page-nav"
-                                title="Trang trước"><span class="material-symbols-outlined">chevron_left</span>
-                        </button>
-                        <button type="button" class="btn-page-nav active">1</button>
-                        <button type="button"
-                                class="btn-page-nav">2
-                        </button>
-                        <button type="button" class="btn-page-nav">3</button>
-                        <button type="button" class="btn-page-nav">4</button>
-                        <button type="button"
-                                class="btn-page-nav" title="Trang sau"> <span
-                                class="material-symbols-outlined">chevron_right</span></button>
-                    </div>
                 </div>
-            </div>
-        </section>
+                <!-- Dải Phân Trang Động -->
+                <div class="admin-pagination-row">
+                    <div class="pagination-info-text">
+                        Hiển thị <strong>${startItem} – ${endItem}</strong> của <strong>${totalCategories}</strong> thể loại đã phê duyệt
+                    </div>
+
+                    <c:if test="${totalPages > 1}">
+                        <div class="pagination-controls-group">
+                            <!-- Nút Trang trước (Chevron Left) -->
+                            <c:if test="${currentPage > 1}">
+                                <a href="${pageContext.request.contextPath}/admin/categories?page=${currentPage - 1}" class="btn-page-nav" title="Trang trước" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                    <span class="material-symbols-outlined">chevron_left</span>
+                                </a>
+                            </c:if>
+
+                            <!-- Danh sách các nút số trang -->
+                            <c:forEach begin="1" end="${totalPages}" var="i">
+                                <a href="${pageContext.request.contextPath}/admin/categories?page=${i}" class="btn-page-nav ${i == currentPage ? 'active' : ''}" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                        ${i}
+                                </a>
+                            </c:forEach>
+
+                            <!-- Nút Trang sau (Chevron Right) -->
+                            <c:if test="${currentPage < totalPages}">
+                                <a href="${pageContext.request.contextPath}/admin/categories?page=${currentPage + 1}" class="btn-page-nav" title="Trang sau" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                    <span class="material-symbols-outlined">chevron_right</span>
+                                </a>
+                            </c:if>
+                        </div>
+                    </c:if>
+                </div>
+
     </div>
 </main>
 <footer class="site-main-footer">
