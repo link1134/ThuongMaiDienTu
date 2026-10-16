@@ -479,6 +479,7 @@
     --color-border-default: #e2e8f0;
     --color-border-subtle: #f1f5f9;
     --color-blue-accent: #2563eb;
+
     --color-emerald-accent: #10b981;
     --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
@@ -1313,3 +1314,5 @@ body.site-body {
     font-weight: 800;
     color: #2563eb;
 }
+
+

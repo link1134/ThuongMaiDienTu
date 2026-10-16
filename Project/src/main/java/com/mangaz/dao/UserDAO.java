@@ -11,11 +11,8 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 
 public class UserDAO {
-
-
     private User map(ResultSet rs) throws SQLException {
-
-        return new User(
+        User user = new User(
                 rs.getInt("Id"),
                 rs.getString("Username"),
                 rs.getString("Email"),
@@ -25,270 +22,139 @@ public class UserDAO {
                 rs.getBoolean("Enabled"),
                 rs.getTimestamp("CreatedAt")
         );
-    }
+        user.setRole(rs.getString("Role"));
+        user.setAvatarUrl(rs.getString("AvatarUrl"));
+        user.setPhoneNumber(rs.getString("PhoneNumber"));
+        user.setDateOfBirth(rs.getDate("DateOfBirth"));
+        user.setGender(rs.getString("Gender"));
+        user.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
 
+        return user;
+    }
 
     // =========================================================
     // TÌM USER THEO USERNAME HOẶC EMAIL
     // =========================================================
-
-    public User findByUsernameOrEmail(
-            String input
-    ) throws SQLException {
-
-        String sql =
-                "SELECT * FROM Users " +
-                        "WHERE Username = ? OR Email = ?";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public User findByUsernameOrEmail(String input) throws SQLException {
+        String sql = "SELECT * FROM Users " + "WHERE Username = ? OR Email = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, input);
             ps.setString(2, input);
-
-
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
                     return map(rs);
                 }
-
                 return null;
             }
         }
     }
-
 
     // =========================================================
     // TÌM USER THEO EMAIL
     // =========================================================
-
-    public User findByEmail(
-            String email
-    ) throws SQLException {
-
-        String sql =
-                "SELECT * FROM Users WHERE Email = ?";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public User findByEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE Email = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, email);
-
-
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
                     return map(rs);
                 }
-
                 return null;
             }
         }
     }
-
 
     // =========================================================
     // TÌM USER THEO USERNAME
     // =========================================================
-
-    public User findByUsername(
-            String username
-    ) throws SQLException {
-
-        String sql =
-                "SELECT * FROM Users WHERE Username = ?";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public User findByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE Username = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, username);
-
-
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
                     return map(rs);
                 }
-
                 return null;
             }
         }
     }
-
 
     // =========================================================
     // TÌM USER THEO ID
     // =========================================================
-
-    public User findById(
-            int id
-    ) throws SQLException {
-
-        String sql =
-                "SELECT * FROM Users WHERE Id = ?";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public User findById(int id) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE Id = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, id);
-
-
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
                     return map(rs);
                 }
-
                 return null;
             }
         }
     }
 
-
     // =========================================================
     // TẠO USER
     // =========================================================
-
-    public int createUser(
-            User user
-    ) throws SQLException {
-
-        String sql =
-                "INSERT INTO Users " +
-                        "(Username, Email, Password, FullName, EmailVerified, Enabled) " +
-                        "VALUES (?, ?, ?, ?, 0, 1)";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(
-                                sql,
-                                Statement.RETURN_GENERATED_KEYS
-                        )
-        ) {
-
-            ps.setString(
-                    1,
-                    user.getUsername()
-            );
-
-            ps.setString(
-                    2,
-                    user.getEmail()
-            );
-
-            ps.setString(
-                    3,
-                    user.getPassword()
-            );
-
-            ps.setString(
-                    4,
-                    user.getFullName()
-            );
-
-
+    public int createUser(User user) throws SQLException {
+        String sql = "INSERT INTO Users "
+                + "(Username, Email, Password, FullName, EmailVerified, Enabled, "
+                + "AvatarUrl, PhoneNumber, DateOfBirth, Gender) "
+                + "VALUES (?, ?, ?, ?, 0, 1, NULL, NULL, NULL, NULL)";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getEmail());
+            ps.setString(3, user.getPassword());
+            ps.setString(4, user.getFullName());
             ps.executeUpdate();
-
-
-            try (ResultSet keys =
-                         ps.getGeneratedKeys()) {
-
+            try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
                     return keys.getInt(1);
                 }
             }
         }
-
-
         return 0;
     }
-
 
     // =========================================================
     // XÁC NHẬN EMAIL
     // =========================================================
-
-    public void setEmailVerified(
-            int userId
-    ) throws SQLException {
-
-        String sql =
-                "UPDATE Users " +
-                        "SET EmailVerified = 1 " +
-                        "WHERE Id = ?";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public void setEmailVerified(int userId) throws SQLException {
+        String sql = "UPDATE Users " + "SET EmailVerified = 1 " + "WHERE Id = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, userId);
-
             ps.executeUpdate();
         }
     }
-
 
     // =========================================================
     // UPDATE PASSWORD
     // =========================================================
 
-    public void updatePassword(
-            int userId,
-            String hash
-    ) throws SQLException {
+    public boolean updatePassword(int userId, String hash)
+            throws SQLException {
 
-        String sql =
-                "UPDATE Users " +
-                        "SET Password = ? " +
-                        "WHERE Id = ?";
+        String sql = "UPDATE Users "
+                + "SET Password = ?, UpdatedAt = SYSDATETIME() "
+                + "WHERE Id = ?";
 
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setString(1, hash);
             ps.setInt(2, userId);
 
-            ps.executeUpdate();
+            return ps.executeUpdate() == 1;
         }
     }
 
@@ -296,241 +162,177 @@ public class UserDAO {
     // =========================================================
     // LƯU TOKEN XÁC NHẬN EMAIL
     // =========================================================
-
-    public void saveVerificationToken(
-            int userId,
-            String token,
-            Timestamp expiresAt
-    ) throws SQLException {
-
-        String deleteSql =
-                "DELETE FROM EmailVerificationTokens " +
-                        "WHERE UserId = ?";
-
-
-        String insertSql =
-                "INSERT INTO EmailVerificationTokens " +
-                        "(UserId, Token, ExpiresAt) " +
-                        "VALUES (?, ?, ?)";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection()
-        ) {
-
+    public void saveVerificationToken(int userId, String token, Timestamp expiresAt) throws SQLException {
+        String deleteSql = "DELETE FROM EmailVerificationTokens " + "WHERE UserId = ?";
+        String insertSql = "INSERT INTO EmailVerificationTokens " + "(UserId, Token, ExpiresAt) " + "VALUES (?, ?, ?)";
+        try (Connection c = DBConnection.getConnection()) {
             // Xóa token cũ
-            try (
-                    PreparedStatement ps =
-                            c.prepareStatement(deleteSql)
-            ) {
-
+            try (PreparedStatement ps = c.prepareStatement(deleteSql)) {
                 ps.setInt(1, userId);
-
                 ps.executeUpdate();
             }
-
-
             // Tạo token mới
-            try (
-                    PreparedStatement ps =
-                            c.prepareStatement(insertSql)
-            ) {
-
+            try (PreparedStatement ps = c.prepareStatement(insertSql)) {
                 ps.setInt(1, userId);
                 ps.setString(2, token);
                 ps.setTimestamp(3, expiresAt);
-
                 ps.executeUpdate();
             }
         }
     }
-
 
     // =========================================================
     // TÌM USER TỪ TOKEN XÁC NHẬN
     // =========================================================
-
-    public int findUserIdByVerificationToken(
-            String token
-    ) throws SQLException {
-
-        String sql =
-                "SELECT UserId " +
-                        "FROM EmailVerificationTokens " +
-                        "WHERE Token = ? " +
-                        "AND ExpiresAt > SYSDATETIME()";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public int findUserIdByVerificationToken(String token) throws SQLException {
+        String sql = "SELECT UserId " + "FROM EmailVerificationTokens " + "WHERE Token = ? " + "AND ExpiresAt > SYSDATETIME()";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, token);
-
-
-            try (ResultSet rs =
-                         ps.executeQuery()) {
-
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
-
                 return 0;
             }
         }
     }
-
 
     // =========================================================
     // XÓA TOKEN XÁC NHẬN
     // =========================================================
-
-    public void deleteVerificationToken(
-            String token
-    ) throws SQLException {
-
-        String sql =
-                "DELETE FROM EmailVerificationTokens " +
-                        "WHERE Token = ?";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public void deleteVerificationToken(String token) throws SQLException {
+        String sql = "DELETE FROM EmailVerificationTokens " + "WHERE Token = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, token);
-
             ps.executeUpdate();
         }
     }
 
-
     // =========================================================
     // LƯU TOKEN RESET PASSWORD
     // =========================================================
-
-    public void saveResetToken(
-            int userId,
-            String token,
-            Timestamp expiresAt
-    ) throws SQLException {
-
-        String deleteSql =
-                "DELETE FROM PasswordResetTokens " +
-                        "WHERE UserId = ?";
-
-
-        String insertSql =
-                "INSERT INTO PasswordResetTokens " +
-                        "(UserId, Token, ExpiresAt) " +
-                        "VALUES (?, ?, ?)";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection()
-        ) {
-
+    public void saveResetToken(int userId, String token, Timestamp expiresAt) throws SQLException {
+        String deleteSql = "DELETE FROM PasswordResetTokens " + "WHERE UserId = ?";
+        String insertSql = "INSERT INTO PasswordResetTokens " + "(UserId, Token, ExpiresAt) " + "VALUES (?, ?, ?)";
+        try (Connection c = DBConnection.getConnection()) {
             // Xóa token cũ
-            try (
-                    PreparedStatement ps =
-                            c.prepareStatement(deleteSql)
-            ) {
-
+            try (PreparedStatement ps = c.prepareStatement(deleteSql)) {
                 ps.setInt(1, userId);
-
                 ps.executeUpdate();
             }
-
-
             // Tạo token mới
-            try (
-                    PreparedStatement ps =
-                            c.prepareStatement(insertSql)
-            ) {
-
+            try (PreparedStatement ps = c.prepareStatement(insertSql)) {
                 ps.setInt(1, userId);
                 ps.setString(2, token);
                 ps.setTimestamp(3, expiresAt);
-
                 ps.executeUpdate();
             }
         }
     }
 
-
     // =========================================================
     // TÌM USER TỪ RESET TOKEN
     // =========================================================
-
-    public int findUserIdByResetToken(
-            String token
-    ) throws SQLException {
-
-        String sql =
-                "SELECT UserId " +
-                        "FROM PasswordResetTokens " +
-                        "WHERE Token = ? " +
-                        "AND ExpiresAt > SYSDATETIME()";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public int findUserIdByResetToken(String token) throws SQLException {
+        String sql = "SELECT UserId " + "FROM PasswordResetTokens " + "WHERE Token = ? " + "AND ExpiresAt > SYSDATETIME()";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, token);
-
-
-            try (ResultSet rs =
-                         ps.executeQuery()) {
-
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
-
                 return 0;
             }
         }
     }
 
-
     // =========================================================
     // XÓA RESET TOKEN
     // =========================================================
-
-    public void deleteResetToken(
-            String token
-    ) throws SQLException {
-
-        String sql =
-                "DELETE FROM PasswordResetTokens " +
-                        "WHERE Token = ?";
-
-
-        try (
-                Connection c =
-                        DBConnection.getConnection();
-
-                PreparedStatement ps =
-                        c.prepareStatement(sql)
-        ) {
-
+    public void deleteResetToken(String token) throws SQLException {
+        String sql = "DELETE FROM PasswordResetTokens " + "WHERE Token = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, token);
-
             ps.executeUpdate();
+        }
+    }
+
+    public boolean updateFullName(int userId, String fullName)
+            throws java.sql.SQLException {
+
+        String sql = "UPDATE Users SET FullName = ?,  UpdatedAt = SYSDATETIME() WHERE Id = ?";
+
+        try (java.sql.Connection conn = DBConnection.getConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, fullName);
+            ps.setInt(2, userId);
+
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+
+    public boolean updatePhoneNumber(int userId, String phoneNumber)
+            throws java.sql.SQLException {
+
+        String sql = "UPDATE Users SET PhoneNumber = ?,  UpdatedAt = SYSDATETIME() WHERE Id = ?";
+
+        try (java.sql.Connection conn = DBConnection.getConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (phoneNumber.isEmpty()) {
+                ps.setNull(1, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(1, phoneNumber);
+            }
+
+            ps.setInt(2, userId);
+
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+
+    public boolean updateDateOfBirth(int userId, java.sql.Date dateOfBirth)
+            throws java.sql.SQLException {
+
+        String sql = "UPDATE Users SET DateOfBirth = ?, UpdatedAt = SYSDATETIME() WHERE Id = ?";
+
+        try (java.sql.Connection conn = DBConnection.getConnection();
+             java.sql.PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (dateOfBirth == null) {
+                ps.setNull(1, java.sql.Types.DATE);
+            } else {
+                ps.setDate(1, dateOfBirth);
+            }
+            ps.setInt(2, userId);
+            return ps.executeUpdate() == 1;
+        }
+    }
+
+    public boolean updateGender(int userId, String gender)
+            throws SQLException {
+
+        String sql = "UPDATE Users SET Gender = ?, UpdatedAt = SYSDATETIME() WHERE Id = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (gender == null || gender.isEmpty()) {
+                ps.setNull(1, java.sql.Types.NVARCHAR);
+            } else {
+                ps.setString(1, gender);
+            }
+
+            ps.setInt(2, userId);
+
+            return ps.executeUpdate() == 1;
         }
     }
 }

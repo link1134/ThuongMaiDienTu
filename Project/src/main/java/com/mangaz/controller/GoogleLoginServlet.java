@@ -1,5 +1,4 @@
 package com.mangaz.controller;
-
 import com.mangaz.util.ConfigUtil;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
@@ -8,7 +7,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 import java.util.UUID;
-
 @WebServlet("/google-login")
 public class GoogleLoginServlet extends HttpServlet {
     private final Properties config = ConfigUtil.load("google.properties");

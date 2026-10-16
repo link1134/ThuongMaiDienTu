@@ -1,5 +1,4 @@
 package com.mangaz.controller;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mangaz.dao.UserDAO;
@@ -9,7 +8,6 @@ import com.mangaz.util.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -18,13 +16,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
-
 @WebServlet("/google-callback")
 public class GoogleCallbackServlet extends HttpServlet {
     private final Properties config = ConfigUtil.load("google.properties");
     private final UserDAO userDAO = new UserDAO();
     private final ObjectMapper mapper = new ObjectMapper();
-
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String state = req.getParameter("state");
         HttpSession session = req.getSession(false);
@@ -68,7 +64,6 @@ public class GoogleCallbackServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/main");
         } catch (Exception e) { throw new ServletException("Google login failed", e); }
     }
-
     private String postForm(String url, String form) throws Exception {
         HttpRequest r = HttpRequest.newBuilder(URI.create(url)).header("Content-Type", "application/x-www-form-urlencoded")
                 .POST(HttpRequest.BodyPublishers.ofString(form)).build();

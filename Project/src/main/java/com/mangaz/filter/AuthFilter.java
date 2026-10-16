@@ -1,5 +1,4 @@
 package com.mangaz.filter;
-
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,34 +8,25 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
-
 @WebFilter("/*")
 public class AuthFilter implements Filter {
-
     @Override
     public void doFilter(
             ServletRequest request,
             ServletResponse response,
             FilterChain chain
     ) throws IOException, ServletException {
-
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
-
         req.setCharacterEncoding("UTF-8");
         resp.setCharacterEncoding("UTF-8");
-
         String contextPath = req.getContextPath();
         String uri = req.getRequestURI();
-
         String path = uri.substring(contextPath.length());
-
         // =========================
         // CÁC TRANG ĐƯỢC TRUY CẬP TỰ DO
         // =========================
-
         if (path.equals("/")
                 || path.equals("")
                 || path.equals("/main")
@@ -61,22 +51,17 @@ public class AuthFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
-
         // =========================
         // KIỂM TRA ĐĂNG NHẬP
         // =========================
-
         HttpSession session = req.getSession(false);
-
         boolean loggedIn =
                 session != null &&
                         session.getAttribute("user") != null;
-
         if (loggedIn) {
             chain.doFilter(request, response);
             return;
         }
-
         // Chưa đăng nhập → Login
         resp.sendRedirect(contextPath + "/Login.jsp");
     }
