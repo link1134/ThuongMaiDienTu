@@ -118,3 +118,23 @@ CREATE TABLE dbo.Conditions (
                                 Description NVARCHAR(255) NULL
 );
 GO
+CREATE TABLE DeliveryAddresses (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    UserId INT NOT NULL,
+    RecipientName NVARCHAR(100) NOT NULL,
+    PhoneNumber NVARCHAR(20) NOT NULL,
+    CityProvince NVARCHAR(100) NOT NULL,
+    Ward NVARCHAR(100) NOT NULL,
+    AddressDetail NVARCHAR(255) NULL,
+    IsDefault BIT NOT NULL DEFAULT 0,
+
+    CONSTRAINT FK_DeliveryAddresses_Users
+        FOREIGN KEY (UserId) REFERENCES Users(Id)
+);
+ALTER TABLE Users
+ADD
+    AvatarUrl NVARCHAR(500) NULL,
+    PhoneNumber NVARCHAR(20) NULL,
+    DateOfBirth DATE NULL,
+    Gender NVARCHAR(20) NULL,
+    UpdatedAt DATETIME2 NULL;
