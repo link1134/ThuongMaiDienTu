@@ -9,9 +9,9 @@ GO
 IF OBJECT_ID(N'dbo.PasswordResetTokens', N'U') IS NOT NULL DROP TABLE dbo.PasswordResetTokens;
 IF OBJECT_ID(N'dbo.EmailVerificationTokens', N'U') IS NOT NULL DROP TABLE dbo.EmailVerificationTokens;
 IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL DROP TABLE dbo.Users;
-IF OBJECT_ID(N'dbo.CategoryPublishers', N'U') IS NOT NULL DROP TABLE dbo.CategoryPublishers;
-IF OBJECT_ID(N'dbo.CategoryPublisher', N'U') IS NOT NULL DROP TABLE dbo.CategoryPublisher;
-IF OBJECT_ID(N'dbo.Categories', N'U') IS NOT NULL DROP TABLE dbo.Categories;
+IF OBJECT_ID(N'dbo.ProductTypePublishers', N'U') IS NOT NULL DROP TABLE dbo.ProductTypePublishers;
+IF OBJECT_ID(N'dbo.ProductTypePublisher', N'U') IS NOT NULL DROP TABLE dbo.ProductTypePublisher;
+IF OBJECT_ID(N'dbo.ProductType', N'U') IS NOT NULL DROP TABLE dbo.ProductType;
 IF OBJECT_ID(N'dbo.Publishers', N'U') IS NOT NULL DROP TABLE dbo.Publishers;
 IF OBJECT_ID(N'dbo.ComicFormats', N'U') IS NOT NULL DROP TABLE dbo.ComicFormats;
 IF OBJECT_ID(N'dbo.GradingStandards', N'U') IS NOT NULL DROP TABLE dbo.GradingStandards;
@@ -74,27 +74,27 @@ GO
 --);
 --GO
 
---BẢNG CATEGORY - DANH MỤC THỂ LOẠI
---CREATE TABLE dbo.Categories (
---                                CategoryID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Categories PRIMARY KEY,
---                                CategoryCode VARCHAR(20) NOT NULL CONSTRAINT UQ_Categories_Code UNIQUE,
---                                CategoryName NVARCHAR(100) NOT NULL,
+--BẢNG ProductType - DANH MỤC THỂ LOẠI
+--CREATE TABLE dbo.ProductType (
+--                                ProductTypeID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_ProductType PRIMARY KEY,
+--                                ProductTypeCode VARCHAR(20) NOT NULL CONSTRAINT UQ_ProductType_Code UNIQUE,
+--                                ProductTypeName NVARCHAR(100) NOT NULL,
 --                                Description NVARCHAR(500) NULL,
---                                ParentCategoryID INT NULL,
---                                Status BIT NOT NULL CONSTRAINT DF_Categories_Status DEFAULT 1, -- 1: Hiển thị, 0: Ẩn
---                                IsDeleted BIT NOT NULL CONSTRAINT DF_Categories_IsDeleted DEFAULT 0,
---                                CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Categories_CreatedAt DEFAULT SYSDATETIME(),
+--                                ParentProductTypeID INT NULL,
+--                                Status BIT NOT NULL CONSTRAINT DF_ProductType_Status DEFAULT 1, -- 1: Hiển thị, 0: Ẩn
+--                                IsDeleted BIT NOT NULL CONSTRAINT DF_ProductType_IsDeleted DEFAULT 0,
+--                                CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProductType_CreatedAt DEFAULT SYSDATETIME(),
 --                                UpdatedAt DATETIME2 NULL,
---                                CONSTRAINT FK_Categories_Parent FOREIGN KEY (ParentCategoryID) REFERENCES dbo.Categories(CategoryID)
+--                                CONSTRAINT FK_ProductType_Parent FOREIGN KEY (ParentProductTypeID) REFERENCES dbo.ProductType(ProductTypeID)
 --);
 --GO
---BẢNG CATEGORY_PUBLISHER
---CREATE TABLE dbo.CategoryPublisher (
---                                       CategoryID INT NOT NULL,
+--BẢNG ProductType_PUBLISHER
+--CREATE TABLE dbo.ProductTypePublisher (
+--                                       ProductTypeID INT NOT NULL,
 --                                       PublisherID INT NOT NULL,
---                                       CONSTRAINT PK_CategoryPublisher PRIMARY KEY (CategoryID, PublisherID),
---                                       CONSTRAINT FK_CategoryPublisher_Categories FOREIGN KEY (CategoryID) REFERENCES dbo.Categories(CategoryID) ON DELETE CASCADE,
---                                       CONSTRAINT FK_CategoryPublisher_Publishers FOREIGN KEY (PublisherID) REFERENCES dbo.Publishers(PublisherID) ON DELETE CASCADE
+--                                       CONSTRAINT PK_ProductTypePublisher PRIMARY KEY (ProductTypeID, PublisherID),
+--                                       CONSTRAINT FK_ProductTypePublisher_ProductType FOREIGN KEY (ProductTypeID) REFERENCES dbo.ProductType(ProductTypeID) ON DELETE CASCADE,
+--                                       CONSTRAINT FK_ProductTypePublisher_Publishers FOREIGN KEY (PublisherID) REFERENCES dbo.Publishers(PublisherID) ON DELETE CASCADE
 --);
 --GO
 -- Định dạng ấn phẩm (Tankobon, Boxset, Limited Edition...
@@ -134,7 +134,7 @@ GO
 --('PUB-JP-06', N'Hakusensha', N'Nhật Bản', N'NXB chuyên các dòng manga Shojo và Josei nổi tiếng.', 'https://www.hakusensha.co.jp', 1973, 1);
 --GO
 
---INSERT INTO dbo.Categories (CategoryCode, CategoryName, Description, ParentCategoryID, Status, IsDeleted)
+--INSERT INTO dbo.ProductType (ProductTypeCode, ProductTypeName, Description, ParentProductTypeID, Status, IsDeleted)
 --VALUES
 --    ('CAT-SHN-01', N'Shonen Manga', N'Manga hướng tới đối tượng độc giả nam thiếu niên, tập trung vào hành động, tình bạn và sự nỗ lực.', NULL, 1, 0),
 --    ('CAT-SNN-02', N'Seinen Masterpieces', N'Manga dành cho nam giới trưởng thành, chủ đề sâu sắc, tâm lý và hiện thực.', NULL, 1, 0),
@@ -153,7 +153,7 @@ GO
 --    ('CAT-TST-15', N'Thể Loạt Tạm Ẩn Mẫu', N'Danh mục dùng để kiểm tra hiển thị trạng thái Tạm ẩn trên trang Admin.', NULL, 0, 0);
 --GO
 
---INSERT INTO dbo.CategoryPublisher (CategoryID, PublisherID)
+--INSERT INTO dbo.ProductTypePublisher (ProductTypeID, PublisherID)
 --VALUES
 ---- Shonen Manga (ID 1): Kim Đồng (1), Shueisha (5), Kodansha (6)
 --(1, 1), (1, 5), (1, 6),
@@ -196,12 +196,12 @@ CREATE TABLE DeliveryAddresses (
 
 
 -- 1. Loai san pham
-CREATE TABLE dbo.Categories (
-    CategoryId INT IDENTITY(1,1) PRIMARY KEY,
-    CategoryName NVARCHAR(100) NOT NULL UNIQUE,
+CREATE TABLE dbo.ProductType(
+    ProductTypeId INT IDENTITY(1,1) PRIMARY KEY,
+    ProductTypeName NVARCHAR(100) NOT NULL UNIQUE,
     Description NVARCHAR(500) NULL,
     IsActive BIT NOT NULL DEFAULT 1,
-	CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Categories_CreatedAt DEFAULT SYSDATETIME(),
+	CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_ProductType_CreatedAt DEFAULT SYSDATETIME(),
 	UpdatedAt DATETIME2 NULL,
 );
 GO
@@ -220,17 +220,17 @@ CREATE TABLE dbo.AttributeDefinitions (
 GO
 
 -- 3. Thuoc tinh ap dung cho tung loai san pham
-CREATE TABLE dbo.CategoryAttributes (
-    CategoryId INT NOT NULL,
+CREATE TABLE dbo.ProductTypeAttributes (
+    ProductTypeId INT NOT NULL,
     AttributeId INT NOT NULL,
     IsRequired BIT NOT NULL DEFAULT 0,
     DisplayOrder INT NOT NULL DEFAULT 0,
-    CONSTRAINT PK_CategoryAttributes
-        PRIMARY KEY (CategoryId, AttributeId),
-    CONSTRAINT FK_CategoryAttributes_Categories
-        FOREIGN KEY (CategoryId)
-        REFERENCES dbo.Categories(CategoryId),
-    CONSTRAINT FK_CategoryAttributes_AttributeDefinitions
+    CONSTRAINT PK_ProductTypeAttributes
+        PRIMARY KEY (ProductTypeId, AttributeId),
+    CONSTRAINT FK_ProductTypeAttributes_ProductType
+        FOREIGN KEY (ProductTypeId)
+        REFERENCES dbo.ProductType(ProductTypeId),
+    CONSTRAINT FK_ProductTypeAttributes_AttributeDefinitions
         FOREIGN KEY (AttributeId)
         REFERENCES dbo.AttributeDefinitions(AttributeId)
 );
@@ -241,7 +241,7 @@ CREATE TABLE dbo.Listings (
     ListingId INT IDENTITY(1,1) PRIMARY KEY,
     ListingCode VARCHAR(30) NOT NULL UNIQUE,
     SellerId INT NOT NULL,
-    CategoryId INT NOT NULL,
+    ProductTypeId INT NOT NULL,
     Title NVARCHAR(200) NOT NULL,
     Description NVARCHAR(MAX) NULL,
 	ShortDescription NVARCHAR(500) NULL,
@@ -255,9 +255,9 @@ CREATE TABLE dbo.Listings (
     CONSTRAINT FK_Listings_Users
         FOREIGN KEY (SellerId)
         REFERENCES dbo.Users(Id),
-    CONSTRAINT FK_Listings_Categories
-        FOREIGN KEY (CategoryId)
-        REFERENCES dbo.Categories(CategoryId),
+    CONSTRAINT FK_Listings_ProductType
+        FOREIGN KEY (ProductTypeId)
+        REFERENCES dbo.ProductType(ProductTypeId),
     CONSTRAINT CK_Listings_Price
         CHECK (Price IS NULL OR Price >= 0),
     CONSTRAINT CK_Listings_OriginalPrice
@@ -277,11 +277,6 @@ CREATE TABLE dbo.Listings (
             'Cancelled'
         ))
 );
-GO
-
-ALTER TABLE dbo.Listings
-ADD
-    ShortDescription NVARCHAR(500) NULL
 GO
 
 
@@ -317,8 +312,8 @@ CREATE TABLE dbo.ListingImages (
 GO
 
 -- Index ho tro truy van danh sach bai dang
-CREATE INDEX IX_Listings_Category_Status
-    ON dbo.Listings(CategoryId, Status);
+CREATE INDEX IX_Listings_ProductType_Status
+    ON dbo.Listings(ProductTypeId, Status);
 CREATE INDEX IX_Listings_Seller_CreatedAt
     ON dbo.Listings(SellerId, CreatedAt DESC);
 CREATE INDEX IX_ListingAttributeValues_AttributeId
@@ -333,7 +328,7 @@ BEGIN TRY
     BEGIN TRANSACTION;
 
     DECLARE @SellerId INT;
-    DECLARE @CategoryId INT;
+    DECLARE @ProductTypeId INT;
     DECLARE @ListingId INT;
 
     -- 1. Tìm người bán có sẵn
@@ -358,19 +353,19 @@ BEGIN TRY
     END;
 
     -- 2. Tìm danh mục có sẵn
-    SELECT TOP 1 @CategoryId = CategoryId
-    FROM dbo.Categories
-    ORDER BY CategoryId;
+    SELECT TOP 1 @ProductTypeId = ProductTypeId
+    FROM dbo.ProductType
+    ORDER BY ProductTypeId;
 
     -- Nếu chưa có danh mục, tạo danh mục mẫu
-    IF @CategoryId IS NULL
+    IF @ProductTypeId IS NULL
     BEGIN
-        INSERT INTO dbo.Categories
-            (CategoryName, Description, IsActive)
+        INSERT INTO dbo.ProductType
+            (ProductTypeName, Description, IsActive)
         VALUES
             (N'Manga', N'Danh mục manga dùng để kiểm thử', 1);
 
-        SET @CategoryId = SCOPE_IDENTITY();
+        SET @ProductTypeId = SCOPE_IDENTITY();
     END;
 
     -- 3. Tìm bài đăng mẫu nếu đã tạo trước đó
@@ -385,7 +380,7 @@ BEGIN TRY
         (
             ListingCode,
             SellerId,
-            CategoryId,
+            ProductTypeId,
             Title,
             Description,
             Price,
@@ -398,7 +393,7 @@ BEGIN TRY
         (
             'TEST-MANGA-001',
             @SellerId,
-            @CategoryId,
+            @ProductTypeId,
             N'Chuyển Sinh Thành Slime - Tập 1',
             N'Manga còn đẹp, gáy sách nguyên vẹn, trang giấy sạch và không bị rách. Phù hợp cho người sưu tầm hoặc đọc giải trí.',
             65000,
