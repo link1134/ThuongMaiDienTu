@@ -62,19 +62,10 @@ CREATE TABLE dbo.Publishers (
                                 Status BIT NOT NULL CONSTRAINT DF_Publishers_Status DEFAULT 1, -- 1: Hiển thị, 0: Ẩn
                                 CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Publishers_CreatedAt DEFAULT SYSDATETIME(),
                                 UpdatedAt DATETIME2 NULL
+                                IsDeleted BIT NOT NULL CONSTRAINT DF_Publishers_IsDeleted DEFAULT 0
 );
 GO
-INSERT INTO dbo.Publishers (PublisherCode, PublisherName, Country, Description, Website, FoundedYear, Status)
-VALUES
-    ('PUB-VN-01', N'NXB Kim Đồng', N'Việt Nam', N'Nhà xuất bản sách, truyện tranh hàng đầu Việt Nam.', 'https://nxbkimdong.com.vn', 1957, 1),
-    ('PUB-VN-02', N'NXB Trẻ', N'Việt Nam', N'Đơn vị xuất bản uy tín với nhiều bộ manga bản quyền.', 'https://nxbtre.com.vn', 1981, 1),
-    ('PUB-JP-01', N'Shueisha', N'Nhật Bản', N'Tập đoàn xuất bản sở hữu tạp chí Weekly Shōnen Jump.', 'https://www.shueisha.co.jp', 1925, 1),
-    ('PUB-JP-02', N'Kodansha', N'Nhật Bản', N'Nhà xuất bản lớn nhất Nhật Bản.', 'https://www.kodansha.co.jp', 1909, 1),
-    ('PUB-JP-03', N'Shogakukan', N'Nhật Bản', N'NXB sở hữu các tạp chí Shōnen Sunday, Big Comic.', 'https://www.shogakukan.co.jp', 1922, 1),
-    ('PUB-JP-04', N'Square Enix Gangan', N'Nhật Bản', N'Đơn vị phát hành manga qua thương hiệu Gangan Comics.', 'https://magazine.jp.square-enix.com', 1991, 1),
-    ('PUB-JP-05', N'Kadokawa', N'Nhật Bản', N'Tập đoàn truyền thông và xuất bản lớn của Nhật Bản.', 'https://www.kadokawa.co.jp', 1945, 1),
-    ('PUB-JP-06', N'Hakusensha', N'Nhật Bản', N'NXB chuyên các dòng manga Shojo và Josei nổi tiếng.', 'https://www.hakusensha.co.jp', 1973, 1);
-GO
+
 --BẢNG CATEGORY - DANH MỤC THỂ LOẠI
 CREATE TABLE dbo.Categories (
                                 CategoryID INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_Categories PRIMARY KEY,

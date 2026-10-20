@@ -103,17 +103,21 @@
             </div> <!-- Tabs Phân Loại & Bộ Lọc Tìm Kiếm -->
             <div class="admin-toolbar-row">
                 <div class="category-tabs-group">
-                    <button type="button" class="tab-category-btn active"> <span
-                            class="material-symbols-outlined" style="font-size:16px;">format_list_bulleted</span>
-                        <span>Thể loại truyện</span> <span class="tab-count-badge">${totalCategories} </span></button>
-                    <button type="button" class="tab-category-btn"> <span class="material-symbols-outlined"
-                                                                          style="font-size:16px;">apartment</span>
-                        <span>Nhà Xuất Bản</span> <span
-                                class="tab-count-badge">${totalPublishers} </span></button>
-                    <button type="button"
-                            class="tab-category-btn"> <span class="material-symbols-outlined"
-                                                            style="font-size:16px;">approval</span> <span>Định dạng &amp; Tiêu chuẩn Slab</span>
-                        <span class="tab-count-badge">6</span></button>
+                    <a href="${pageContext.request.contextPath}/admin/categories" class="tab-category-btn active" style="text-decoration: none; display: inline-flex; align-items: center;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">format_list_bulleted</span>
+                        <span>Thể loại truyện</span>
+                        <span class="tab-count-badge">${totalCategories}</span>
+                    </a>
+                    <a href="${pageContext.request.contextPath}/admin/publishers" class="tab-category-btn" style="text-decoration: none; display: inline-flex; align-items: center;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">apartment</span>
+                        <span>Nhà Xuất Bản</span>
+                        <span class="tab-count-badge">${totalPublishers}</span>
+                    </a>
+                    <a href="#" class="tab-category-btn" style="text-decoration: none; display: inline-flex; align-items: center;">
+                        <span class="material-symbols-outlined" style="font-size:16px;">approval</span>
+                        <span>Định dạng &amp; Tiêu chuẩn Slab</span>
+                        <span class="tab-count-badge">6</span>
+                    </a>
                 </div>
                 <div class="search-filter-cluster">
                     <div class="admin-search-box"><span class="material-symbols-outlined">search</span> <input
