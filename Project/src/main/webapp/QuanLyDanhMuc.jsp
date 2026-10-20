@@ -42,7 +42,7 @@
                             class="material-symbols-outlined">menu_book</span> <span>Master Catalog</span> </a>
                     </li>
                     <li><a href="#" class="admin-nav-item"> <span class="material-symbols-outlined">group</span>
-                        <span>Quản lý Người dùng &amp; Collector</span> </a></li>
+                        <span>Quản lý Người dùng</span> </a></li>
                 </ul>
             </div> <!-- Menu Phụ: Kiểm toán & Hệ thống -->
             <div class="admin-secondary-nav-card">
@@ -51,8 +51,6 @@
                         <span>Báo cáo kiểm toán</span> </a></li>
                     <li><a href="#" class="admin-nav-item"> <span class="material-symbols-outlined">settings</span>
                         <span>Cài đặt hệ thống</span> </a></li>
-                    <li><a href="#" class="admin-nav-item"> <span class="material-symbols-outlined">security</span>
-                        <span>Nhật ký Escrow</span> </a></li>
                 </ul>
             </div>
         </aside> <!-- CỘT PHẢI: KHU VỰC QUẢN LÝ NỘI DUNG CHÍNH -->
@@ -84,22 +82,8 @@
                     <div class="metric-icon-box green-box"><span class="material-symbols-outlined">menu_book</span>
                     </div>
                 </div> <!-- KPI 3 -->
-                <div class="metric-kpi-card">
-                    <div class="metric-info-col"><span class="metric-kpi-label">Tiêu Chuẩn Slab Phân Loại</span>
-                        <span class="metric-kpi-value">6 Chuẩn</span> <span class="metric-kpi-subtext blue-text">
-                                <span class="material-symbols-outlined" style="font-size:14px;">verified</span> CGC/CBCS
-                                Verified </span></div>
-                    <div class="metric-icon-box blue-box"><span class="material-symbols-outlined">layers</span>
-                    </div>
-                </div> <!-- KPI 4 -->
-                <div class="metric-kpi-card">
-                    <div class="metric-info-col"><span class="metric-kpi-label">Tỷ Lệ Bảo Chứng</span> <span
-                            class="metric-kpi-value">99.8%</span> <span class="metric-kpi-subtext purple-text">
-                                <span class="material-symbols-outlined" style="font-size:14px;">lock</span> Ký quỹ
-                                Escrow </span></div>
-                    <div class="metric-icon-box purple-box"> <span
-                            class="material-symbols-outlined">workspace_premium</span></div>
-                </div>
+
+
             </div> <!-- Tabs Phân Loại & Bộ Lọc Tìm Kiếm -->
             <div class="admin-toolbar-row">
                 <div class="category-tabs-group">
@@ -110,10 +94,10 @@
                                                                           style="font-size:16px;">apartment</span>
                         <span>Nhà Xuất Bản</span> <span
                                 class="tab-count-badge">${totalPublishers} </span></button>
-                    <button type="button"
-                            class="tab-category-btn"> <span class="material-symbols-outlined"
-                                                            style="font-size:16px;">approval</span> <span>Định dạng &amp; Tiêu chuẩn Slab</span>
-                        <span class="tab-count-badge">6</span></button>
+<%--                    <button type="button"--%>
+<%--                            class="tab-category-btn"> <span class="material-symbols-outlined"--%>
+<%--                                                            style="font-size:16px;">approval</span> <span>Định dạng &amp; Tiêu chuẩn Slab</span>--%>
+<%--                        <span class="tab-count-badge">6</span></button>--%>
                 </div>
                 <div class="search-filter-cluster">
                     <div class="admin-search-box"><span class="material-symbols-outlined">search</span> <input
@@ -241,35 +225,43 @@
                 <!-- Dải Phân Trang Động -->
                 <div class="admin-pagination-row">
                     <div class="pagination-info-text">
-                        Hiển thị <strong>${startItem} – ${endItem}</strong> của <strong>${totalCategories}</strong> thể loại đã phê duyệt
+                        Hiển thị <strong>${startItem} – ${endItem}</strong> của <strong>${totalCategories}</strong> thể
+                        loại đã phê duyệt
                     </div>
 
                     <c:if test="${totalPages > 1}">
                         <div class="pagination-controls-group">
                             <!-- Nút Trang trước (Chevron Left) -->
                             <c:if test="${currentPage > 1}">
-                                <a href="${pageContext.request.contextPath}/admin/categories?page=${currentPage - 1}" class="btn-page-nav" title="Trang trước" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                <a href="${pageContext.request.contextPath}/admin/categories?page=${currentPage - 1}"
+                                   class="btn-page-nav" title="Trang trước"
+                                   style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                     <span class="material-symbols-outlined">chevron_left</span>
                                 </a>
                             </c:if>
 
                             <!-- Danh sách các nút số trang -->
                             <c:forEach begin="1" end="${totalPages}" var="i">
-                                <a href="${pageContext.request.contextPath}/admin/categories?page=${i}" class="btn-page-nav ${i == currentPage ? 'active' : ''}" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                <a href="${pageContext.request.contextPath}/admin/categories?page=${i}"
+                                   class="btn-page-nav ${i == currentPage ? 'active' : ''}"
+                                   style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                         ${i}
                                 </a>
                             </c:forEach>
 
                             <!-- Nút Trang sau (Chevron Right) -->
                             <c:if test="${currentPage < totalPages}">
-                                <a href="${pageContext.request.contextPath}/admin/categories?page=${currentPage + 1}" class="btn-page-nav" title="Trang sau" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+                                <a href="${pageContext.request.contextPath}/admin/categories?page=${currentPage + 1}"
+                                   class="btn-page-nav" title="Trang sau"
+                                   style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
                                     <span class="material-symbols-outlined">chevron_right</span>
                                 </a>
                             </c:if>
                         </div>
                     </c:if>
                 </div>
-
+            </div>
+        </section>
     </div>
 </main>
 <footer class="site-main-footer">
@@ -279,9 +271,7 @@
                 <div class="footer-brand-title">MangaVault</div>
                 <p class="footer-brand-mission"> Sàn giao dịch truyện tranh, ấn bản hiếm &amp; vật phẩm sưu tầm
                     xác thực bản quyền số 1 tại Đông Nam Á. </p>
-                <div class="escrow-cert-tag"><span class="material-symbols-outlined">verified_user</span>
-                    <span>100% Bảo Chứng Escrow</span>
-                </div>
+
             </div> <!-- Col 1 -->
             <div class="footer-nav-column">
                 <h4 class="footer-col-header">DANH MỤC LƯU TRỮ</h4>
@@ -304,7 +294,7 @@
             <div class="footer-nav-column">
                 <h4 class="footer-col-header">KÝ QUỸ &amp; PHÁP LÝ</h4>
                 <ul class="footer-nav-list">
-                    <li><a class="footer-link-item" href="#">Bảo Hiểm Ký Quỹ Escrow</a></li>
+
                     <li><a class="footer-link-item" href="#">Quy Trình Giám Định CGC/CBCS</a></li>
                     <li><a class="footer-link-item" href="#">Chính Sách Hoàn Tiền 100%</a></li>
                     <li><a class="footer-link-item" href="#">Điều Khoản Sử Dụng Sàn</a></li>

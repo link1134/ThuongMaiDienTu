@@ -1,0 +1,1371 @@
+/* ==========================================================================
+   CSS CHO TRANG QUẢN LÝ NGƯỜI DÙNG & COLLECTOR (QuanLyNguoiDungAdmin.css)
+   MangaVault Collector Exchange Portal
+   Tương thích 100% với hệ thống design token của MangaVault
+   ========================================================================== */
+
+/* Design Tokens & Reset */
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --color-primary: #f59e0b;
+  --color-primary-dark: #d97706;
+  --color-primary-amber: #d97706;
+  --color-amber-btn: #d97706;
+  --color-amber-hover: #b45309;
+  --color-bg-body: #f8fafc;
+  --color-bg-white: #ffffff;
+  --color-bg-slate-50: #f8fafc;
+  --color-bg-slate-100: #f1f5f9;
+  --color-bg-slate-200: #e2e8f0;
+  --color-bg-slate-300: #cbd5e1;
+  --color-text-dark: #0f172a;
+  --color-text-slate-800: #1e293b;
+  --color-text-slate-700: #334155;
+  --color-text-slate-600: #475569;
+  --color-text-slate-500: #64748b;
+  --color-text-slate-400: #94a3b8;
+  --color-border-default: #e2e8f0;
+  --color-border-subtle: #f1f5f9;
+  --color-blue-accent: #2563eb;
+  --color-emerald-accent: #10b981;
+   --color-accent-emerald-hover: #008953;
+    --color-accent-emerald: #009e60;
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.03);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body.site-body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-body);
+  color: var(--color-text-dark);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* ==========================================================================
+   CONTAINER CHÍNH TRANG QUẢN TRỊ ADMIN (BỐ CỤC KHUNG CHỨA TOÀN TRANG)
+   ========================================================================== */
+.admin-page-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+  width: 100%;
+}
+
+.admin-layout-grid {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* ==========================================================================
+   KHU VỰC QUẢN LÝ NỘI DUNG CHÍNH (ADMIN MAIN CONTENT)
+   ========================================================================== */
+.admin-main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+
+.admin-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+  letter-spacing: -0.01em;
+}
+
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-export-outline {
+  background-color: #ffffff;
+  border: 1px solid var(--color-border-default);
+  color: var(--color-text-slate-700);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-export-outline:hover {
+  background-color: var(--color-bg-slate-50);
+  border-color: var(--color-text-slate-400);
+}
+
+.btn-batch-kyc {
+  background-color: var(--color-amber-btn);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 18px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+  transition: all 0.15s ease;
+}
+
+.btn-batch-kyc:hover {
+  background-color: var(--color-amber-hover);
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   4 THẺ CHỈ SỐ KPI TỔNG QUAN (METRIC CARDS)
+   ========================================================================== */
+.admin-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 992px) {
+  .admin-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .admin-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.metric-kpi-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.metric-kpi-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric-kpi-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+}
+
+.metric-kpi-subtext {
+  font-size: 11px;
+  font-weight: 600;
+  color: #10b981;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.metric-kpi-subtext.amber-text {
+  color: #b45309;
+}
+
+.metric-kpi-subtext.blue-text {
+  color: #2563eb;
+}
+
+.metric-kpi-subtext.danger-text {
+  color: #ef4444;
+}
+
+.metric-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metric-icon-box.amber-box {
+  background-color: #fffbeb;
+  color: #d97706;
+  border-color: #fde68a;
+}
+
+.metric-icon-box.blue-box {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border-color: #dbeafe;
+}
+
+.metric-icon-box.red-box {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border-color: #fee2e2;
+}
+
+/* ==========================================================================
+   THANH CÔNG CỤ TÌM KIẾM VÀ BỘ LỌC (TOOLBAR ROW)
+   ========================================================================== */
+.admin-toolbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  background: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 280px;
+}
+
+.admin-search-box .material-symbols-outlined {
+  position: absolute;
+  left: 12px;
+  font-size: 18px;
+  color: var(--color-text-slate-400);
+  pointer-events: none;
+}
+
+.admin-search-input {
+  background: var(--color-bg-slate-50);
+  border: 1px solid var(--color-border-default);
+  border-radius: 8px;
+  padding: 9px 12px 9px 38px;
+  font-size: 13px;
+  color: var(--color-text-dark);
+  outline: none;
+  width: 100%;
+  transition: all 0.15s ease;
+}
+
+.admin-search-input:focus {
+  background: #ffffff;
+  border-color: var(--color-blue-accent);
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.filter-select-cluster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-select {
+  background: #ffffff;
+  border: 1px solid var(--color-border-default);
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-slate-700);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.filter-select:focus {
+  border-color: var(--color-blue-accent);
+}
+
+.btn-icon-refresh {
+  background: #ffffff;
+  border: 1px solid var(--color-border-default);
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-slate-600);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-icon-refresh:hover {
+  background-color: var(--color-bg-slate-50);
+  color: var(--color-text-dark);
+}
+
+/* ==========================================================================
+   BẢNG DỮ LIỆU COLLECTOR & HỘI VIÊN (DATA TABLE CARD)
+   ========================================================================== */
+.admin-table-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border-default);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.table-responsive-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.admin-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.admin-data-table thead {
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.admin-data-table th {
+  padding: 14px 18px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--color-text-slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.admin-data-table tbody tr {
+  border-bottom: 1px solid var(--color-border-subtle);
+  transition: background-color 0.12s ease;
+}
+
+.admin-data-table tbody tr:hover {
+  background-color: #fbfdff;
+}
+
+.admin-data-table td {
+  padding: 16px 18px;
+  vertical-align: middle;
+}
+
+/* Cột Mã Collector */
+.collector-id-code {
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+.collector-id-code.danger-id {
+  color: #dc2626;
+}
+
+/* Cột Họ tên & Avatar */
+.user-identity-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar-frame {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.user-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--color-border-default);
+}
+
+.avatar-initial-circle {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #fee2e2;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #fecaca;
+}
+
+.avatar-verified-check {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background-color: #10b981;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid #ffffff;
+}
+
+.avatar-verified-check .material-symbols-outlined {
+  font-size: 10px;
+}
+
+.user-name-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.user-fullname-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-fullname {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+}
+
+.seller-tier-badge {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.icon-lock-inline {
+  font-size: 14px;
+  color: #ef4444;
+}
+
+.user-email-text {
+  font-size: 11px;
+  color: var(--color-text-slate-400);
+}
+
+/* Cột Cấp bậc thẩm định */
+.tier-level-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tier-level-badge.gold {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.tier-level-badge.silver {
+  background-color: var(--color-bg-slate-100);
+  color: var(--color-text-slate-700);
+  border: 1px solid var(--color-border-default);
+}
+
+.tier-level-badge.standard {
+  background-color: var(--color-bg-slate-50);
+  color: var(--color-text-slate-600);
+  border: 1px solid var(--color-border-default);
+}
+
+.tier-level-badge.pending {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.tier-level-badge .material-symbols-outlined {
+  font-size: 14px;
+}
+
+/* Cột Số dư Escrow & Đơn giao dịch */
+.escrow-balance-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.balance-amount-strong {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-text-dark);
+}
+
+.balance-amount-strong.frozen-balance {
+  color: #dc2626;
+}
+
+.balance-subtext {
+  font-size: 11px;
+  color: var(--color-text-slate-500);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-dot-green {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #10b981;
+}
+
+.frozen-note-tag {
+  color: #ef4444;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+/* Cột Điểm uy tín */
+.reputation-score-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 110px;
+}
+
+.reputation-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.reputation-percent {
+  font-weight: 800;
+  color: #10b981;
+}
+
+.reputation-percent.warning {
+  color: #ef4444;
+}
+
+.reputation-details {
+  color: var(--color-text-slate-400);
+  font-size: 10px;
+}
+
+.reputation-details.danger {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.reputation-progress-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 9999px;
+  background-color: var(--color-bg-slate-100);
+  overflow: hidden;
+}
+
+.reputation-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background-color: #10b981;
+}
+
+.reputation-progress-fill.warning {
+  background-color: #ef4444;
+}
+
+/* Cột Trạng thái */
+.col-status-fixed {
+  min-width: 110px;
+  white-space: nowrap;
+}
+
+.status-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-indicator-badge.active {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.status-indicator-badge.locked {
+  background-color: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.status-indicator-badge.review {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.status-dot-bullet {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+/* Cột Thao tác */
+.action-buttons-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-row-detail {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-row-detail:hover {
+  background-color: #2563eb;
+  color: #ffffff;
+}
+
+.btn-row-detail .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.btn-row-lock {
+  background: none;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  padding: 5px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-row-lock:hover {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn-row-lock.btn-row-lock-active {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.btn-row-lock .material-symbols-outlined {
+  font-size: 16px;
+}
+
+/* ==========================================================================
+   DẢI THANH PHÂN TRANG (PAGINATION BAR)
+   ========================================================================== */
+.admin-pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--color-border-default);
+  background-color: #ffffff;
+}
+
+.pagination-info-text {
+  font-size: 12px;
+  color: var(--color-text-slate-500);
+}
+
+.pagination-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-page-nav {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border-default);
+  background: #ffffff;
+  color: var(--color-text-slate-700);
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-page-nav:hover {
+  background-color: var(--color-bg-slate-50);
+  border-color: var(--color-text-slate-400);
+}
+
+.btn-page-nav.active {
+  background-color: #d97706;
+  border-color: #d97706;
+  color: #ffffff;
+}
+
+.pagination-dots {
+  padding: 0 4px;
+  color: var(--color-text-slate-400);
+  font-size: 12px;
+}
+/* ========================================================================== HEADER ========================================================================== */
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border-default);
+}
+
+.header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 16px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+@media (min-width: 640px) {
+    .header-inner {
+        padding: 0 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .header-inner {
+        padding: 0 32px;
+    }
+}
+
+.brand-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.brand-icon-box {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: linear-gradient(to top right, #f59e0b, #fb923c);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+}
+
+.brand-icon-box .material-symbols-outlined {
+    font-size: 26px;
+}
+
+.brand-text-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: -0.025em;
+    color: var(--color-text-dark);
+    line-height: 1;
+}
+
+.brand-highlight {
+    color: var(--color-primary);
+}
+
+.brand-subtitle {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    color: var(--color-text-slate-400);
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.search-container {
+    display: none;
+    flex: 1;
+    max-width: 448px;
+}
+
+@media (min-width: 768px) {
+    .search-container {
+        display: block;
+    }
+}
+
+.search-field {
+    position: relative;
+    width: 100%;
+}
+
+.search-prefix-icon {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    padding-left: 14px;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    color: var(--color-text-slate-400);
+}
+
+.search-prefix-icon .material-symbols-outlined {
+    font-size: 19px;
+}
+
+.search-input-control {
+    width: 100%;
+    padding: 8px 16px 8px 40px;
+    font-size: 12px;
+    font-family: inherit;
+    background-color: rgba(241, 245, 249, 0.9);
+    border: none;
+    border-radius: 9999px;
+    color: var(--color-text-slate-800);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.search-input-control::placeholder {
+    color: var(--color-text-slate-400);
+}
+
+.search-input-control:focus {
+    box-shadow: 0 0 0 2px var(--color-accent-blue);
+    background-color: #ffffff;
+}
+
+.main-navigation {
+    display: none;
+    align-items: center;
+    gap: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-slate-600);
+}
+
+@media (min-width: 1024px) {
+    .main-navigation {
+        display: flex;
+    }
+}
+
+.nav-item {
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.15s ease;
+}
+
+.nav-item:hover,
+.nav-dropdown-trigger:hover {
+    color: var(--color-text-dark);
+}
+
+.nav-item.active-nav {
+    color: var(--color-accent-blue);
+    font-weight: 700;
+}
+
+.nav-dropdown-trigger {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.icon-expand {
+    font-size: 14px;
+}
+
+.live-auction-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pulse-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #2563eb;
+    display: inline-block;
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.header-utilities {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-trade-post {
+    background-color: var(--color-accent-emerald);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-trade-post:hover {
+    background-color: var(--color-accent-emerald-hover);
+}
+
+.icon-utility-button {
+    position: relative;
+    padding: 6px;
+    border-radius: 9999px;
+    color: var(--color-text-slate-600);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease;
+}
+
+.icon-utility-button:hover {
+    background-color: var(--color-bg-slate-100);
+}
+
+.icon-utility-button .material-symbols-outlined {
+    font-size: 20px;
+}
+
+.utility-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: var(--color-primary);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 800;
+    border-radius: 9999px;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-avatar-trigger {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-left: 4px;
+    cursor: pointer;
+}
+
+.user-avatar-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 0 2px var(--color-bg-slate-200);
+}
+
+.icon-chevron {
+    font-size: 14px;
+    color: var(--color-text-slate-400);
+}
+
+/* Header 1: icon và tiện ích */
+.header-utilities {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.utility-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background-color: #2563eb;
+    color: #ffffff;
+    font-size: 9px;
+    font-weight: 700;
+    border-radius: 9999px;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ========================================================================== 8. FOOTER ========================================================================== */
+.site-main-footer {
+    background-color: #ffffff;
+    border-top: 1px solid var(--color-border-default);
+    color: var(--color-text-slate-600);
+    font-size: 12px;
+}
+
+.footer-inner-shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 16px;
+}
+
+@media (min-width: 640px) {
+    .footer-inner-shell {
+        padding: 48px 24px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .footer-inner-shell {
+        padding: 48px 32px;
+    }
+}
+
+.footer-top-columns {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+}
+
+@media (min-width: 768px) {
+    .footer-top-columns {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .footer-top-columns {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+.footer-brand-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (min-width: 1024px) {
+    .footer-brand-column {
+        grid-column: span 2;
+    }
+}
+
+.footer-brand-title {
+    font-weight: 900;
+    font-size: 18px;
+    color: var(--color-primary);
+}
+
+.footer-brand-mission {
+    color: var(--color-text-slate-500);
+    line-height: 1.6;
+    font-size: 11px;
+    max-width: 384px;
+}
+
+.escrow-cert-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    border: 1px solid rgba(67, 78, 219, 0.3);
+    color: var(--color-primary);
+    font-size: 10px;
+    font-weight: 700;
+    width: fit-content;
+}
+
+.escrow-cert-tag .material-symbols-outlined {
+    font-size: 13px;
+}
+
+.footer-nav-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-col-header {
+    font-weight: 700;
+    color: var(--color-text-slate-900);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11px;
+}
+
+.footer-nav-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+}
+
+.footer-link-item {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+.footer-link-item:hover {
+    color: var(--color-primary);
+}
+
+.footer-legal-bar {
+    border-top: 1px solid var(--color-border-default);
+    margin-top: 40px;
+    padding-top: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 10px;
+    color: var(--color-text-slate-400);
+}
+
+@media (min-width: 640px) {
+    .footer-legal-bar {
+        flex-direction: row;
+    }
+}
+
+.footer-security-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* ========================================================================== CỘT TRÁI: SIDEBAR QUẢN TRỊ (ADMIN SIDEBAR) ========================================================================== */
+.admin-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: 96px;
+}
+
+/* Thẻ Brand Badge MangaVault Admin */
+.admin-brand-badge-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border-default);
+    border-radius: 16px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-shield-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #b45309;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid #fcd34d;
+}
+
+.admin-shield-icon-box .material-symbols-outlined {
+    font-size: 22px;
+}
+
+.admin-badge-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-badge-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    line-height: 1.2;
+}
+
+.admin-badge-subtitle {
+    font-size: 11px;
+    color: var(--color-text-slate-500);
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+/* Menu Điều Hướng Admin */
+.admin-nav-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border-default);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: var(--shadow-sm);
+}
+
+.admin-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    list-style: none;
+}
+
+.admin-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-slate-600);
+    text-decoration: none;
+    transition: all 0.15s ease;
+}
+
+.admin-nav-item:hover {
+    background-color: var(--color-bg-slate-100);
+    color: var(--color-text-dark);
+}
+
+.admin-nav-item.active {
+    background-color: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+}
+
+.admin-nav-item .material-symbols-outlined {
+    font-size: 20px;
+    color: var(--color-text-slate-500);
+}
+
+.admin-nav-item.active .material-symbols-outlined {
+    color: #b45309;
+}
+
+/* Menu phụ bên dưới (Kiểm toán, cài đặt, Escrow) */
+.admin-secondary-nav-card {
+    background: #ffffff;
+    border: 1px solid var(--color-border-default);
+    border-radius: 16px;
+    padding: 12px;
+    box-shadow: var(--shadow-sm);
+}
