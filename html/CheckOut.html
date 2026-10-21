@@ -19,7 +19,22 @@
 </head>
 
 <body class="site-body">
+    <div class="address-modal-overlay" id="address-modal">
+        <div class="address-modal">
+            <div class="address-modal-header">
+                <h3>Danh sách địa chỉ đã lưu</h3>
+            </div>
 
+            <div class="address-modal-list" id="address-list">
+                <!-- Danh sách địa chỉ sẽ hiển thị ở đây -->
+            </div>
+
+            <div class="address-modal-footer">
+                <button type="button" id="cancel-address">Hủy bỏ</button>
+                <button type="button" id="confirm-address">Xác nhận</button>
+            </div>
+        </div>
+    </div>
     <header class="site-header">
         <div class="header-inner"> <!-- Brand Logo --> <a class="brand-identity" href="#">
                 <div class="brand-icon-box"> <span class="material-symbols-outlined">menu_book</span> </div>
@@ -92,7 +107,7 @@
                         <div class="deliver-type-wrapper">
                             <div class="delivery-info">
                                 <span>Trong ngày</span>
-                                <div type="normal" class="item-price" >
+                                <div type="normal" class="item-price">
                                     81.000
                                     <sup>đ</sup>
                                 </div>
@@ -152,12 +167,13 @@
                     </div>
                     <div class="card-address-content">
                         <div class="customer-info">
-                            <p>Mai Vũ Thành Hiển</p>
+                            <p id="current-address-name">Mai Vũ Thành Hiển</p>
                             <i></i>
-                            <p>0708699870</p>
+                            <p id="current-address-phone">0708699870</p>
                         </div>
+
                         <div class="address">
-                            <p class="address-content">
+                            <p class="address-content" id="current-address-text">
                                 143/14/14 Ô5 khu B Thị trấn Hậu Nghĩa, Thị trấn Hậu Nghĩa, Huyện Đức Hòa, Long An
                             </p>
                         </div>
@@ -329,24 +345,94 @@
             });
         });
     </script>
-<script>
-    const toggleBtn = document.querySelector('.more-checkout-info-btn');
-    const orderList = document.querySelector('.order-item-list');
-    const arrowIcon = toggleBtn.querySelector('.material-symbols-outlined');
+    <script>
+        const toggleBtn = document.querySelector('.more-checkout-info-btn');
+        const orderList = document.querySelector('.order-item-list');
+        const arrowIcon = toggleBtn.querySelector('.material-symbols-outlined');
 
-    // Mặc định ẩn danh sách
-    orderList.style.display = 'none';
+        // Mặc định ẩn danh sách
+        orderList.style.display = 'none';
 
-    toggleBtn.addEventListener('click', function () {
-        if (orderList.style.display === 'none') {
-            orderList.style.display = 'grid';
-            arrowIcon.textContent = 'keyboard_arrow_up';
-        } else {
-            orderList.style.display = 'none';
-            arrowIcon.textContent = 'keyboard_arrow_down';
+        toggleBtn.addEventListener('click', function () {
+            if (orderList.style.display === 'none') {
+                orderList.style.display = 'grid';
+                arrowIcon.textContent = 'keyboard_arrow_up';
+            } else {
+                orderList.style.display = 'none';
+                arrowIcon.textContent = 'keyboard_arrow_down';
+            }
+        });
+    </script>
+    <script>
+        const addressModal = document.getElementById("address-modal");
+        const addressList = document.getElementById("address-list");
+        const currentName = document.getElementById("current-address-name");
+        const currentPhone = document.getElementById("current-address-phone");
+        const currentAddress = document.getElementById("current-address-text");
+        const savedAddresses = [
+            {
+                name: "Mai Vũ Thành Hiển",
+                phone: "0708699870",
+                address: "143/14/14 Ô5 khu B Thị trấn Hậu Nghĩa, Huyện Đức Hòa, Long An",
+                isDefault: true
+            },
+            {
+                name: "Mai Vũ Thành Hiển",
+                phone: "0708699870",
+                address: "Địa chỉ thứ hai, Thành phố Hồ Chí Minh",
+                isDefault: false
+            }
+        ];
+
+        document.querySelector(".change-address-btn").addEventListener("click", function () {
+            addressList.innerHTML = "";
+            savedAddresses.forEach(function (address, index) {
+                const label = document.createElement("label");
+                label.className = "address-option";
+                label.innerHTML = `
+                <input type="radio" name="selected-address" value="${index}"
+                    ${address.name === currentName.textContent.trim()
+                        && address.address === currentAddress.textContent.trim()
+                        ? "checked" : ""}>
+                <div class="address-option-content">
+                    <div class="address-option-info">
+                        <strong>${address.name}</strong>
+                        <span>${address.phone}</span>
+                        ${address.isDefault
+                        ? '<span class="default-address-tag">Mặc định</span>'
+                        : ""}
+                    </div>
+                    <div class="address-option-text">${address.address}</div>
+                </div>
+            `;
+                addressList.appendChild(label);
+            });
+            addressModal.style.display = "flex";
+        });
+        function closeAddressModal() {
+            addressModal.style.display = "none";
         }
-    });
-</script>
+        document.getElementById("cancel-address").addEventListener("click", closeAddressModal);
+        addressModal.addEventListener("click", function (event) {
+            if (event.target === addressModal) {
+                closeAddressModal();
+            }
+        });
+        document.getElementById("confirm-address").addEventListener("click", function () {
+            const selected = document.querySelector(
+                'input[name="selected-address"]:checked'
+            );
+            if (!selected) {
+                alert("Vui lòng chọn một địa chỉ.");
+                return;
+            }
+            const address = savedAddresses[Number(selected.value)];
+            currentName.textContent = address.name;
+            currentPhone.textContent = address.phone;
+            currentAddress.textContent = address.address;
+            closeAddressModal();
+        });
+    </script>
 </body>
 
 </html>
