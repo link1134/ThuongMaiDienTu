@@ -69,97 +69,309 @@
 
         <!-- BỐ CỤC 2 CỘT CHÍNH: DANH SÁCH MẶT HÀNG & THẺ CHI TIẾT TỔNG KẾT -->
         <div class="cart-layout-grid">
+            <div>
+                <div class="cart-items-list-header">
+                    <label class="all-item-check">
+                        <input type="checkbox" class="check-box-mod" id="select-all">
+                        <span>Tất cả&nbsp;(n sản phẩm)</span>
+                    </label>
 
-            <!-- CỘT TRÁI: DANH SÁCH CÁC ẤN PHẨM TRONG GIỎ HÀNG -->
-            <section class="cart-items-column">
-                <div class="cart-title-block">
-                    <h1 class="cart-heading">Giỏ hàng</h1>
-                    <div class="cart-item-count">Sản phẩm : 3</div>
+                    <span>Đơn giá</span>
+
+                    <span>Số lượng</span>
+
+                    <span>Thành tiền</span>
+
+                    <span class="material-symbols-outlined">
+                        delete
+                    </span>
                 </div>
+                <div class="infinite-scroll-component">
+                    <div class="cart-item">
+                        <div class="cart-item-information">
+                            <input type="checkbox" class="check-box-mod item-checkbox">
+                            <a href="">
+                                <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400" alt=""
+                                    class="cart-item-image">
+                            </a>
+                            <!-- Chỗ này mốt có thể thêm gì đó, giờ thì chỉ tên thôi -->
+                            <div class="cart-item-more-information">
+                                <a href="">Tên truyện chỗ này</a>
+                            </div>
+                        </div>
+                        <div class="cart-item-base-price">
+                            <div type="normal" class="item-price">
+                                102.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <div class="quantity-btn-wrapper">
+                            <div class="quantity-btn">
+                                <span class="material-symbols-outlined quantity-btn-decrease">
+                                    remove
+                                </span>
+                                <input type="tel" value="1" class="quantity-btn-input"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <span class="material-symbols-outlined quantity-btn-increase">
+                                    add
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <div type="normal" class="item-price">
+                                999.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <button class="delete-btn">
+                            <span class="material-symbols-outlined">
+                                delete</button>
 
-                <div class="cart-items-list">
-                    <!-- Sản phẩm 1: One Piece - Tập 1 (2003) -->
-                    <article class="cart-item-card">
-                        <div class="item-main-details">
-                            <div class="item-thumb-box">
-                                <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=150&q=80"
-                                    alt="One Piece - Tập 1 (Ấn bản đầu tiên 2003)" class="item-thumb-img">
-                            </div>
-                            <div class="item-text-info">
-                                <h2 class="item-title">One Piece – Tập 1 (Ấn bản đầu tiên 2003)</h2>
-                                <span class="item-publisher">NXB Kim Đồng</span>
+                        </span>
+                    </div>
+                    <div class="cart-item">
+                        <div class="cart-item-information">
+                            <input type="checkbox" class="check-box-mod item-checkbox">
+                            <a href="">
+                                <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400" alt=""
+                                    class="cart-item-image">
+                            </a>
+                            <!-- Chỗ này mốt có thể thêm gì đó, giờ thì chỉ tên thôi -->
+                            <div class="cart-item-more-information">
+                                <a href="">Tên truyện chỗ này</a>
                             </div>
                         </div>
-                        <div class="item-actions-cluster">
-                            <span class="item-price">450.000 đ</span>
-                            <button class="btn-item-delete" type="button" title="Xóa khỏi giỏ hàng">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
+                        <div class="cart-item-base-price">
+                            <div type="normal" class="item-price">
+                                102.000
+                                <sup>đ</sup>
+                            </div>
                         </div>
-                    </article>
+                        <div class="quantity-btn-wrapper">
+                            <div class="quantity-btn">
+                                <span class="material-symbols-outlined quantity-btn-decrease">
+                                    remove
+                                </span>
+                                <input type="tel" value="1" class="quantity-btn-input"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <span class="material-symbols-outlined quantity-btn-increase">
+                                    add
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <div type="normal" class="item-price">
+                                999.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <button class="delete-btn">
+                            <span class="material-symbols-outlined">
+                                delete</button>
 
-                    <!-- Sản phẩm 2: Slam Dunk - Tập 31 Kết Thúc -->
-                    <article class="cart-item-card">
-                        <div class="item-main-details">
-                            <div class="item-thumb-box">
-                                <img src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=150&q=80"
-                                    alt="Slam Dunk - Tập 31 Kết Thúc (Bản In Đầu Trẻ)" class="item-thumb-img">
-                            </div>
-                            <div class="item-text-info">
-                                <h2 class="item-title">Slam Dunk – Tập 31 Kết Thúc (Bản In Đầu Trẻ)</h2>
-                                <span class="item-publisher">NXB Trẻ</span>
+                        </span>
+                    </div>
+                    <div class="cart-item">
+                        <div class="cart-item-information">
+                            <input type="checkbox" class="check-box-mod item-checkbox">
+                            <a href="">
+                                <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400" alt=""
+                                    class="cart-item-image">
+                            </a>
+                            <!-- Chỗ này mốt có thể thêm gì đó, giờ thì chỉ tên thôi -->
+                            <div class="cart-item-more-information">
+                                <a href="">Tên truyện chỗ này</a>
                             </div>
                         </div>
-                        <div class="item-actions-cluster">
-                            <span class="item-price">1.250.000 đ</span>
-                            <button class="btn-item-delete" type="button" title="Xóa khỏi giỏ hàng">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
+                        <div class="cart-item-base-price">
+                            <div type="normal" class="item-price">
+                                102.000
+                                <sup>đ</sup>
+                            </div>
                         </div>
-                    </article>
+                        <div class="quantity-btn-wrapper">
+                            <div class="quantity-btn">
+                                <span class="material-symbols-outlined quantity-btn-decrease">
+                                    remove
+                                </span>
+                                <input type="tel" value="1" class="quantity-btn-input"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <span class="material-symbols-outlined quantity-btn-increase">
+                                    add
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <div type="normal" class="item-price">
+                                999.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <button class="delete-btn">
+                            <span class="material-symbols-outlined">
+                                delete</button>
 
-                    <!-- Sản phẩm 3: Vua Trò Chơi (Yu-Gi-Oh!) - Tập 1 (2001) -->
-                    <article class="cart-item-card">
-                        <div class="item-main-details">
-                            <div class="item-thumb-box">
-                                <img src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=150&q=80"
-                                    alt="Vua Trò Chơi (Yu-Gi-Oh!) - Tập 1 (2001)" class="item-thumb-img">
-                            </div>
-                            <div class="item-text-info">
-                                <h2 class="item-title">Vua Trò Chơi (Yu-Gi-Oh!) – Tập 1 (2001)</h2>
-                                <span class="item-publisher">NXB Kim Đồng</span>
+                        </span>
+                    </div>
+                    <div class="cart-item">
+                        <div class="cart-item-information">
+                            <input type="checkbox" class="check-box-mod item-checkbox">
+                            <a href="">
+                                <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400" alt=""
+                                    class="cart-item-image">
+                            </a>
+                            <!-- Chỗ này mốt có thể thêm gì đó, giờ thì chỉ tên thôi -->
+                            <div class="cart-item-more-information">
+                                <a href="">Tên truyện chỗ này</a>
                             </div>
                         </div>
-                        <div class="item-actions-cluster">
-                            <span class="item-price">620.000 đ</span>
-                            <button class="btn-item-delete" type="button" title="Xóa khỏi giỏ hàng">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
+                        <div class="cart-item-base-price">
+                            <div type="normal" class="item-price">
+                                102.000
+                                <sup>đ</sup>
+                            </div>
                         </div>
-                    </article>
+                        <div class="quantity-btn-wrapper">
+                            <div class="quantity-btn">
+                                <span class="material-symbols-outlined quantity-btn-decrease">
+                                    remove
+                                </span>
+                                <input type="tel" value="1" class="quantity-btn-input"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <span class="material-symbols-outlined quantity-btn-increase">
+                                    add
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <div type="normal" class="item-price">
+                                999.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <button class="delete-btn">
+                            <span class="material-symbols-outlined">
+                                delete</button>
+
+                        </span>
+                    </div>
+                    <div class="cart-item">
+                        <div class="cart-item-information">
+                            <input type="checkbox" class="check-box-mod item-checkbox">
+                            <a href="">
+                                <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400" alt=""
+                                    class="cart-item-image">
+                            </a>
+                            <!-- Chỗ này mốt có thể thêm gì đó, giờ thì chỉ tên thôi -->
+                            <div class="cart-item-more-information">
+                                <a href="">Tên truyện chỗ này</a>
+                            </div>
+                        </div>
+                        <div class="cart-item-base-price">
+                            <div type="normal" class="item-price">
+                                102.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <div class="quantity-btn-wrapper">
+                            <div class="quantity-btn">
+                                <span class="material-symbols-outlined quantity-btn-decrease">
+                                    remove
+                                </span>
+                                <input type="tel" value="1" class="quantity-btn-input"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <span class="material-symbols-outlined quantity-btn-increase">
+                                    add
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <div type="normal" class="item-price">
+                                999.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <button class="delete-btn">
+                            <span class="material-symbols-outlined">
+                                delete</button>
+
+                        </span>
+                    </div>
+                    <div class="cart-item">
+                        <div class="cart-item-information">
+                            <input type="checkbox" class="check-box-mod item-checkbox">
+                            <a href="">
+                                <img src="https://images.unsplash.com/photo-1517849845537-4d257902454a?w=400" alt=""
+                                    class="cart-item-image">
+                            </a>
+                            <!-- Chỗ này mốt có thể thêm gì đó, giờ thì chỉ tên thôi -->
+                            <div class="cart-item-more-information">
+                                <a href="">Tên truyện chỗ này</a>
+                            </div>
+                        </div>
+                        <div class="cart-item-base-price">
+                            <div type="normal" class="item-price">
+                                102.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <div class="quantity-btn-wrapper">
+                            <div class="quantity-btn">
+                                <span class="material-symbols-outlined quantity-btn-decrease">
+                                    remove
+                                </span>
+                                <input type="tel" value="1" class="quantity-btn-input"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                <span class="material-symbols-outlined quantity-btn-increase">
+                                    add
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <div type="normal" class="item-price">
+                                999.000
+                                <sup>đ</sup>
+                            </div>
+                        </div>
+                        <button class="delete-btn">
+                            <span class="material-symbols-outlined">
+                                delete</button>
+
+                        </span>
+                    </div>
                 </div>
-            </section>
-
+            </div>
             <!-- CỘT PHẢI: THẺ TÓM TẮT & THANH TOÁN (CHI TIẾT GIỎ HÀNG) -->
             <aside class="cart-summary-column">
-                <div class="cart-summary-card">
-                    <div class="summary-header-row">
-                        <h2 class="summary-title">Chi tiết giỏ hàng</h2>
-                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                            alt="Avatar khách hàng" class="user-summary-avatar-img">
+                <div class="card-address">
+                    <div class="card-address-header">
+                        <h3>Địa chỉ giao hàng</h3>
+                        <button class="change-address-btn">Thay đổi</button>
                     </div>
-
+                    <div class="card-address-content">
+                        <div class="customer-info">
+                            <p>Mai Vũ Thành Hiển</p>
+                            <i></i>
+                            <p>0708699870</p>
+                        </div>
+                        <div class="address">
+                            <p class="address-content">
+                                143/14/14 Ô5 khu B Thị trấn Hậu Nghĩa, Thị trấn Hậu Nghĩa, Huyện Đức Hòa, Long An
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-summary-card">
+                    <!-- Nếu chọn sản phẩm thì sài cái này -->
                     <div class="summary-breakdown-list">
                         <div class="summary-row">
-                            <span class="summary-row-label">Tạm tính :</span>
+                            <span class="summary-row-label">Tổng tiền hàng</span>
                             <span class="summary-row-val">2.320.000 đ</span>
                         </div>
-                        <div class="summary-row">
-                            <span class="summary-row-label">Phí vận chuyển :</span>
-                            <span class="summary-row-val">0 đ</span>
-                        </div>
                         <div class="summary-row total-row">
-                            <span class="summary-row-label">Tổng (Tax incl.) :</span>
+                            <span class="summary-row-label">Tổng tiền thanh toán</span>
+                            <!-- Dùng cái này thay cho số tiền nếu ko chọn hàng -->
+                            <!-- <span class="summary-row-val">Vui lòng chọn sản phẩm</span> -->
                             <span class="summary-row-val">2.320.000 đ</span>
                         </div>
                     </div>
@@ -229,6 +441,26 @@
             </div>
         </div>
     </footer> <!-- END: SiteFooter -->
+    <script>
+        const selectAll = document.getElementById("select-all");
+        const itemCheckboxes = document.querySelectorAll(".item-checkbox");
+
+        // Nhấn checkbox tổng
+        selectAll.addEventListener("change", function () {
+            itemCheckboxes.forEach(function (checkbox) {
+                checkbox.checked = selectAll.checked;
+            });
+        });
+
+        // Khi thay đổi checkbox sản phẩm
+        itemCheckboxes.forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                selectAll.checked = [...itemCheckboxes].every(function (item) {
+                    return item.checked;
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
