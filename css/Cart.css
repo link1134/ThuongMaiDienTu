@@ -360,7 +360,7 @@ body.site-body {
    ========================================================================== */
 .cart-summary-card {
     background: white;
-    padding: 16px;
+   
     color: black;
     display: flex;
     flex-direction: column;
@@ -398,6 +398,7 @@ body.site-body {
     flex-direction: column;
     gap: 0.5rem;
     margin-bottom: 1rem;
+     padding: 16px;
 }
 
 .summary-row {
@@ -434,31 +435,35 @@ body.site-body {
 }
 
 /* Nút thanh toán nổi bật */
-.btn-checkout-now {
-    background-color: #2ed573;
-    color: #ffffff;
-    border: none;
-    border-radius: 12px;
-    padding: 16px 24px;
-    font-size: 16px;
-    font-weight: 800;
+.checkout-btn-wrapper {
     display: flex;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    column-gap: 8px;
+    -webkit-box-align: center;
     align-items: center;
+}
+.btn-checkout-now{
+     appearance: button;
+    margin: 0px 16px 16px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(255, 66, 78);
+    border-width: medium;
+    border-style: none;
+    border-color: currentcolor;
+    border-image: none;
+    font-weight: 400;
+    height: 40px;
+    width: 100%;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
     justify-content: center;
-    gap: 8px;
     cursor: pointer;
-    text-decoration: none;
-    box-shadow: 0 4px 14px rgba(46, 213, 115, 0.4);
-    transition: background-color 0.15s ease, transform 0.15s ease;
-}
-
-.btn-checkout-now:hover {
-    background-color: #26af5f;
-    transform: translateY(-1px);
-}
-
-.btn-checkout-now .material-symbols-outlined {
-    font-size: 20px;
+    font-size: 16px;
+    line-height: 24px;
+    border-radius: 4px;
 }
 
 .infinite-scroll-component {
