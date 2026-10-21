@@ -1041,3 +1041,122 @@ body.site-body {
     background-color: rgb(235, 235, 240);
     margin: 0px 8px;
 }
+.address-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+
+    justify-content: center;
+    align-items: center;
+}
+
+.address-modal {
+    background: white;
+    width: 600px;
+    max-width: calc(100% - 30px);
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.address-modal-header {
+    margin-bottom: 20px;
+}
+
+.address-modal-header h3 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.address-modal-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.address-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.address-option input[type="radio"] {
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.address-option-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.address-option-info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.address-option-info strong {
+    font-size: 15px;
+}
+
+.address-option-info span {
+    color: #666;
+    font-size: 14px;
+}
+
+.default-address-tag {
+    color: #434edb;
+    border: 1px solid #434edb;
+    padding: 2px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.address-option-text {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.address-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.address-modal-footer button {
+    padding: 10px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#cancel-address {
+    background: white;
+    border: 1px solid #ccc;
+}
+
+#confirm-address {
+    background: #434edb;
+    color: white;
+    border: 1px solid #434edb;
+}
+
+@media (max-width: 480px) {
+    .address-modal {
+        padding: 18px;
+    }
+
+    .address-modal-footer button {
+        padding: 9px 14px;
+    }
+}
