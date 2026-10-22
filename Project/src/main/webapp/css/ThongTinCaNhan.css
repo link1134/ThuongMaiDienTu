@@ -1925,4 +1925,8 @@ body.site-body {
         min-width: 0;
     }
 }
-
+.addressItems{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

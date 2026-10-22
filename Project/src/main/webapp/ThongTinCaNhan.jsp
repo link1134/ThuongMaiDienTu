@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ThongTinCaNhan.css"/>
 </head>
 
-<body class="site-body"> <!-- ==================== HEADER ==================== -->
+<body data-context-path="${pageContext.request.contextPath}" class="site-body"> <!-- ==================== HEADER ==================== -->
 <jsp:include page="/common/header.jsp"/>
 <main class="main-page-container"> <!-- Breadcrumb -->
     <nav class="breadcrumb-nav"><a href="#">Trang chủ</a> <span class="bc-sep">/</span> <a href="#">Tài khoản</a>
@@ -333,30 +333,26 @@
                     </div>
 
                 </div>
+
                 <div class="address-list">
 
-                    <div class="address-detail-card">
-                        <div class="address-top-row">
-                            <div class="address-identity-meta"><span class="default-badge">MẶC ĐỊNH</span></div>
-                            <div class="address-actions-inline">
-                                <button class="address-btn" type="button"> <span
-                                        class="material-symbols-outlined">edit</span> <span>Chỉnh sửa</span></button>
-                                <button class="address-btn" type="button"> <span
-                                        class="material-symbols-outlined">delete</span> <span>Xóa</span></button>
-                            </div>
-                        </div>
-                        <div class="recipient-heading"><span class="recipient-name">Lê Minh Triết</span> <span
-                                class="recipient-phone">(+84) 908 123 456</span></div>
-                        <p class="recipient-address"> Căn hộ 12B, Tháp T2, Khu phức hợp Masteri An Phú, 179 Xa Lộ Hà
-                            Nội, Phường Thảo Điền, Thành phố Thủ Đức, TP. Hồ Chí Minh. </p>
+                    <!-- Khu vực được tải lại bằng fetch -->
+                    <div class="addressItems" id="addressItems" >
+                        <!-- Các địa chỉ sẽ được Servlet trả về tại đây -->
                     </div>
+
+                    <!-- Giữ nút thêm địa chỉ ở bên ngoài -->
                     <div class="add-address-row">
-                        <button class="btn-outline-rounded" type="button" id="addAddressBtn">
+                        <button class="btn-outline-rounded"
+                                type="button"
+                                id="addAddressBtn">
                             <span class="material-symbols-outlined">add</span>
                             <span>Thêm địa chỉ mới</span>
                         </button>
                     </div>
+
                 </div>
+
 
             </div> <!-- 4. Favorite Bookshelf & Watchlist -->
             <div class="card-panel management-section" id="followListSection">
@@ -597,10 +593,8 @@
         </div>
 
         <form id="addAddressForm">
-
             <!-- Họ tên và số điện thoại -->
             <div class="address-form-grid">
-
                 <div class="address-form-field">
                     <label for="recipientName">
                         Họ tên <span class="required-mark">*</span>
@@ -612,7 +606,6 @@
                            maxlength="100"
                            required>
                 </div>
-
                 <div class="address-form-field">
                     <label for="recipientPhone">
                         Điện thoại di động <span class="required-mark">*</span>
@@ -624,7 +617,6 @@
                            maxlength="15"
                            required>
                 </div>
-
                 <!-- Tỉnh / thành phố -->
                 <div class="address-form-field">
                     <label for="province">
@@ -634,43 +626,10 @@
                         <option value="" selected disabled>
                             Chọn tỉnh / thành phố
                         </option>
-                        <option>TP. Hồ Chí Minh</option>
-                        <option>Hà Nội</option>
-                        <option>Đà Nẵng</option>
-                        <option>Hải Phòng</option>
-                        <option>Cần Thơ</option>
-                        <option>Đồng Nai</option>
-                        <option>Tây Ninh</option>
-                        <option>Đắk Lắk</option>
-                        <option>Khánh Hòa</option>
-                        <option>Quảng Ninh</option>
                     </select>
                 </div>
-
                 <!-- Quận / huyện -->
                 <div class="address-form-field">
-                    <label for="district">
-                        Quận / huyện <span class="required-mark">*</span>
-                    </label>
-                    <select id="district" name="district" required>
-                        <option value="" selected disabled>
-                            Chọn quận / huyện
-                        </option>
-                        <option>Quận 1</option>
-                        <option>Quận 3</option>
-                        <option>Quận 7</option>
-                        <option>Quận 10</option>
-                        <option>Quận Bình Thạnh</option>
-                        <option>TP. Thủ Đức</option>
-                        <option>Huyện Bình Chánh</option>
-                        <option>Huyện Củ Chi</option>
-                        <option>Huyện Hóc Môn</option>
-                        <option>Huyện Nhà Bè</option>
-                    </select>
-                </div>
-
-                <!-- Phường / xã -->
-                <div class="address-form-field address-form-full">
                     <label for="ward">
                         Phường / xã <span class="required-mark">*</span>
                     </label>
@@ -678,16 +637,6 @@
                         <option value="" selected disabled>
                             Chọn phường / xã
                         </option>
-                        <option>Phường Bến Nghé</option>
-                        <option>Phường Bến Thành</option>
-                        <option>Phường Cầu Ông Lãnh</option>
-                        <option>Phường Tân Định</option>
-                        <option>Phường Sài Gòn</option>
-                        <option>Phường Thảo Điền</option>
-                        <option>Phường An Khánh</option>
-                        <option>Phường Bình Thạnh</option>
-                        <option>Phường Tân Hưng</option>
-                        <option>Xã Bình Hưng</option>
                     </select>
                 </div>
 
@@ -789,96 +738,7 @@
 
 </footer>
 
-<script>
-    (function () {
-        var trigger = document.getElementById("userAvatarTrigger");
-        var menu = document.getElementById("userMenu");
-
-        if (!trigger || !menu) return;
-
-        var loggedIn = trigger.getAttribute("data-logged-in") === "true";
-        var loginUrl = trigger.getAttribute("data-login-url");
-
-        function activate(e) {
-            if (!loggedIn) {
-                window.location.href = loginUrl;
-                return;
-            }
-
-            e.stopPropagation();
-            menu.classList.toggle("open");
-        }
-
-        trigger.addEventListener("click", activate);
-
-        trigger.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                activate(e);
-            }
-        });
-
-        document.addEventListener("click", function (e) {
-            if (!menu.contains(e.target)) {
-                menu.classList.remove("open");
-            }
-        });
-    })();
-</script>
-
-<script src="${pageContext.request.contextPath}/js/profile-inline-edit.js"></script>
-<script src="${pageContext.request.contextPath}/js/switch_sidebar_active-item.js"></script>
-<script>
-
-    const addressModal = document.getElementById("addressModal");
-    const addAddressBtn = document.getElementById("addAddressBtn");
-    const closeAddressModal = document.getElementById("closeAddressModal");
-    const cancelAddressBtn = document.getElementById("cancelAddressBtn");
-    const addAddressForm = document.getElementById("addAddressForm");
-
-    // Mở popup
-    addAddressBtn.addEventListener("click", function () {
-        addressModal.hidden = false;
-        document.body.style.overflow = "hidden";
-    });
-
-    // Đóng popup
-    function closeAddressPopup() {
-        addressModal.hidden = true;
-        document.body.style.overflow = "";
-    }
-
-    closeAddressModal.addEventListener("click", closeAddressPopup);
-    cancelAddressBtn.addEventListener("click", closeAddressPopup);
-
-    // Nhấn vùng nền bên ngoài popup để đóng
-    addressModal.addEventListener("click", function (event) {
-        if (event.target === addressModal) {
-            closeAddressPopup();
-        }
-    });
-
-    // Nhấn Escape để đóng popup
-    document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape" && !addressModal.hidden) {
-            closeAddressPopup();
-        }
-    });
-
-    // Xác nhận: hiện tại chỉ kiểm tra dữ liệu và đóng popup.
-    // Chưa lưu vào database hoặc thêm địa chỉ vào danh sách.
-    addAddressForm.addEventListener("submit", function (event) {
-        event.preventDefault();
-
-        if (!addAddressForm.checkValidity()) {
-            addAddressForm.reportValidity();
-            return;
-        }
-
-        closeAddressPopup();
-    });
-
-</script>
+<script src="${pageContext.request.contextPath}/js/ThongTinCaNhan.js"></script>
 </body>
 </html>
 

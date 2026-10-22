@@ -64,11 +64,12 @@ CREATE TABLE DeliveryAddresses (
                                    UserId INT NOT NULL,
                                    RecipientName NVARCHAR(100) NOT NULL,
                                    PhoneNumber NVARCHAR(20) NOT NULL,
+                                   ProvinceCode INT NULL,
                                    CityProvince NVARCHAR(100) NOT NULL,
+                                   WardCode INT NULL,
                                    Ward NVARCHAR(100) NOT NULL,
-                                   AddressDetail NVARCHAR(255) NULL,
+                                   AddressDetail NVARCHAR(255) NOT NULL,
                                    IsDefault BIT NOT NULL DEFAULT 0,
-
                                    CONSTRAINT FK_DeliveryAddresses_Users
                                        FOREIGN KEY (UserId) REFERENCES Users(Id)
 );
