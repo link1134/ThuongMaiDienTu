@@ -102,19 +102,18 @@
                     </c:if>
                 </div>
             </div>
-            <div class="purchase-commerce-card">
-
-
+            <form action="${pageContext.request.contextPath}/cart/add" method="POST" class="purchase-commerce-card">
+                <input type="hidden" name="listingId" value="${product.productId}"/>
                 <div class="price-listing-row">
                     <div class="quantity-section">
                         <div class="price-listing-label">Số lượng</div>
 
                         <div class="quantity-control-row">
                             <div class="quantity-row">
-                                <button type="button" class="quantity-btn">−</button>
-                                <input type="number" class="quantity-input" value="1" min="1"
+                                <button type="button" class="quantity-btn" id="btn-decrease">−</button>
+                                <input type="number" class="quantity-input" name="quantity" value="1" min="1" id="quantity-input"
                                        max="${product.stockQuantity}">
-                                <button type="button" class="quantity-btn">+</button>
+                                <button type="button" class="quantity-btn" id="btn-increase">+</button>
                             </div>
 
                             <span class="stock-quantity"><c:out
@@ -123,8 +122,8 @@
                     </div>
 
                     <div class="subtotal-section">
-                        <div class="price-listing-label">Tạm tính</div>
-                        <span class="current-price"><fmt:formatNumber value="${product.price}"
+                        <div class="price-listing-label" >Tạm tính</div>
+                        <span class="current-price" id="subtotal-display"><fmt:formatNumber value="${product.price}"
                                                                       pattern="#,##0"/> đ</span>
                     </div>
                 </div>
@@ -134,14 +133,14 @@
                     <span>Đã hoàn tất giám định vật lý bởi MangaVault Labs</span>
                 </div>
                 <div class="checkout-buttons-row">
-                    <button class="btn-buy-now" type="button"> <span
+                    <button class="btn-buy-now" type="button" id="btn-buy-now"> <span
                             class="material-symbols-outlined">shopping_bag</span> <span>Mua ngay</span>
                     </button>
-                    <button class="btn-cart-square" type="button" title="Thêm vào giỏ hàng"> <span
-                            class="material-symbols-outlined">shopping_cart</span></button>
+                    <button class="btn-cart-square" type="submit" title="Thêm vào giỏ hàng">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                    </button>
                 </div>
-
-            </div>
+            </form>
             <div class="seller-profile-card">
                 <!-- Hàng 1: Avatar, Tên, Huy hiệu uy tín và Thời gian phản hồi -->
                 <div class="seller-top-row">
@@ -385,26 +384,58 @@
 </footer> <!-- END: SiteFooter -->
 
 <script>
-    const tabButtons = document.querySelectorAll(
-        '.spec-tabs-nav button[data-tab]'
-    );
+    // 1. Chuyển Tab
+    const tabButtons = document.querySelectorAll('.spec-tabs-nav button[data-tab]');
     const conditionPanel = document.getElementById('condition-panel');
     const descriptionPanel = document.getElementById('description-panel');
+
     tabButtons.forEach(function(button) {
         button.addEventListener('click', function() {
             const selectedTab = button.dataset.tab;
-            // Cap nhat trang thai active cua cac tab
-            tabButtons.forEach(function(tab) {
-                tab.classList.remove('active');
-            });
+            tabButtons.forEach(tab => tab.classList.remove('active'));
             button.classList.add('active');
-            // Hien thi noi dung tuong ung
             conditionPanel.hidden = selectedTab !== 'condition';
             descriptionPanel.hidden = selectedTab !== 'description';
         });
     });
-</script>
-</body>
 
+    // 2. Xử lý Nút Tăng/Giảm số lượng & Tự động tính Tạm tính
+    const unitPrice = ${product.price};
+    const maxStock = ${product.stockQuantity};
+    const quantityInput = document.getElementById('quantity-input');
+    const btnDecrease = document.getElementById('btn-decrease');
+    const btnIncrease = document.getElementById('btn-increase');
+    const subtotalDisplay = document.getElementById('subtotal-display');
+
+    function updateSubtotal() {
+        let qty = parseInt(quantityInput.value) || 1;
+        if (qty < 1) qty = 1;
+        if (qty > maxStock) qty = maxStock;
+        quantityInput.value = qty;
+
+        const subtotal = unitPrice * qty;
+        subtotalDisplay.innerText = new Intl.NumberFormat('vi-VN').format(subtotal) + ' đ';
+    }
+
+    if (btnDecrease && btnIncrease && quantityInput) {
+        btnDecrease.addEventListener('click', function() {
+            let current = parseInt(quantityInput.value) || 1;
+            if (current > 1) {
+                quantityInput.value = current - 1;
+                updateSubtotal();
+            }
+        });
+
+        btnIncrease.addEventListener('click', function() {
+            let current = parseInt(quantityInput.value) || 1;
+            if (current < maxStock) {
+                quantityInput.value = current + 1;
+                updateSubtotal();
+            }
+        });
+
+        quantityInput.addEventListener('input', updateSubtotal);
+    }
+</script>
 </body>
 </html>
