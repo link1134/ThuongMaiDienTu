@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -17,7 +19,7 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Main.css"/>
 </head>
 <body class="site-body"> <!-- BEGIN: SiteHeader -->
-<jsp:include page="/common/header.jsp" /> <!-- END: SiteHeader --> <!-- BEGIN: Segmented Mall/Shop Switcher -->
+<jsp:include page="/common/header.jsp"/> <!-- END: SiteHeader --> <!-- BEGIN: Segmented Mall/Shop Switcher -->
 <section class="mode-switch-section">
     <div class="segmented-switcher-group">
         <button class="switcher-pill-btn active-pill" type="button"> Manga
@@ -98,175 +100,117 @@
         </div>
     </section> <!-- Featured Products Grid & Tabs -->
     <section class="products-showcase-section"> <!-- Filter Tabs -->
+        <h2 class="display-section-title">Sản phẩm mới nhất</h2>
+
         <div class="category-tabs-bar">
-            <button class="category-tab-btn active-tab" type="button">Phổ
-                biến
+            <!-- Giữ các tab hiện tại nếu bạn vẫn muốn sử dụng -->
+            <button class="category-tab-btn active-tab" type="button">
+                Mới nhất
             </button>
-            <button class="category-tab-btn" type="button">KimĐồng</button>
-            <button
-                    class="category-tab-btn" type="button">Nhà xuất bản trẻ
-            </button>
-            <button
-                    class="category-tab-btn" type="button">AMAKstore
-            </button>
-            <button class="category-tab-btn"
-                    type="button">FAHASA
-            </button>
-        </div> <!-- 9 Product Cards Grid -->
-        <div class="products-grid-layout"> <!-- Product Card 1 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Naruto Manga volume 1 cover edition"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuACztMLi6igS4NGFHU3mY6pkeT3J_zWzAXJyM4fF57zsP6pmSKa14Fwx3TxoSZNx2bEAH-kVVcc1sv8RDHnthR5Bh9VPhKN42f3aywDuxqw5MWcNaH0-yP5CAAQPu9oyB9-9rLA73lMaxUQuAWJaOyu3bosB4-PQLWWoHvsKTSq5FTTij3B0DnWEDHHr0BbzXNOU7NyiBgwbN_olkT22cJAY7koYlzq2nvp-GbiRr8"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Naruto Tập 1</h4>
-                            <p class="manga-author">Tên tác giả</p>
+            <button class="category-tab-btn" type="button">Kim Đồng</button>
+            <button class="category-tab-btn" type="button">Nhà xuất bản trẻ</button>
+            <button class="category-tab-btn" type="button">AMAKstore</button>
+            <button class="category-tab-btn" type="button">FAHASA</button>
+        </div><!-- 9 Product Cards Grid -->
+        <div class="product-grid">
+            <c:choose>
+                <c:when test="${not empty products}">
+                    <c:forEach var="product" items="${products}">
+                        <div class="product-card">
+                            <div class="product-image">
+                                <c:choose>
+                                    <c:when test="${not empty product.imageUrl}">
+                                        <img
+                                                src="<c:out value='${product.imageUrl}'/>"
+                                                alt="<c:out value='${product.title}'/>">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img
+                                                src="https://placehold.co/400x500/f0eee9/555555?text=No+Image"
+                                                alt="Chưa có ảnh sản phẩm">
+                                    </c:otherwise>
+                                </c:choose>
+                                <span class="product-type">
+                            <c:choose>
+                                <c:when test="${product.listingType eq 'Auction'}">
+                                    Đấu giá
+                                </c:when>
+                                <c:when test="${product.listingType eq 'Trade'}">
+                                    Trao đổi
+                                </c:when>
+                                <c:otherwise>
+                                    Mua ngay
+                                </c:otherwise>
+                            </c:choose>
+                        </span>
+                                <div class="product-condition-and-bookmark">
+                            <span class="product-condition">
+                                Rất tốt
+                            </span>
+                                    <button class="bookmark-btn"
+                                            type="button"
+                                            aria-label="Lưu sản phẩm">
+                                <span class="material-symbols-outlined">
+                                    bookmark
+                                </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="product-info">
+
+                                <div class="product-tags">
+                            <span class="product-type-tag">
+                                <c:out value="${product.productTypeName}"/>
+                            </span>
+
+                                    <span class="product-tag">Shonen</span>
+                                    <span class="product-tag">Bản giới hạn</span>
+                                    <span class="product-tag-more">+3</span>
+                                </div>
+
+                                <h3 class="product-name">
+                                    <c:out value="${product.title}"/>
+                                </h3>
+
+                                <div class="product-price">
+                                    <span>Giá niêm yết</span>
+
+                                    <strong>
+                                        <c:choose>
+                                            <c:when test="${product.price ne null}">
+                                                <fmt:formatNumber
+                                                        value="${product.price}"
+                                                        pattern="#,##0"/> đ
+                                            </c:when>
+                                            <c:otherwise>
+                                                Chưa có giá
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </strong>
+                                </div>
+
+                                <a
+                                        class="buy-btn"
+                                        href="${pageContext.request.contextPath}/product-detail?id=${product.listingId}">
+                                    Xem chi tiết
+                                </a>
+
+                            </div>
                         </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">45.000 đ</span></div>
+
+                    </c:forEach>
+
+                </c:when>
+
+                <c:otherwise>
+                    <div class="search-empty-state">
+                        <h3>Chưa có sản phẩm</h3>
+                        <p>Hiện tại chưa có bài đăng nào được đăng bán.</p>
                     </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 2 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Naruto Manga volume 72 final edition"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBeHUMeJkcsFh0W4-q8sn5fVlC31BINS1jihPZgxIkMu7WQytcK2RV9uPfhaeFomhU9MDweQux2jzVaE-mB3FQWzyhPVs60lJXwU2iuG0uovIzdux3nWq3wc28bqJg-cJ146YLcONuUyTAAv8XNtAsv7YbBWHoOgElCdADoSOHweJNw1arRTxTSaeJQHB7FG7957oeAXSH08PpXTTkec2WGjkNxCESkobi2M56XZxc"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Naruto Tập 72</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">52.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 3 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Naruto Manga volume 48 battle edition"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJWxJTAMG4bgxzNAIxYqCg6nYpga0DE5ZEDPa_6kamMkQ1TGUCZTt4W5jdkNr-Ph6IGjWPUYYWkPczmyjxHKNCUuaSnUV7igZHzYl3nBP7zTaH04CokXxluqNDs8h6H5GkpTbQedEMMnEpGMAgP2znC9wkMI3_Ds0cir1ZqT7osevxVYq295RReMZwNuIoBMgKrJ3F2L0fgjjT8BCkeOMEU05He1EgjRpa3ACY9Yc"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Naruto Tập 48</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">48.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 4 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Alya manga limited bonus set"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAJcBIYw4qQNst0uWYHovCgCkX0PcfzgwzW9BlLaIzPs_rmHN3VfGA3POLkm8kXYddx_VVfGZVnUazYKUzxi4O0LLVRJQOdu3RYP4-1XZ08zd-9cOEBzl3NNXHnCDHQppk-MhDGgXKOEiS_HmNlVkSTARCUEry7kxG_lSgCW4aTsiBi03YLLm1IzQDcFXJw6jho_kfbMzbnK_E1BVvRXbArwiv4fAxI8gG3I-WN5w0"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Alya Tập 1</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">89.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 5 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="One Punch Man volume 34 cover"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBs1HtIhZu7pEQJmFg4sFI7W1SpW-78ulCg0SVjkz1yMITywLiKNgPxoKN4jr3CA-MR-ZZH-fp7kwqpw7d5Yk2rsT-wOlM0wpPd58OyWOXrF6Eh1aO-T-KzhSbJiNkrU2ONr8_iW-CQzUruqZG1ozkj5m1uKH42D3CRdWMNto0ZPcyapPyw3zzOJD8xh07kbElJjCyAvrTLgJC4hDTEWdeCyXRw44mN97FtMeKrtXo"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">One Punch Man 34</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">55.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 6 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Doraemon Plus manga volume 6"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAWfzoCeZtuEbhKiuGfxM5RHD63OTAAxCUGxzhxqimO8EYpXhufkhMoyF5xSN3CBzb5pAOuT9YGPl0ZKmTaciiPdaFny5LLhNnCbIPnXzUgKqVNB0Wb3pS4kiIF4BwhweEmjHvfXOnVkgtp4TRyg74imEwbuXxXI3C6xrrvl2VYPhNTZWJCjRmOCoq4hgZC8sYuvegvFWCFwOHbM6mETz42M3N4t3rECQ-h9t44r4"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Doraemon Plus 6</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">38.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 7 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Slime light novel and manga volume 1"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0NKWC3detA-eOzPCp4sTcSQzykyqbSTDypKckMpeUhtYePrY1ahO8-3SfqXRs5kDQOwkHUPy-6uhCKJ1Cj7WVri5_X6OLgGWoaMgn0cwk8nba8jzx5zKLW3x8nfmS0tW-34e6JqRl3aGKzUluSrjvXub4UU8ZuenUekI7OrndEaySaiyYIKPZI3cxDI5zvE6ILi1ct0DXTHaGB_IQWLJkZzq1kypoPPqQXPkTVT4"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Slime Tập 1</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">95.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 8 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Witch Hat Atelier manga volume 10"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD00No696IAQjfvj_X_yKwH6-VKX_Blux651PsCeN0jFhB2XQABmZyGlCOp1yXXORXE-5qJ3Zf46q3O3_w696InPDnjEyRZZOO-vxV6hM8Nbw_GMVBLhzqvnvxXLvuUQR_mVMwtKlcMqCNWB9EbEUbP3xE7fk_F5OEk92aEXVDJnc3DQ4mbfORjIM1w7Bqbvl7zK6vwzUbqQSCoAQFolOLUAmeAT_9sA1DYbwLkH2Q"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Witch Hat Tập 10</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">72.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article> <!-- Product Card 9 -->
-            <article class="manga-item-card">
-                <div class="manga-cover-frame"><img alt="Vinland Saga collector volume 13"
-                                                    class="manga-cover-image"
-                                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvPALReSMNw5wonS2E0XDRTeQMePV1Q008m3rvpOpemrnrASi2PfZZTVvnTWzxw_Z9oqDbwX9TmuZ5ejr4TD2iDL7i0kOyMTWiSO9kJBbDFUieUGxP8A9FM8epPuw7KQOu9FWqs1pcfwDvcLDvl3mA4TC8I8LX7ukD-ZwEEAJ-ZsgVUqZPG1rbUqDU3GZlsiV6htYZkT1yPwlWL3JSfTuSSSPM1jh3fP4PPpLIPnk"/>
-                </div>
-                <div class="manga-card-info">
-                    <div class="manga-card-heading-row">
-                        <div>
-                            <h4 class="manga-title">Vinland Saga 13</h4>
-                            <p class="manga-author">Tên tác giả</p>
-                        </div>
-                        <div class="manga-price-block"><span class="price-eyebrow">Giá</span> <span
-                                class="price-value">120.000 đ</span></div>
-                    </div>
-                    <button class="btn-buy-manga" type="button">Buy Now</button>
-                </div>
-            </article>
+                </c:otherwise>
+            </c:choose>
+
         </div>
     </section> <!-- Highlighted Manga Shops Section -->
     <section class="shops-display-section">

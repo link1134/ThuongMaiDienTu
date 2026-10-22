@@ -83,6 +83,7 @@
     .user-menu-item:hover {
         background: #fef2f2;
     }
+
     /* Nút Đăng nhập / Đăng ký khi chưa đăng nhập */
     .btn-login_register {
         display: inline-flex;
@@ -102,6 +103,7 @@
         box-shadow: var(--shadow-sm);
         transition: background-color 0.15s ease;
     }
+
     .btn-login_register:hover {
         background-color: var(--color-primary-dark);
         color: #ffffff;
@@ -114,12 +116,26 @@
         <div class="brand-text-group"><span class="brand-title">MANGAZ</span> <span
                 class="brand-subtitle">COLLECTOR EXCHANGE</span></div>
     </a> <!-- Search Input -->
+
         <div class="search-container">
-            <div class="search-field"> <span class="search-prefix-icon"> <span
-                    class="material-symbols-outlined">search</span> </span> <input
-                    class="search-input-control" placeholder="Tìm kiếm truyện, bài đăng và users" type="text"/>
-            </div>
-        </div> <!-- Navigation Links -->
+            <form class="search-field"
+                  action="${pageContext.request.contextPath}/search"
+                  method="get">
+
+        <span class="search-prefix-icon">
+            <span class="material-symbols-outlined">search</span>
+        </span>
+
+                <input
+                        class="search-input-control"
+                        type="text"
+                        name="keyword"
+                        placeholder="Tìm kiếm truyện, bài đăng và users"
+                        value="${fn:escapeXml(param.keyword)}"
+                />
+            </form>
+        </div>
+        <!-- Navigation Links -->
         <nav class="main-navigation"><a class="nav-item active-nav" href="#">Trang chủ</a>
             <div class="nav-dropdown-trigger"><span>Khám phá</span> <span
                     class="material-symbols-outlined icon-expand">expand_more</span></div>

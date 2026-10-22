@@ -68,7 +68,7 @@ CREATE TABLE DeliveryAddresses (
                                    CityProvince NVARCHAR(100) NOT NULL,
                                    WardCode INT NULL,
                                    Ward NVARCHAR(100) NOT NULL,
-                                   AddressDetail NVARCHAR(255) NOT NULL,
+                                   AddressDetail NVARCHAR(500) NOT NULL,
                                    IsDefault BIT NOT NULL DEFAULT 0,
                                    CONSTRAINT FK_DeliveryAddresses_Users
                                        FOREIGN KEY (UserId) REFERENCES Users(Id)
@@ -315,4 +315,190 @@ BEGIN CATCH
 
     THROW;
 END CATCH;
+GO
+
+
+USE MangaZ;
+GO
+
+-- Lấy một người dùng có sẵn để làm người bán
+DECLARE @SellerId INT;
+DECLARE @ProductTypeId INT;
+
+SELECT TOP 1 @SellerId = Id
+FROM dbo.Users
+ORDER BY Id;
+
+SELECT TOP 1 @ProductTypeId = ProductTypeId
+FROM dbo.ProductType
+ORDER BY ProductTypeId;
+
+-- Kiểm tra dữ liệu khóa ngoại
+IF @SellerId IS NULL OR @ProductTypeId IS NULL
+BEGIN
+    THROW 50001,
+        N'Cần có ít nhất một User và một ProductType trước khi thêm listing.',
+        1;
+END;
+
+-- Dữ liệu mẫu và URL ảnh minh họa
+DECLARE @Seed TABLE (
+    ListingCode NVARCHAR(50),
+    Title NVARCHAR(255),
+    ShortDescription NVARCHAR(500),
+    Description NVARCHAR(MAX),
+    Price DECIMAL(18,2),
+    OriginalPrice DECIMAL(18,2),
+    Quantity INT,
+    ListingType NVARCHAR(20),
+    ImageUrl NVARCHAR(1000)
+);
+
+INSERT INTO @Seed VALUES
+
+(
+    'TEST-MANGA-002',
+    N'Doraemon tập 2 - còn đẹp',
+    N'Truyện được bảo quản cẩn thận.',
+    N'Doraemon tập 2, ruột sách sạch, gáy còn chắc chắn.',
+    18000, 20000, 1, 'Sale',
+    'https://picsum.photos/seed/mangaz02/400/600'
+),
+(
+    'TEST-MANGA-003',
+    N'Doraemon tuyển tập truyện ngắn',
+    N'Tuyển tập truyện ngắn dành cho người sưu tầm.',
+    N'Tuyển tập Doraemon, phù hợp để đọc giải trí hoặc bổ sung bộ sưu tập.',
+    45000, 55000, 1, 'Sale',
+    'https://picsum.photos/seed/mangaz03/400/600'
+),
+(
+    'TEST-MANGA-004',
+    N'One Piece tập 10',
+    N'Truyện One Piece đã qua sử dụng.',
+    N'Tập 10 của One Piece. Tình trạng tốt, có thể có dấu hiệu sử dụng nhẹ.',
+    22000, 25000, 1, 'Sale',
+    'https://picsum.photos/seed/mangaz04/400/600'
+),
+(
+    'TEST-MANGA-005',
+    N'One Piece tập 20 - đấu giá',
+    N'Bài đăng đấu giá thử nghiệm.',
+    N'Phiên đấu giá thử nghiệm cho One Piece tập 20. Thông tin giá dùng để kiểm tra giao diện.',
+    30000, 35000, 1, 'Auction',
+    'https://picsum.photos/seed/mangaz05/400/600'
+),
+(
+    'TEST-MANGA-006',
+    N'Naruto tập 5',
+    N'Manga Naruto, tình trạng khá tốt.',
+    N'Naruto tập 5. Bìa còn nguyên, các trang không bị thiếu.',
+    20000, 25000, 1, 'Sale',
+    'https://picsum.photos/seed/mangaz06/400/600'
+),
+(
+    'TEST-MANGA-007',
+    N'Naruto tập 10 - muốn trao đổi',
+    N'Bài đăng trao đổi truyện.',
+    N'Muốn trao đổi Naruto tập 10 với manga khác có tình trạng tương đương.',
+    25000, 25000, 1, 'Trade',
+    'https://picsum.photos/seed/mangaz07/400/600'
+),
+(
+    'TEST-MANGA-008',
+    N'Conan tập 15',
+    N'Truyện trinh thám đã qua sử dụng.',
+    N'Tập 15 của Thám tử lừng danh Conan. Sách được giữ gìn tương đối tốt.',
+    18000, 22000, 1, 'Sale',
+    'https://picsum.photos/seed/mangaz08/400/600'
+),
+(
+    'TEST-MANGA-009',
+    N'Bộ truyện Dragon Ball',
+    N'Bộ truyện dành cho người yêu thích manga hành động.',
+    N'Bài đăng bộ Dragon Ball để kiểm tra tìm kiếm các từ khóa khác nhau.',
+    120000, 150000, 1, 'Sale',
+    'https://picsum.photos/seed/mangaz09/400/600'
+),
+(
+    'TEST-MANGA-010',
+    N'Doraemon tập đặc biệt - đấu giá',
+    N'Bài đăng đấu giá Doraemon.',
+    N'Một bài đăng Doraemon khác để kiểm tra tìm kiếm nhiều kết quả cùng từ khóa.',
+    40000, 45000, 1, 'Auction',
+    'https://picsum.photos/seed/mangaz10/400/600'
+);
+
+-- Lưu ID của những listing vừa tạo
+DECLARE @Inserted TABLE (
+    ListingId INT,
+    ListingCode NVARCHAR(50),
+    ImageUrl NVARCHAR(1000)
+);
+
+INSERT INTO dbo.Listings (
+    ListingCode,
+    SellerId,
+    ProductTypeId,
+    Title,
+    ShortDescription,
+    Description,
+    Price,
+    OriginalPrice,
+    Quantity,
+    ListingType,
+    Status
+)
+OUTPUT
+    inserted.ListingId,
+    inserted.ListingCode
+INTO @Inserted (ListingId, ListingCode)
+SELECT
+    s.ListingCode,
+    @SellerId,
+    @ProductTypeId,
+    s.Title,
+    s.ShortDescription,
+    s.Description,
+    s.Price,
+    s.OriginalPrice,
+    s.Quantity,
+    s.ListingType,
+    'Active'
+FROM @Seed s;
+
+-- Gắn ảnh cho từng listing vừa tạo
+UPDATE i
+SET i.ImageUrl = s.ImageUrl
+FROM @Inserted i
+JOIN @Seed s ON s.ListingCode = i.ListingCode;
+
+INSERT INTO dbo.ListingImages (
+    ListingId,
+    ImageUrl,
+    DisplayOrder,
+    IsPrimary
+)
+SELECT
+    i.ListingId,
+    i.ImageUrl,
+    1,
+    1
+FROM @Inserted i;
+
+-- Xem kết quả
+SELECT
+    l.ListingId,
+    l.ListingCode,
+    l.Title,
+    l.Price,
+    l.ListingType,
+    l.Status,
+    li.ImageUrl
+FROM dbo.Listings l
+JOIN @Inserted i ON i.ListingId = l.ListingId
+LEFT JOIN dbo.ListingImages li
+    ON li.ListingId = l.ListingId
+    AND li.IsPrimary = 1
+ORDER BY l.ListingId;
 GO
