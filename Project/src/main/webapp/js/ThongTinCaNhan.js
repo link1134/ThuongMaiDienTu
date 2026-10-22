@@ -389,7 +389,18 @@ const confirmAddressBtn = addAddressForm.querySelector(
 const contextPath = document.body.dataset.contextPath;
 console.log("Context path:", contextPath);
 console.log("URL:", `${contextPath}/delivery-addresses`);
+const addressModalTitle = document.getElementById("addressModalTitle");
+const addressIdInput = document.getElementById("addressId");
+
 addAddressBtn.addEventListener("click", function () {
+    addAddressForm.reset();
+    addressIdInput.value = "";
+    addressModalTitle.textContent = "Thêm địa chỉ";
+
+    wardSelect.innerHTML =
+        '<option value="" selected disabled>Chọn phường / xã</option>';
+    wardSelect.disabled = true;
+
     addressModal.hidden = false;
     document.body.style.overflow = "hidden";
 });
@@ -451,33 +462,37 @@ async function loadAddresses() {
 
 addAddressForm.addEventListener("submit", async function (event) {
     event.preventDefault();
-    // Kiểm tra các trường required
+
     if (!addAddressForm.checkValidity()) {
         addAddressForm.reportValidity();
         return;
     }
+
     const provinceOption =
         provinceSelect.options[provinceSelect.selectedIndex];
     const wardOption =
         wardSelect.options[wardSelect.selectedIndex];
-    if (!provinceOption || !wardOption ||
-        !provinceSelect.value || !wardSelect.value) {
+
+    if (!provinceSelect.value || !wardSelect.value ||
+        !provinceOption || !wardOption) {
         alert("Vui lòng chọn tỉnh/thành và phường/xã.");
         return;
     }
+
     const formData = new FormData(addAddressForm);
-    // Mã và tên tỉnh/thành
+
     formData.set("provinceCode", provinceSelect.value);
     formData.set("provinceName", provinceOption.textContent);
-    // Mã và tên phường/xã
     formData.set("wardCode", wardSelect.value);
     formData.set("wardName", wardOption.textContent);
-    // Checkbox không chọn sẽ không xuất hiện trong FormData
+
     formData.set(
         "isDefault",
         document.getElementById("isDefaultAddress").checked
     );
+
     confirmAddressBtn.disabled = true;
+
     try {
         const response = await fetch(
             `${contextPath}/delivery-addresses`,
@@ -489,30 +504,145 @@ addAddressForm.addEventListener("submit", async function (event) {
                 body: new URLSearchParams(formData)
             }
         );
+
+        const message = await response.text();
+
         if (!response.ok) {
-            const message = await response.text();
-            throw new Error(
-                message || "Không thể lưu địa chỉ."
-            );
+            throw new Error(message || "Không thể lưu địa chỉ.");
         }
+
         closeAddressPopup();
         addAddressForm.reset();
+        addressIdInput.value = "";
+        addressModalTitle.textContent = "Thêm địa chỉ";
+
         wardSelect.innerHTML =
             '<option value="" selected disabled>Chọn phường / xã</option>';
         wardSelect.disabled = true;
+
         await loadAddresses();
+
     } catch (error) {
         console.error("Lỗi xử lý địa chỉ:", error);
-        alert(
-            error.message ||
-            "Có lỗi xảy ra. Vui lòng thử lại."
-        );
+        alert(error.message || "Có lỗi xảy ra. Vui lòng thử lại.");
     } finally {
         confirmAddressBtn.disabled = false;
     }
 });
 loadAddresses().catch(error => {
     console.error("Lỗi tải địa chỉ:", error);
+});
+
+addressItems.addEventListener("click", async function (event) {
+    const editButton = event.target.closest(".edit-address-btn");
+    const deleteButton = event.target.closest(".delete-address-btn");
+
+    // CHỈNH SỬA ĐỊA CHỈ
+    if (editButton) {
+        addAddressForm.reset();
+
+        addressIdInput.value = editButton.dataset.id;
+        addressModalTitle.textContent = "Chỉnh sửa địa chỉ";
+
+        document.getElementById("recipientName").value =
+            editButton.dataset.name || "";
+
+        document.getElementById("recipientPhone").value =
+            editButton.dataset.phone || "";
+
+        document.getElementById("detailAddress").value =
+            editButton.dataset.detail || "";
+
+        document.getElementById("isDefaultAddress").checked =
+            editButton.dataset.default === "true";
+
+        const provinceCode = editButton.dataset.provinceCode;
+        const wardCode = editButton.dataset.wardCode;
+
+        // Chọn tỉnh cũ
+        provinceSelect.value = provinceCode || "";
+
+        // Tải các phường/xã thuộc tỉnh đó
+        wardSelect.innerHTML =
+            '<option value="">Đang tải phường/xã...</option>';
+        wardSelect.disabled = true;
+
+        addressModal.hidden = false;
+        document.body.style.overflow = "hidden";
+
+        try {
+            const response = await fetch(
+                `https://provinces.open-api.vn/api/v2/p/${provinceCode}?depth=2`
+            );
+
+            if (!response.ok) {
+                throw new Error("Không thể tải danh sách phường/xã.");
+            }
+
+            const province = await response.json();
+
+            wardSelect.innerHTML =
+                '<option value="" disabled>Chọn phường / xã</option>';
+
+            province.wards.forEach(function (ward) {
+                const option = document.createElement("option");
+                option.value = ward.code;
+                option.textContent = ward.name;
+
+                if (String(ward.code) === String(wardCode)) {
+                    option.selected = true;
+                }
+
+                wardSelect.appendChild(option);
+            });
+
+            wardSelect.disabled = false;
+
+        } catch (error) {
+            console.error("Lỗi tải phường/xã:", error);
+            alert(error.message);
+        }
+
+        return;
+    }
+
+    // XÓA ĐỊA CHỈ
+    if (deleteButton) {
+        if (!confirm("Bạn có chắc chắn muốn xóa địa chỉ này không?")) {
+            return;
+        }
+
+        try {
+            const data = new URLSearchParams();
+            data.set("action", "delete");
+            data.set("addressId", deleteButton.dataset.id);
+
+            const response = await fetch(
+                `${contextPath}/delivery-addresses`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded;charset=UTF-8",
+                        "Accept": "text/plain"
+                    },
+                    body: data.toString()
+                }
+            );
+
+            const message = await response.text();
+
+            if (!response.ok) {
+                throw new Error(message || "Không thể xóa địa chỉ.");
+            }
+
+            await loadAddresses();
+
+        } catch (error) {
+            console.error("Lỗi xóa địa chỉ:", error);
+            alert(error.message || "Không thể xóa địa chỉ.");
+        }
+    }
 });
 
 //Script số 4
