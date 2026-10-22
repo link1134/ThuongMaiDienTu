@@ -1154,6 +1154,7 @@ body.site-body {
     color: blue;
     font-weight: 600;
     cursor: pointer;
+    user-select: none;
 }
 
 .card-checkout-content {
@@ -1354,6 +1355,13 @@ body.site-body {
 
 .address-modal-header {
     margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+.address-modal-header a{
+    color: blue;
+    text-decoration: none;
+
 }
 
 .address-modal-header h3 {
@@ -1450,4 +1458,13 @@ body.site-body {
         padding: 9px 14px;
     }
 }
-
+.payment-method-name-des{
+    display: grid;
+}
+.payment-method-name{
+    font-weight: 700;
+}
+.payment-method-des{
+    color: rgb(128, 128, 137);
+    font-size: 12px;
+}
