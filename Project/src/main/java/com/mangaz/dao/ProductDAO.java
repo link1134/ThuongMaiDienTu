@@ -15,7 +15,6 @@ import java.util.List;
 public class ProductDAO {
 
     public ProductDetail findById(int listingId) {
-
         String sql = """
                 SELECT ListingId, Title, Description,
                        Price, OriginalPrice, Quantity, ShortDescription
@@ -24,7 +23,6 @@ public class ProductDAO {
                   AND ListingType = 'Sale'
                   AND Status = 'Active'
                 """;
-
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, listingId);
@@ -51,10 +49,8 @@ public class ProductDAO {
                                 product.getImageUrls().get(0)
                         );
                     }
-
                     return product;
                 }
-
             }
 
         } catch (SQLException e) {
