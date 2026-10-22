@@ -90,6 +90,50 @@ public class DeliveryAddressServlet extends HttpServlet {
         }
 
         try {
+            String action = req.getParameter("action");
+            String addressIdText = req.getParameter("addressId");
+
+            // XÓA ĐỊA CHỈ
+            if ("delete".equals(action)) {
+                int addressId;
+
+                try {
+                    addressId = Integer.parseInt(addressIdText);
+                } catch (NumberFormatException e) {
+                    resp.sendError(
+                            HttpServletResponse.SC_BAD_REQUEST,
+                            "Mã địa chỉ không hợp lệ."
+                    );
+                    return;
+                }
+
+                if (addressId <= 0) {
+                    resp.sendError(
+                            HttpServletResponse.SC_BAD_REQUEST,
+                            "Mã địa chỉ không hợp lệ."
+                    );
+                    return;
+                }
+
+                boolean deleted = addressDAO.delete(
+                        addressId,
+                        user.getId()
+                );
+
+                if (!deleted) {
+                    resp.sendError(
+                            HttpServletResponse.SC_NOT_FOUND,
+                            "Không tìm thấy địa chỉ cần xóa."
+                    );
+                    return;
+                }
+
+                resp.setContentType("text/plain;charset=UTF-8");
+                resp.getWriter().write("Xóa địa chỉ thành công.");
+                return;
+            }
+
+            // ĐỌC VÀ KIỂM TRA THÔNG TIN ĐỊA CHỈ
             String recipientName = req.getParameter("recipientName");
             String phoneNumber = req.getParameter("recipientPhone");
 
@@ -136,9 +180,7 @@ public class DeliveryAddressServlet extends HttpServlet {
 
             DeliveryAddress address = new DeliveryAddress();
 
-            // Lấy UserId từ session, tuyệt đối không lấy từ form.
             address.setUserId(user.getId());
-
             address.setRecipientName(recipientName.trim());
             address.setPhoneNumber(phoneNumber.trim());
 
@@ -150,26 +192,53 @@ public class DeliveryAddressServlet extends HttpServlet {
 
             address.setAddressDetail(detailAddress.trim());
 
-            boolean isDefault =
-                    "true".equalsIgnoreCase(isDefaultText);
-
+            boolean isDefault = "true".equalsIgnoreCase(isDefaultText);
             address.setDefaultAddress(isDefault);
 
+            // CHỈNH SỬA ĐỊA CHỈ
+            if (!isBlank(addressIdText)) {
+                int addressId = Integer.parseInt(addressIdText);
+
+                if (addressId <= 0) {
+                    resp.sendError(
+                            HttpServletResponse.SC_BAD_REQUEST,
+                            "Mã địa chỉ không hợp lệ."
+                    );
+                    return;
+                }
+
+                address.setId(addressId);
+
+                boolean updated = addressDAO.update(address);
+
+                if (!updated) {
+                    resp.sendError(
+                            HttpServletResponse.SC_NOT_FOUND,
+                            "Không tìm thấy địa chỉ cần cập nhật."
+                    );
+                    return;
+                }
+
+                resp.setContentType("text/plain;charset=UTF-8");
+                resp.getWriter().write("Cập nhật địa chỉ thành công.");
+                return;
+            }
+
+            // THÊM ĐỊA CHỈ MỚI
             addressDAO.insert(address);
 
-            resp.setStatus(HttpServletResponse.SC_OK);
             resp.setContentType("text/plain;charset=UTF-8");
             resp.getWriter().write("Lưu địa chỉ thành công.");
 
         } catch (NumberFormatException e) {
             resp.sendError(
                     HttpServletResponse.SC_BAD_REQUEST,
-                    "Mã tỉnh/thành hoặc phường/xã không hợp lệ."
+                    "Mã tỉnh/thành, phường/xã hoặc địa chỉ không hợp lệ."
             );
 
         } catch (SQLException e) {
             throw new ServletException(
-                    "Không thể lưu địa chỉ vào database.", e
+                    "Không thể xử lý địa chỉ trong database.", e
             );
         }
     }

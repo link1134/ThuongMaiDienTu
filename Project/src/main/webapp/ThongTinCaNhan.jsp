@@ -580,7 +580,7 @@
 
         <div class="address-modal-header">
             <div>
-                <h2>Thêm địa chỉ mới</h2>
+                <h2 id="addressModalTitle">Thêm địa chỉ mới</h2>
                 <p>Điền thông tin để tạo địa chỉ giao hàng của bạn.</p>
             </div>
 
@@ -594,6 +594,7 @@
 
         <form id="addAddressForm">
             <!-- Họ tên và số điện thoại -->
+            <input type="hidden" id="addressId" name="addressId" value="">
             <div class="address-form-grid">
                 <div class="address-form-field">
                     <label for="recipientName">

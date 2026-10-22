@@ -12,19 +12,29 @@
             </div>
 
             <div class="address-actions-inline">
-                <button class="address-btn"
+
+                <button class="address-btn edit-address-btn"
                         type="button"
-                        data-address-id="${address.id}">
+                        data-id="<c:out value='${address.id}'/>"
+                        data-name="<c:out value='${address.recipientName}'/>"
+                        data-phone="<c:out value='${address.phoneNumber}'/>"
+                        data-province-code="<c:out value='${address.provinceCode}'/>"
+                        data-province-name="<c:out value='${address.cityProvince}'/>"
+                        data-ward-code="<c:out value='${address.wardCode}'/>"
+                        data-ward-name="<c:out value='${address.ward}'/>"
+                        data-detail="<c:out value='${address.addressDetail}'/>"
+                        data-default="${address.defaultAddress}">
                     <span class="material-symbols-outlined">edit</span>
                     <span>Chỉnh sửa</span>
                 </button>
 
-                <button class="address-btn"
+                <button class="address-btn delete-address-btn"
                         type="button"
-                        data-address-id="${address.id}">
+                        data-id="<c:out value='${address.id}'/>">
                     <span class="material-symbols-outlined">delete</span>
                     <span>Xóa</span>
                 </button>
+
             </div>
         </div>
 

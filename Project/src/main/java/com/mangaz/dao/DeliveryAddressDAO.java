@@ -138,4 +138,77 @@ public class DeliveryAddressDAO {
             }
         }
     }
+
+    public boolean update(DeliveryAddress address) throws SQLException {
+        String sql = """
+                UPDATE DeliveryAddresses
+                SET RecipientName = ?,
+                    PhoneNumber = ?,
+                    ProvinceCode = ?,
+                    CityProvince = ?,
+                    WardCode = ?,
+                    Ward = ?,
+                    AddressDetail = ?,
+                    IsDefault = ?
+                WHERE Id = ? AND UserId = ?
+                """;
+
+        try (Connection conn = DBConnection.getConnection()) {
+            conn.setAutoCommit(false);
+
+            try {
+                // Nếu địa chỉ này được đặt làm mặc định,
+                // bỏ mặc định của các địa chỉ khác cùng tài khoản.
+                if (address.isDefaultAddress()) {
+                    String resetSql = """
+                            UPDATE DeliveryAddresses
+                            SET IsDefault = 0
+                            WHERE UserId = ? AND Id <> ?
+                            """;
+
+                    try (PreparedStatement ps = conn.prepareStatement(resetSql)) {
+                        ps.setInt(1, address.getUserId());
+                        ps.setInt(2, address.getId());
+                        ps.executeUpdate();
+                    }
+                }
+
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setString(1, address.getRecipientName());
+                    ps.setString(2, address.getPhoneNumber());
+                    ps.setInt(3, address.getProvinceCode());
+                    ps.setString(4, address.getCityProvince());
+                    ps.setInt(5, address.getWardCode());
+                    ps.setString(6, address.getWard());
+                    ps.setString(7, address.getAddressDetail());
+                    ps.setBoolean(8, address.isDefaultAddress());
+                    ps.setInt(9, address.getId());
+                    ps.setInt(10, address.getUserId());
+
+                    boolean updated = ps.executeUpdate() > 0;
+                    conn.commit();
+                    return updated;
+                }
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
+        }
+    }
+
+    public boolean delete(int addressId, int userId) throws SQLException {
+        String sql = """
+                DELETE FROM DeliveryAddresses
+                WHERE Id = ? AND UserId = ?
+                """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, addressId);
+            ps.setInt(2, userId);
+
+            return ps.executeUpdate() > 0;
+        }
+    }
 }
