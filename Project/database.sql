@@ -204,6 +204,30 @@ GO
 USE MangaZ;
 GO
 
+--Carts: Mỗi User có 1 giỏ hàng duy nhất đang active
+CREATE TABLE dbo.Carts (
+                           CartId INT IDENTITY(1,1) PRIMARY KEY,
+                           UserId INT NOT NULL UNIQUE, -- Đảm bảo quan hệ 1-1 giữa User và Cart hiện tại
+                           CreatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                           UpdatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                           CONSTRAINT FK_Carts_Users FOREIGN KEY (UserId) REFERENCES dbo.Users(Id) ON DELETE CASCADE
+);
+GO
+
+-- Bảng CartItems: Chứa các sản phẩm trong giỏ hàng
+CREATE TABLE dbo.CartItems (
+                               CartItemId INT IDENTITY(1,1) PRIMARY KEY,
+                               CartId INT NOT NULL,
+                               ListingId INT NOT NULL,
+                               Quantity INT NOT NULL DEFAULT 1,
+                               AddedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                               CONSTRAINT FK_CartItems_Carts FOREIGN KEY (CartId) REFERENCES dbo.Carts(CartId) ON DELETE CASCADE,
+                               CONSTRAINT FK_CartItems_Listings FOREIGN KEY (ListingId) REFERENCES dbo.Listings(ListingId) ON DELETE CASCADE,
+                               CONSTRAINT UQ_CartItems_Cart_Listing UNIQUE (CartId, ListingId), -- Tránh trùng lặp 1 sản phẩm trong 1 giỏ
+                               CONSTRAINT CK_CartItems_Quantity CHECK (Quantity > 0)
+);
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 
