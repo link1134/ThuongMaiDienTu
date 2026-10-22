@@ -161,7 +161,7 @@
                 <div class="checkout-btn-wrapper">
                     <form action="${pageContext.request.contextPath}/checkout" method="GET">
                         <button class="btn-checkout-now" type="submit" ${empty cart.items ? 'disabled' : ''}>
-                            <span>Tiến Hành Thanh Toán</span>
+                            <span>Đặt hàng</span>
                         </button>
                     </form>
                 </div>
