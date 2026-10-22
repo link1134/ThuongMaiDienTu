@@ -49,14 +49,42 @@ public class CategoryServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/admin/categories");
 
         } else {
-            // Mặc định: Hiển thị danh sách
-            List<Category> categories = categoryDAO.getAllCategories();
+            // --- XỬ LÝ PHÂN TRANG ---
+            int page = 1;
+            int pageSize = 5; // Số dòng hiển thị mỗi trang
+
+            String pageParam = request.getParameter("page");
+            if (pageParam != null && !pageParam.trim().isEmpty()) {
+                try {
+                    page = Integer.parseInt(pageParam);
+                } catch (NumberFormatException e) {
+                    page = 1;
+                }
+            }
+
             int totalCategories = categoryDAO.countCategories();
+            int totalPages = (int) Math.ceil((double) totalCategories / pageSize);
+
+            // Kiểm tra giới hạn trang hợp lệ
+            if (page < 1) page = 1;
+            if (page > totalPages && totalPages > 0) page = totalPages;
+
+            // Lấy danh sách thể loại theo trang
+            List<Category> categories = categoryDAO.getCategoriesByPage(page, pageSize);
             int totalPublishers = publisherDAO.countPublishers();
 
+            // Tính vị trí hiển thị
+            int startItem = totalCategories == 0 ? 0 : (page - 1) * pageSize + 1;
+            int endItem = Math.min(page * pageSize, totalCategories);
+
+            // Đẩy dữ liệu sang JSP
             request.setAttribute("categories", categories);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
             request.setAttribute("totalCategories", totalCategories);
             request.setAttribute("totalPublishers", totalPublishers);
+            request.setAttribute("startItem", startItem);
+            request.setAttribute("endItem", endItem);
 
             request.getRequestDispatcher("/QuanLyDanhMuc.jsp").forward(request, response);
         }

@@ -10,6 +10,7 @@ public class Category {
     private String description;
     private Integer parentCategoryId;
     private boolean status;
+    private boolean isDeleted;
     private Timestamp createdAt;
     private Timestamp updatedAt;
     private List<Publisher> publishers;
@@ -18,6 +19,7 @@ public class Category {
 
     public Category() {
     }
+
 
     public Category(int categoryId, String categoryCode, String categoryName, String description, Integer parentCategoryId, boolean status, Timestamp createdAt, Timestamp updatedAt, List<Publisher> publishers) {
         this.categoryId = categoryId;
@@ -80,6 +82,15 @@ public class Category {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
+    }
+
 
     public Timestamp getCreatedAt() {
         return createdAt;

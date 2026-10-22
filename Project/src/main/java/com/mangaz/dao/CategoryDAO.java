@@ -24,9 +24,10 @@ public class CategoryDAO {
                 "FROM Categories c " +
                 "LEFT JOIN CategoryPublisher cp ON c.CategoryID = cp.CategoryID " +
                 "LEFT JOIN Publishers p ON cp.PublisherID = p.PublisherID " +
+                "WHERE c.IsDeleted = 0 " +
                 "GROUP BY c.CategoryID, c.CategoryCode, c.CategoryName, c.Description, " +
-                "c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt";
-
+                "c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt " +
+                "ORDER BY c.CategoryID DESC";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -174,13 +175,11 @@ public class CategoryDAO {
      * Đếm tổng số Thể loại hiện có trong CSDL
      */
     public int countCategories() {
-        String sql = "SELECT COUNT(*) FROM Categories";
+        String sql = "SELECT COUNT(*) FROM Categories WHERE IsDeleted = 0";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                return rs.getInt(1);
-            }
+            if (rs.next()) return rs.getInt(1);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -192,14 +191,16 @@ public class CategoryDAO {
     public Category getCategoryById(int categoryId) {
         Category cat = null;
         String sql = "SELECT c.CategoryID, c.CategoryCode, c.CategoryName, c.Description, " +
-                "c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt, " +
-                "STRING_AGG(CAST(p.PublisherID AS VARCHAR), ',') AS PubIds " +
+                "       c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt, " +
+                "       STRING_AGG(CAST(p.PublisherID AS VARCHAR), ',') AS PubIds, " +
+                "       STRING_AGG(CAST(p.PublisherCode AS VARCHAR), ',') AS PubCodes, " +
+                "       STRING_AGG(CAST(p.PublisherName AS VARCHAR), ',') AS PubNames " +
                 "FROM Categories c " +
                 "LEFT JOIN CategoryPublisher cp ON c.CategoryID = cp.CategoryID " +
                 "LEFT JOIN Publishers p ON cp.PublisherID = p.PublisherID " +
-                "WHERE c.CategoryID = ? " +
+                "WHERE c.IsDeleted = 0 " +
                 "GROUP BY c.CategoryID, c.CategoryCode, c.CategoryName, c.Description, " +
-                "c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt";
+                "         c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt";
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -297,7 +298,7 @@ public class CategoryDAO {
      * Xóa logic Thể loại
      */
     public boolean deleteCategoryLogic(int categoryId) {
-        String sql = "UPDATE Categories SET Status = 0, UpdatedAt = SYSDATETIME() WHERE CategoryID = ?";
+        String sql = "UPDATE Categories SET IsDeleted = 1, UpdatedAt = SYSDATETIME() WHERE CategoryID = ?";
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -308,5 +309,78 @@ public class CategoryDAO {
             e.printStackTrace();
         }
         return false;
+    }
+    /**
+     * Lấy danh sách thể loại có phân trang
+     * @param page Trang hiện tại (bắt đầu từ 1)
+     * @param pageSize Số lượng dòng trên 1 trang   
+     */
+    public List<Category> getCategoriesByPage(int page, int pageSize) {
+        List<Category> list = new ArrayList<>();
+        int offset = (page - 1) * pageSize;
+
+        String sql = "SELECT c.CategoryID, c.CategoryCode, c.CategoryName, c.Description, " +
+                "c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt, " +
+                "STRING_AGG(CAST(p.PublisherID AS VARCHAR), ',') AS PubIds, " +
+                "STRING_AGG(CAST(p.PublisherCode AS VARCHAR), ',') AS PubCodes, " +
+                "STRING_AGG(CAST(p.PublisherName AS VARCHAR), ',') AS PubNames " +
+                "FROM Categories c " +
+                "LEFT JOIN CategoryPublisher cp ON c.CategoryID = cp.CategoryID " +
+                "LEFT JOIN Publishers p ON cp.PublisherID = p.PublisherID " +
+                "WHERE c.IsDeleted = 0 " +
+                "GROUP BY c.CategoryID, c.CategoryCode, c.CategoryName, c.Description, " +
+                "c.ParentCategoryID, c.Status, c.CreatedAt, c.UpdatedAt " +
+                "ORDER BY c.CategoryID DESC " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, offset);
+            ps.setInt(2, pageSize);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Category cat = new Category();
+                    cat.setCategoryId(rs.getInt("CategoryID"));
+                    cat.setCategoryCode(rs.getString("CategoryCode"));
+                    cat.setCategoryName(rs.getString("CategoryName"));
+                    cat.setDescription(rs.getString("Description"));
+                    cat.setParentCategoryId((Integer) rs.getObject("ParentCategoryID"));
+                    cat.setStatus(rs.getBoolean("Status"));
+                    cat.setCreatedAt(rs.getTimestamp("CreatedAt"));
+                    cat.setUpdatedAt(rs.getTimestamp("UpdatedAt"));
+
+                    List<Publisher> pubList = new ArrayList<>();
+                    String pubIds = rs.getString("PubIds");
+                    String pubCodes = rs.getString("PubCodes");
+                    String pubNames = rs.getString("PubNames");
+
+                    if (pubIds != null && !pubIds.trim().isEmpty() && pubNames != null && !pubNames.trim().isEmpty()) {
+                        String[] ids = pubIds.split(",");
+                        String[] names = pubNames.split(",");
+                        String[] codes = (pubCodes != null && !pubCodes.trim().isEmpty()) ? pubCodes.split(",") : new String[ids.length];
+
+                        int minLength = Math.min(ids.length, names.length);
+                        for (int i = 0; i < minLength; i++) {
+                            Publisher pub = new Publisher();
+                            try {
+                                pub.setPublisherId(Integer.parseInt(ids[i].trim()));
+                                pub.setPublisherName(names[i].trim());
+                                pub.setPublisherCode(i < codes.length && codes[i] != null ? codes[i].trim() : "");
+                                pubList.add(pub);
+                            } catch (NumberFormatException ex) {
+                                System.out.println("Lỗi parse Publisher ID: " + ids[i]);
+                            }
+                        }
+                    }
+                    cat.setPublishers(pubList);
+                    list.add(cat);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }
