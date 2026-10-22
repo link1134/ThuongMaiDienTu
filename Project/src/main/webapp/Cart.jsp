@@ -52,9 +52,9 @@
                                 <div class="cart-item-information">
                                     <input type="checkbox" class="check-box-mod item-checkbox">
                                     <a href="${pageContext.request.contextPath}/product-detail?id=${item.listingId}">
-                                        <img src="${pageContext.request.contextPath}${item.productImageUrl}"
+                                        <img src="${item.productImageUrl}"
                                              alt="Hình ảnh truyện" class="cart-item-image"
-                                             onerror="this.src='${pageContext.request.contextPath}/images/placeholder.jpg'">
+                                             >
                                     </a>
                                     <div class="cart-item-more-information">
                                         <a href="${pageContext.request.contextPath}/product-detail?id=${item.listingId}">${item.productTitle}</a>
