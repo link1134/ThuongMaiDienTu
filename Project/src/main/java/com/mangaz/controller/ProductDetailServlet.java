@@ -54,6 +54,10 @@ public class ProductDetailServlet extends HttpServlet {
             );
             return;
         }
+        product.setAttributes(
+                productDAO.findAttributesByListingId(listingId)
+        );
+
         // Chuyển dữ liệu sang JSP
         request.setAttribute("product", product);
         request.getRequestDispatcher(

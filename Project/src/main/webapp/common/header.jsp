@@ -108,6 +108,27 @@
         background-color: var(--color-primary-dark);
         color: #ffffff;
     }
+    .header-inner {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 16px;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+    }
+    @media (min-width: 640px) {
+        .header-inner {
+            padding: 0 24px;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .header-inner {
+            padding: 0 32px;
+        }
+    }
     .icon-utility-button {
         text-decoration: none;
         position: relative;
@@ -165,7 +186,7 @@
         </nav> <!-- Action Buttons & Utilities -->
         <div class="header-utilities">
             <button class="btn-trade-post" type="button"> <span
-                    class="material-symbols-outlined">add_circle</span> <span>Đăng bài / Trade</span></button>
+                    class="material-symbols-outlined">add_circle</span> <span>Đăng bài</span></button>
             <div class="icon-utility-button" title="Yêu thích"> <span
                     class="material-symbols-outlined">favorite_border</span> <span
                     class="utility-badge">2</span></div>

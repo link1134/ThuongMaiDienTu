@@ -36,28 +36,34 @@
     </nav>
 
 
-    <div style="display: flex; justify-content: flex-start; flex: 1; width: 100%;">
-        <div class="search-result">
-            <h1>"Truyện doraemon"</h1>
-            <span>
-    (<c:out value="${totalResults}"/> kết quả tìm thấy)
-</span>
-        </div>
-    </div>
-
+    <%--    <div style="display: flex; justify-content: flex-start; flex: 1; width: 100%;">--%>
+    <%--        <div class="search-result">--%>
+    <%--            <h1>"${keyword}"</h1>--%>
+    <%--            <span>--%>
+    <%--    (<c:out value="${totalResults}"/> kết quả tìm thấy)--%>
+    <%--</span>--%>
+    <%--        </div>--%>
+    <%--    </div>--%>
     <div class="product-filter-bar">
         <!-- Các tab loại bài đăng -->
         <div class="filter-tabs">
-            <button class="filter-tab active">
-                Tất cả (86)
-            </button>
-            <button class="filter-tab">
-                Mua ngay (54)
+
+            <button type="button"
+                    class="filter-tab ${selectedType eq 'All' ? 'active' : ''}"
+                    data-type="All">
+                Tất cả (<c:out value="${allCount}"/>)
             </button>
 
-            <button class="filter-tab">
-                Đấu giá (32)
+            <button type="button"
+                    class="filter-tab ${selectedType eq 'Sale' ? 'active' : ''}"
+                    data-type="Sale">
+                Mua ngay (<c:out value="${saleCount}"/>)
+            </button>
 
+            <button type="button"
+                    class="filter-tab ${selectedType eq 'Auction' ? 'active' : ''}"
+                    data-type="Auction">
+                Đấu giá (<c:out value="${auctionCount}"/>)
             </button>
         </div>
         <div class="filter-divider"></div>
@@ -80,7 +86,6 @@
                 <span class="chevron"></span>
             </button>
         </div>
-
         <!-- Sắp xếp -->
         <div class="filter-sort">
             <span class="sort-label">Sắp xếp theo:</span>
@@ -96,144 +101,146 @@
     <!-- Khu vực chứa danh sách sản phẩm -->
 
 
-    <div class="product-grid">
+    <%--    <div class="product-grid">--%>
 
-        <c:choose>
-            <c:when test="${not empty products}">
+    <%--        <c:choose>--%>
+    <%--            <c:when test="${not empty products}">--%>
 
-                <c:forEach var="product" items="${products}">
+    <%--                <c:forEach var="product" items="${products}">--%>
 
-                    <div class="product-card">
-                        <div class="product-image">
+    <%--                    <div class="product-card">--%>
+    <%--                        <div class="product-image">--%>
 
-                            <c:choose>
-                                <c:when test="${not empty product.imageUrl}">
-                                    <img
-                                            src="<c:out value='${product.imageUrl}'/>"
-                                            alt="<c:out value='${product.title}'/>">
-                                </c:when>
-                                <c:otherwise>
-                                    <img
-                                            src="https://placehold.co/400x500/f0eee9/555555?text=No+Image"
-                                            alt="Chưa có ảnh sản phẩm">
-                                </c:otherwise>
-                            </c:choose>
+    <%--                            <c:choose>--%>
+    <%--                                <c:when test="${not empty product.imageUrl}">--%>
+    <%--                                    <img--%>
+    <%--                                            src="<c:out value='${product.imageUrl}'/>"--%>
+    <%--                                            alt="<c:out value='${product.title}'/>">--%>
+    <%--                                </c:when>--%>
+    <%--                                <c:otherwise>--%>
+    <%--                                    <img--%>
+    <%--                                            src="https://placehold.co/400x500/f0eee9/555555?text=No+Image"--%>
+    <%--                                            alt="Chưa có ảnh sản phẩm">--%>
+    <%--                                </c:otherwise>--%>
+    <%--                            </c:choose>--%>
 
-                            <span class="product-type">
-                            <c:choose>
-                                <c:when test="${product.listingType eq 'Auction'}">
-                                    Đấu giá
-                                </c:when>
-                                <c:when test="${product.listingType eq 'Trade'}">
-                                    Trao đổi
-                                </c:when>
-                                <c:otherwise>
-                                    Mua ngay
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
+    <%--                            <span class="product-type">--%>
+    <%--                            <c:choose>--%>
+    <%--                                <c:when test="${product.listingType eq 'Auction'}">--%>
+    <%--                                    Đấu giá--%>
+    <%--                                </c:when>--%>
+    <%--                                <c:when test="${product.listingType eq 'Trade'}">--%>
+    <%--                                    Trao đổi--%>
+    <%--                                </c:when>--%>
+    <%--                                <c:otherwise>--%>
+    <%--                                    Mua ngay--%>
+    <%--                                </c:otherwise>--%>
+    <%--                            </c:choose>--%>
+    <%--                        </span>--%>
 
-                            <div class="product-condition-and-bookmark">
-                            <span class="product-condition">
-                                Rất tốt
-                            </span>
+    <%--                            <div class="product-condition-and-bookmark">--%>
+    <%--                            <span class="product-condition">--%>
+    <%--                                Rất tốt--%>
+    <%--                            </span>--%>
 
-                                <button class="bookmark-btn"
-                                        type="button"
-                                        aria-label="Lưu sản phẩm">
-                                <span class="material-symbols-outlined">
-                                    bookmark
-                                </span>
-                                </button>
-                            </div>
-                        </div>
+    <%--                                <button class="bookmark-btn"--%>
+    <%--                                        type="button"--%>
+    <%--                                        aria-label="Lưu sản phẩm">--%>
+    <%--                                <span class="material-symbols-outlined">--%>
+    <%--                                    bookmark--%>
+    <%--                                </span>--%>
+    <%--                                </button>--%>
+    <%--                            </div>--%>
+    <%--                        </div>--%>
 
-                        <div class="product-info">
+    <%--                        <div class="product-info">--%>
 
-                            <div class="product-tags">
-                            <span class="product-type-tag">
-                                <c:out value="${product.productTypeName}"/>
-                            </span>
+    <%--                            <div class="product-tags">--%>
+    <%--                            <span class="product-type-tag">--%>
+    <%--                                <c:out value="${product.productTypeName}"/>--%>
+    <%--                            </span>--%>
 
-                                <span class="product-tag">Shonen</span>
-                                <span class="product-tag">Bản giới hạn</span>
-                                <span class="product-tag-more">+3</span>
-                            </div>
+    <%--                                <span class="product-tag">Shonen</span>--%>
+    <%--                                <span class="product-tag">Bản giới hạn</span>--%>
+    <%--                                <span class="product-tag-more">+3</span>--%>
+    <%--                            </div>--%>
 
-                            <h3 class="product-name">
-                                <c:out value="${product.title}"/>
-                            </h3>
+    <%--                            <h3 class="product-name">--%>
+    <%--                                <c:out value="${product.title}"/>--%>
+    <%--                            </h3>--%>
 
-                            <div class="product-price">
-                                <span>Giá niêm yết</span>
+    <%--                            <div class="product-price">--%>
+    <%--                                <span>Giá niêm yết</span>--%>
 
-                                <strong>
-                                    <c:choose>
-                                        <c:when test="${product.price ne null}">
-                                            <fmt:formatNumber
-                                                    value="${product.price}"
-                                                    pattern="#,##0"/> đ
-                                        </c:when>
-                                        <c:otherwise>
-                                            Chưa có giá
-                                        </c:otherwise>
-                                    </c:choose>
-                                </strong>
-                            </div>
+    <%--                                <strong>--%>
+    <%--                                    <c:choose>--%>
+    <%--                                        <c:when test="${product.price ne null}">--%>
+    <%--                                            <fmt:formatNumber--%>
+    <%--                                                    value="${product.price}"--%>
+    <%--                                                    pattern="#,##0"/> đ--%>
+    <%--                                        </c:when>--%>
+    <%--                                        <c:otherwise>--%>
+    <%--                                            Chưa có giá--%>
+    <%--                                        </c:otherwise>--%>
+    <%--                                    </c:choose>--%>
+    <%--                                </strong>--%>
+    <%--                            </div>--%>
 
-                            <a
-                                    class="buy-btn"
-                                    href="${pageContext.request.contextPath}/product-detail?id=${product.listingId}">
-                                Xem chi tiết
-                            </a>
+    <%--                            <a--%>
+    <%--                                    class="buy-btn"--%>
+    <%--                                    href="${pageContext.request.contextPath}/product-detail?id=${product.listingId}">--%>
+    <%--                                Xem chi tiết--%>
+    <%--                            </a>--%>
 
-                        </div>
-                    </div>
+    <%--                        </div>--%>
+    <%--                    </div>--%>
 
-                </c:forEach>
+    <%--                </c:forEach>--%>
 
-            </c:when>
+    <%--            </c:when>--%>
 
-            <c:otherwise>
-                <div class="search-empty-state">
-                    <h3>Không tìm thấy sản phẩm</h3>
-                    <p>
-                        Không có bài đăng nào phù hợp với từ khóa
-                        "<c:out value="${keyword}"/>".
-                    </p>
-                </div>
-            </c:otherwise>
-        </c:choose>
+    <%--            <c:otherwise>--%>
+    <%--                <div class="search-empty-state">--%>
+    <%--                    <h3>Không tìm thấy sản phẩm</h3>--%>
+    <%--                    <p>--%>
+    <%--                        Không có bài đăng nào phù hợp với từ khóa--%>
+    <%--                        "<c:out value="${keyword}"/>".--%>
+    <%--                    </p>--%>
+    <%--                </div>--%>
+    <%--            </c:otherwise>--%>
+    <%--        </c:choose>--%>
 
+    <%--    </div>--%>
+    <div id="search-results-content">
+        <jsp:include page="/SearchResult.jsp"/>
     </div>
 
+<%--    <div class="pagination-section">--%>
 
-    <div class="pagination-section">
+<%--        <div class="pagination">--%>
 
-        <div class="pagination">
+<%--            <button class="pagination-btn pagination-arrow" type="button" aria-label="Trang trước">--%>
+<%--                    <span class="material-symbols-outlined">--%>
+<%--                        keyboard_arrow_left--%>
+<%--                    </span>--%>
+<%--            </button>--%>
 
-            <button class="pagination-btn pagination-arrow" type="button" aria-label="Trang trước">
-                    <span class="material-symbols-outlined">
-                        keyboard_arrow_left
-                    </span>
-            </button>
+<%--            <button class="pagination-btn active" type="button">1</button>--%>
+<%--            <button class="pagination-btn" type="button">2</button>--%>
+<%--            <button class="pagination-btn" type="button">3</button>--%>
+<%--            <button class="pagination-btn" type="button">4</button>--%>
 
-            <button class="pagination-btn active" type="button">1</button>
-            <button class="pagination-btn" type="button">2</button>
-            <button class="pagination-btn" type="button">3</button>
-            <button class="pagination-btn" type="button">4</button>
+<%--            <span class="pagination-dots">...</span>--%>
 
-            <span class="pagination-dots">...</span>
+<%--            <button class="pagination-btn pagination-next" type="button">--%>
+<%--                Tiếp theo <span class="material-symbols-outlined">--%>
+<%--                        keyboard_arrow_right--%>
+<%--                    </span>--%>
+<%--            </button>--%>
 
-            <button class="pagination-btn pagination-next" type="button">
-                Tiếp theo <span class="material-symbols-outlined">
-                        keyboard_arrow_right
-                    </span>
-            </button>
+<%--        </div>--%>
 
-        </div>
-
-    </div>
+<%--    </div>--%>
 
 
 </main>
@@ -292,6 +299,70 @@
         </div>
     </div>
 </footer> <!-- END: SiteFooter -->
+<input type="hidden"
+       id="search-keyword"
+       value="<c:out value='${keyword}'/>">
+<script>
+    const searchUrl = '${pageContext.request.contextPath}/search';
+
+    document.querySelectorAll(".filter-tab").forEach(button => {
+        button.addEventListener("click", async function () {
+
+            const selectedType = this.dataset.type;
+            const keywordElement = document.getElementById("search-keyword");
+            const keyword = keywordElement.value;
+
+            // Đánh dấu tab đang chọn
+            document.querySelectorAll(".filter-tab").forEach(tab => {
+                tab.classList.remove("active");
+            });
+
+            this.classList.add("active");
+
+            const resultsContainer =
+                document.getElementById("search-results-content");
+
+            resultsContainer.style.opacity = "0.5";
+
+            try {
+                const params = new URLSearchParams({
+                    keyword: keyword,
+                    type: selectedType,
+                    partial: "true"
+                });
+
+
+                const response = await fetch(searchUrl + "?" + params.toString());
+
+                const html = await response.text();
+
+                if (!response.ok) {
+                    console.error("HTTP status:", response.status);
+                    console.error("Response body:", html);
+                    throw new Error("Server trả về HTTP " + response.status);
+                }
+
+                const parser = new DOMParser();
+                const documentResult = parser.parseFromString(html, "text/html");
+                const newContent = documentResult.querySelector(".search-results-content");
+
+                if (!newContent) {
+                    console.error("HTML server trả về:", html);
+                    throw new Error("Không tìm thấy .search-results-content trong response.");
+                }
+
+                resultsContainer.innerHTML = newContent.innerHTML;
+
+
+            } catch (error) {
+                console.error(error);
+                alert("Không thể tải kết quả. Vui lòng thử lại.");
+            } finally {
+                resultsContainer.style.opacity = "1";
+            }
+        });
+    });
+</script>
 </body>
 
 </html>

@@ -20,21 +20,21 @@
 </head>
 <body class="site-body"> <!-- BEGIN: SiteHeader -->
 <jsp:include page="/common/header.jsp"/> <!-- END: SiteHeader --> <!-- BEGIN: Segmented Mall/Shop Switcher -->
-<section class="mode-switch-section">
-    <div class="segmented-switcher-group">
-        <button class="switcher-pill-btn active-pill" type="button"> Manga
-            Mall
-        </button>
-        <button class="switcher-pill-btn inactive-pill" type="button"> Manga Shop</button>
-    </div>
-</section> <!-- END: Segmented Mall/Shop Switcher --> <!-- BEGIN: Main Page Content -->
+<%--<section class="mode-switch-section">--%>
+<%--    <div class="segmented-switcher-group">--%>
+<%--        <button class="switcher-pill-btn active-pill" type="button"> Manga--%>
+<%--            Mall--%>
+<%--        </button>--%>
+<%--        <button class="switcher-pill-btn inactive-pill" type="button"> Manga Shop</button>--%>
+<%--    </div>--%>
+<%--</section> <!-- END: Segmented Mall/Shop Switcher --> <!-- BEGIN: Main Page Content -->--%>
 <main class="main-page-container"> <!-- Hero Section -->
     <section class="hero-showcase-section">
         <div class="hero-text-column">
             <h1 class="hero-headline"> Manga là linh hồn<br/> Sàn là điểm hẹn. </h1>
             <div class="hero-cta-group">
                 <button class="btn-primary-action" type="button"> Khám phá</button>
-                <button class="btn-secondary-action" type="button"> Tạo gian hàng</button>
+                <button class="btn-secondary-action" type="button"> Tham gia bán hàng</button>
             </div>
             <div class="hero-metric-stats">
                 <div class="metric-item">
@@ -100,7 +100,7 @@
         </div>
     </section> <!-- Featured Products Grid & Tabs -->
     <section class="products-showcase-section"> <!-- Filter Tabs -->
-        <h2 class="display-section-title">Sản phẩm mới nhất</h2>
+        <%--        <h2 class="display-section-title">Sản phẩm mới nhất</h2>--%>
 
         <div class="category-tabs-bar">
             <!-- Giữ các tab hiện tại nếu bạn vẫn muốn sử dụng -->
@@ -158,15 +158,24 @@
                             </div>
 
                             <div class="product-info">
-
                                 <div class="product-tags">
-                            <span class="product-type-tag">
-                                <c:out value="${product.productTypeName}"/>
-                            </span>
+    <span class="product-type-tag">
+        <c:out value="${product.productTypeName}"/>
+    </span>
 
-                                    <span class="product-tag">Shonen</span>
-                                    <span class="product-tag">Bản giới hạn</span>
-                                    <span class="product-tag-more">+3</span>
+                                    <c:forEach var="tag" items="${product.tags}" varStatus="status">
+                                        <c:if test="${status.index lt 2}">
+            <span class="product-tag">
+                <c:out value="${tag.tagName}"/>
+            </span>
+                                        </c:if>
+                                    </c:forEach>
+
+                                    <c:if test="${product.tags.size() gt 2}">
+        <span class="product-tag-more">
+            +${product.tags.size() - 2}
+        </span>
+                                    </c:if>
                                 </div>
 
                                 <h3 class="product-name">

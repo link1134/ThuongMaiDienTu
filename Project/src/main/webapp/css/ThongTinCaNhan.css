@@ -64,29 +64,6 @@ body.site-body {
     border-bottom: 1px solid var(--color-border-default);
 }
 
-.header-inner {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 16px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-}
-
-@media (min-width: 640px) {
-    .header-inner {
-        padding: 0 24px;
-    }
-}
-
-@media (min-width: 1024px) {
-    .header-inner {
-        padding: 0 32px;
-    }
-}
-
 .brand-identity {
     display: flex;
     align-items: center;
@@ -286,25 +263,6 @@ body.site-body {
     background-color: var(--color-accent-emerald-hover);
 }
 
-.icon-utility-button {
-    position: relative;
-    padding: 6px;
-    border-radius: 9999px;
-    color: var(--color-text-slate-600);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.15s ease;
-}
-
-.icon-utility-button:hover {
-    background-color: var(--color-bg-slate-100);
-}
-
-.icon-utility-button .material-symbols-outlined {
-    font-size: 20px;
-}
 
 .utility-badge {
     position: absolute;
