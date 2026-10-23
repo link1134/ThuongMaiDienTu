@@ -11,10 +11,12 @@
     <title>Thanh toán - MangaVault Collector Exchange</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/CheckOut.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Main.css">
+
 </head>
 
 <body class="site-body">
@@ -33,7 +35,7 @@
     </div>
 </div>
 
-<jsp:include page="/common/header.jsp" />
+<jsp:include page="/common/header.jsp"/>
 
 <main class="cart-page-container">
     <div class="back-navigation-bar">
@@ -53,7 +55,8 @@
         <!-- Hidden Input Địa chỉ -->
         <input type="hidden" name="recipientName" id="input-recipient-name" value="${defaultAddress.recipientName}">
         <input type="hidden" name="phoneNumber" id="input-phone-number" value="${defaultAddress.phoneNumber}">
-        <input type="hidden" name="shippingAddress" id="input-shipping-address" value="${defaultAddress.addressDetail}, ${defaultAddress.ward}, ${defaultAddress.cityProvince}">
+        <input type="hidden" name="shippingAddress" id="input-shipping-address"
+               value="${defaultAddress.addressDetail}, ${defaultAddress.ward}, ${defaultAddress.cityProvince}">
 
         <div class="cart-layout-grid">
             <div class="cart-left">
@@ -61,7 +64,8 @@
                 <div class="delivery-type-container">
                     <h3>Chọn hình thức giao hàng</h3>
                     <label class="delivery-type active">
-                        <div><input type="radio" name="delivery" value="Vận chuyển nhanh" class="check-box-mod item-checkbox" checked data-fee="41000"></div>
+                        <div><input type="radio" name="delivery" value="Vận chuyển nhanh"
+                                    class="check-box-mod item-checkbox" checked data-fee="41000"></div>
                         <div class="deliver-type-wrapper">
                             <div class="delivery-info">
                                 <span>24 Thg 10 - 26 Thg 10</span>
@@ -73,7 +77,8 @@
                         </div>
                     </label>
                     <label class="delivery-type">
-                        <div><input type="radio" name="delivery" value="Vận chuyển trong ngày" class="check-box-mod item-checkbox" data-fee="81000"></div>
+                        <div><input type="radio" name="delivery" value="Vận chuyển trong ngày"
+                                    class="check-box-mod item-checkbox" data-fee="81000"></div>
                         <div class="deliver-type-wrapper">
                             <div class="delivery-info">
                                 <span>Trong ngày</span>
@@ -92,7 +97,9 @@
                     <label class="payment-method active">
                         <div><input type="radio" name="payment-method" value="COD" class="check-box-mod" checked></div>
                         <div class="payment-method-information">
-                            <img src="${pageContext.request.contextPath}/images/products/OIP.webp" alt="COD" onerror="this.style.display='none'">
+                            <span class="material-symbols-outlined payment-google-icon-mod">
+payments
+</span>
                             <div class="payment-method-name-des">
                                 <span class="payment-method-name">Thanh toán trực tiếp (COD)</span>
                                 <span class="payment-method-des">Trả bằng tiền mặt khi hàng giao tới bạn</span>
@@ -102,6 +109,7 @@
                     <label class="payment-method">
                         <div><input type="radio" name="payment-method" value="MoMo" class="check-box-mod"></div>
                         <div class="payment-method-information">
+                            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-MoMo-Square.png" alt="">
                             <div class="payment-method-name-des">
                                 <span class="payment-method-name">Ví MoMo</span>
                             </div>
@@ -110,6 +118,7 @@
                     <label class="payment-method">
                         <div><input type="radio" name="payment-method" value="ZaloPay" class="check-box-mod"></div>
                         <div class="payment-method-information">
+                            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-ZaloPay-Square.png" alt="">
                             <div class="payment-method-name-des">
                                 <span class="payment-method-name">Ví ZaloPay</span>
                             </div>
@@ -312,9 +321,9 @@
         const selected = document.querySelector('input[name="selected-address"]:checked');
         if (selected && savedAddresses[selected.value]) {
             const addr = savedAddresses[selected.value];
-            if(currentName) currentName.textContent = addr.name;
-            if(currentPhone) currentPhone.textContent = addr.phone;
-            if(currentAddress) currentAddress.textContent = addr.address;
+            if (currentName) currentName.textContent = addr.name;
+            if (currentPhone) currentPhone.textContent = addr.phone;
+            if (currentAddress) currentAddress.textContent = addr.address;
 
             document.getElementById('input-recipient-name').value = addr.name;
             document.getElementById('input-phone-number').value = addr.phone;
@@ -326,7 +335,7 @@
 <!-- XỬ LÝ POPUP THÔNG BÁO THÀNH CÔNG VÀ CHUYỂN HƯỚNG VỀ TRANG CHỦ -->
 <c:if test="${orderSuccess eq true}">
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             Swal.fire({
                 title: 'Đặt hàng thành công!',
                 text: 'Cảm ơn bạn đã mua hàng tại MangaZ. Đơn hàng của bạn đang được hệ thống xử lý!',
@@ -348,7 +357,7 @@
 <!-- POPUP BÁO LỖI NẾU ĐẶT HÀNG THẤT BẠI -->
 <c:if test="${not empty errorMessage}">
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             Swal.fire({
                 title: 'Đặt hàng không thành công!',
                 text: '${errorMessage}',

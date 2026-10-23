@@ -13,7 +13,6 @@
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <!-- Đảm bảo đường dẫn CSS chính xác -->
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Cart.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Main.css">
 </head>
 <body class="site-body">
 <jsp:include page="/common/header.jsp"/>
@@ -32,7 +31,7 @@
         <div>
             <div class="cart-items-list-header">
                 <label class="all-item-check">
-                    <input type="checkbox" class="check-box-mod" id="select-all">
+                    <input type="checkbox" class="check-box-mod" id="select-all" checked>
                     <span>Tất cả&nbsp;(${cart.items.size()} sản phẩm)</span>
                 </label>
                 <span>Đơn giá</span>
@@ -50,7 +49,7 @@
                         <c:forEach var="item" items="${cart.items}">
                             <div class="cart-item">
                                 <div class="cart-item-information">
-                                    <input type="checkbox" class="check-box-mod item-checkbox">
+                                    <input type="checkbox" class="check-box-mod item-checkbox" checked>
                                     <a href="${pageContext.request.contextPath}/product-detail?id=${item.listingId}">
                                         <img src="${item.productImageUrl}"
                                              alt="Hình ảnh truyện" class="cart-item-image"
@@ -161,7 +160,7 @@
                 <div class="checkout-btn-wrapper">
                     <form action="${pageContext.request.contextPath}/checkout" method="GET">
                         <button class="btn-checkout-now" type="submit" ${empty cart.items ? 'disabled' : ''}>
-                            <span>Đặt hàng</span>
+                            <span>Mua hàng</span>
                         </button>
                     </form>
                 </div>

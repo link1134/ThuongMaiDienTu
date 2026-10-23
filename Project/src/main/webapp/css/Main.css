@@ -288,25 +288,7 @@ body.site-body {
     background-color: var(--color-emerald-trade-hover);
 }
 
-.icon-utility-button {
-    position: relative;
-    padding: 6px;
-    border-radius: 9999px;
-    color: var(--color-text-slate-600);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.15s ease;
-}
 
-.icon-utility-button:hover {
-    background-color: var(--color-bg-slate-100);
-}
-
-.icon-utility-button .material-symbols-outlined {
-    font-size: 20px;
-}
 
 .utility-badge {
     position: absolute;
