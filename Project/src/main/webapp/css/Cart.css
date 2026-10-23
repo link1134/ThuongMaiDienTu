@@ -443,6 +443,15 @@ body.site-body {
     -webkit-box-align: center;
     align-items: center;
 }
+.checkout-btn-wrapper form{
+    display: flex;
+    width: 100%;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    column-gap: 8px;
+    -webkit-box-align: center;
+    align-items: center;
+}
 .btn-checkout-now{
      appearance: button;
     margin: 0px 16px 16px;

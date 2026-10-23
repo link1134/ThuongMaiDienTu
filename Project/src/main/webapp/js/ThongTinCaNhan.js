@@ -635,7 +635,6 @@ addressItems.addEventListener("click", async function (event) {
             if (!response.ok) {
                 throw new Error(message || "Không thể xóa địa chỉ.");
             }
-
             await loadAddresses();
 
         } catch (error) {

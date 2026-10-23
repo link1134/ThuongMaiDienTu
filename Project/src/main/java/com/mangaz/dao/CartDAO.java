@@ -9,6 +9,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CartDAO {
+    public int getCartItemCount(int userId) {
+        String sql = "SELECT COALESCE(SUM(ci.Quantity), 0) AS TotalItems " +
+                "FROM Carts c " +
+                "LEFT JOIN CartItems ci ON c.CartId = ci.CartId " +
+                "WHERE c.UserId = ?";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("TotalItems");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
 
     public Cart getCartByUserId(int userId) {
         Cart cart = new Cart();
@@ -59,9 +82,10 @@ public class CartDAO {
         }
         return cart;
     }
+
     /*
-    * Tạo giỏ hàng mới theo ID của người dùng
-    * */
+     * Tạo giỏ hàng mới theo ID của người dùng
+     * */
     private int createCart(int userId, Connection conn) throws SQLException {
         String sql = "INSERT INTO Carts (UserId) VALUES (?)";
         try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -72,9 +96,10 @@ public class CartDAO {
         }
         return -1;
     }
+
     /*
-    * Thêm sản phẩm vào giỏ hàng
-    * */
+     * Thêm sản phẩm vào giỏ hàng
+     * */
     public boolean addToCart(int userId, int listingId, int quantity) {
         Cart cart = getCartByUserId(userId);
         String checkSql = "SELECT CartItemId, Quantity FROM CartItems WHERE CartId = ? AND ListingId = ?";
@@ -101,9 +126,10 @@ public class CartDAO {
         }
         return false;
     }
+
     /*
-    * Cập nhật lại số lượng sản phẩm trong giỏ hàng
-    * */
+     * Cập nhật lại số lượng sản phẩm trong giỏ hàng
+     * */
     public boolean updateQuantity(int cartItemId, int newQuantity) {
         if (newQuantity <= 0) return removeCartItem(cartItemId);
 
@@ -118,9 +144,10 @@ public class CartDAO {
         }
         return false;
     }
+
     /*
-    * Xóa sản phẩm khỏi giỏ hàng
-    * */
+     * Xóa sản phẩm khỏi giỏ hàng
+     * */
     public boolean removeCartItem(int cartItemId) {
         String sql = "DELETE FROM CartItems WHERE CartItemId = ?";
         try (Connection conn = DBConnection.getConnection();
