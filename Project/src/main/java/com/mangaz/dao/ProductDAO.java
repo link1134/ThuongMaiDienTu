@@ -1,6 +1,11 @@
 
 package com.mangaz.dao;
-
+import com.mangaz.model.ProductAttribute;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import com.mangaz.model.ProductDetail;
 import com.mangaz.util.DBConnection;
 import com.mangaz.util.DBConnection;
@@ -13,7 +18,45 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductDAO {
+    public List<ProductAttribute> findAttributesByListingId(int listingId) {
+        List<ProductAttribute> attributes = new ArrayList<>();
 
+        String sql =
+                "SELECT ad.AttributeName, lav.ValueText " +
+                        "FROM dbo.ListingAttributeValues lav " +
+                        "JOIN dbo.AttributeDefinitions ad " +
+                        "    ON lav.AttributeId = ad.AttributeId " +
+                        "JOIN dbo.Listings l " +
+                        "    ON lav.ListingId = l.ListingId " +
+                        "JOIN dbo.ProductTypeAttributes pta " +
+                        "    ON pta.ProductTypeId = l.ProductTypeId " +
+                        "    AND pta.AttributeId = lav.AttributeId " +
+                        "WHERE lav.ListingId = ? " +
+                        "ORDER BY pta.DisplayOrder, ad.AttributeName";
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, listingId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ProductAttribute attribute = new ProductAttribute();
+
+                    attribute.setAttributeName(rs.getString("AttributeName"));
+                    attribute.setValueText(rs.getString("ValueText"));
+
+                    attributes.add(attribute);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(
+                    "Lỗi khi lấy thuộc tính bài đăng: " + listingId, e
+            );
+        }
+
+        return attributes;
+    }
     public ProductDetail findById(int listingId) {
         String sql = """
                 SELECT ListingId, Title, Description,

@@ -78,11 +78,13 @@
             <div class="small-description">
                 <!-- Chỗ này có nhiều hơn 1 tác giả thì TRƯỚC TÁC GIẢ CUỐI, cho nó cái ,&nbsp; -->
                 <span class="author-row">
-                        <h6>Tác giả:&nbsp;<a href="">Eiichiro Oda <span>,&nbsp;</span></a> <a href="">Tác giả gì gì
-                                đó</a></h6>
+                        <h6>Tác giả:&nbsp;<a href="">Eiichiro Oda <span>,&nbsp;</span></a>
+<%--                            <a href="">Tác giả gì gì--%>
+<%--                                đó</a>--%>
+                        </h6>
                     </span>
                 <h1 class="product-headline-title"><c:out value="${product.title}"/></h1>
-                <p class="sell-number">Bài đăng #<c:out value="${product.productId}"/></p>
+                <%--                <p class="sell-number">Bài đăng #<c:out value="${product.productId}"/></p>--%>
                 <p class="product-synopsis"><c:out value="${product.shortDescription}"
                                                    default="Chưa có mô tả cho sản phẩm này."/></p>
                 <!-- Tình trạng sách tóm tắt -->
@@ -111,7 +113,8 @@
                         <div class="quantity-control-row">
                             <div class="quantity-row">
                                 <button type="button" class="quantity-btn" id="btn-decrease">−</button>
-                                <input type="number" class="quantity-input" name="quantity" value="1" min="1" id="quantity-input"
+                                <input type="number" class="quantity-input" name="quantity" value="1" min="1"
+                                       id="quantity-input"
                                        max="${product.stockQuantity}">
                                 <button type="button" class="quantity-btn" id="btn-increase">+</button>
                             </div>
@@ -122,9 +125,9 @@
                     </div>
 
                     <div class="subtotal-section">
-                        <div class="price-listing-label" >Tạm tính</div>
+                        <div class="price-listing-label">Tạm tính</div>
                         <span class="current-price" id="subtotal-display"><fmt:formatNumber value="${product.price}"
-                                                                      pattern="#,##0"/> đ</span>
+                                                                                            pattern="#,##0"/> đ</span>
                     </div>
                 </div>
 
@@ -195,60 +198,40 @@
 
         <!-- TAB 1: THONG SO VA TINH TRANG -->
         <div class="spec-tab-panel" id="condition-panel">
-
             <div class="spec-table-grid">
 
-                <!-- Cot trai -->
-                <div>
-                    <div class="spec-row">
-                        <span class="spec-label">Tác giả &amp; Minh hoạ</span>
-                        <span class="spec-value">Eiichiro Oda</span>
-                    </div>
+                <c:choose>
+                    <c:when test="${not empty product.attributes}">
 
-                    <div class="spec-row">
-                        <span class="spec-label">Số trang thực tế</span>
-                        <span class="spec-value">208 / 208 trang (Đầy đủ)</span>
-                    </div>
+                        <c:forEach var="attribute"
+                                   items="${product.attributes}">
 
-                    <div class="spec-row">
-                        <span class="spec-label">Mức độ ố vàng giấy</span>
-                        <span class="spec-value highlight-blue">
-                        ~10% viền mép ngoài tự nhiên
+                            <div class="spec-row">
+                    <span class="spec-label">
+                        <c:out value="${attribute.attributeName}"/>
                     </span>
-                    </div>
 
-                    <div class="spec-row">
-                        <span class="spec-label">Tình trạng viết vẽ / Tẩy xóa</span>
-                        <span class="spec-value highlight-blue">
-                        Không có dấu vết (Pristine)
+                                <span class="spec-value">
+                        <c:out value="${attribute.valueText}"/>
                     </span>
-                    </div>
-                </div>
+                            </div>
 
-                <!-- Cot phai -->
-                <div>
-                    <div class="spec-row">
-                        <span class="spec-label">Năm phát hành</span>
-                        <span class="spec-value">2003 (Bản in đầu)</span>
-                    </div>
+                        </c:forEach>
 
-                    <div class="spec-row">
-                        <span class="spec-label">Quy cách đóng gáy</span>
-                        <span class="spec-value">Thẳng đều, keo zin 9.5/10</span>
-                    </div>
+                    </c:when>
 
-                    <div class="spec-row">
-                        <span class="spec-label">Phụ kiện đi kèm</span>
-                        <span class="spec-value">01 Áo bọc ngoài, 01 Bookmark</span>
-                    </div>
-
-                    <div class="spec-row">
-                        <span class="spec-label">Độ phẳng của bìa lót</span>
-                        <span class="spec-value">Phẳng 100%, không quăn mép</span>
-                    </div>
-                </div>
+                    <c:otherwise>
+                        <div class="spec-row">
+                            <span class="spec-label">Thông tin sản phẩm</span>
+                            <span class="spec-value">
+                    Chưa có thông số chi tiết.
+                </span>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
             </div>
+
         </div>
 
         <!-- TAB 2: MO TA CHI TIET -->
@@ -275,57 +258,57 @@
 
     </div>
     <!-- BỘ SƯU TẬP TƯƠNG QUAN / TẬP KHÁC CÙNG BỘ -->
-    <section class="related-collection-section">
-        <div class="related-section-header">
-            <div>
-                <div class="related-eyebrow">BỘ SƯU TẬP TƯƠNG QUAN</div>
-                <h2 class="related-title">Tập Khác Cùng Bộ &amp; Bản Hiếm Tuyển Chọn</h2>
-            </div>
-            <a href="#" class="related-link-all"> <span>Xem tất cả One Piece Vault</span> <span
-                    class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span> </a>
-        </div>
-        <div class="related-books-grid"> <!-- Sách 1 --> <a href="#" class="related-book-card">
-            <div class="related-cover-wrapper"> <span class="related-top-pill pill-edition">1st
-                            Edition</span> <img class="related-cover-img"
-                                                src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=300&q=80"
-                                                alt="One Piece #2"></div>
-            <div class="related-info-body"><span class="related-book-series">ONE PIECE #2</span>
-                <div class="related-book-name">Tập 2: Chàng Thợ Săn Hải Tặc</div>
-                <div class="related-price-row"><span class="related-price-val">380.000 đ</span> <span
-                        class="related-grade-val">Grade 8.8</span></div>
-            </div>
-        </a> <!-- Sách 2 --> <a href="#" class="related-book-card">
-            <div class="related-cover-wrapper"> <span class="related-top-pill pill-obi">Kèm Obi
-                            Gốc</span> <img class="related-cover-img"
-                                            src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=300&q=80"
-                                            alt="One Piece #4"></div>
-            <div class="related-info-body"><span class="related-book-series">ONE PIECE #4</span>
-                <div class="related-book-name">Tập 4: Lưỡi Kiếm Nguyện Ước</div>
-                <div class="related-price-row"><span class="related-price-val">420.000 đ</span> <span
-                        class="related-grade-val">Grade 9.0</span></div>
-            </div>
-        </a> <!-- Sách 3 --> <a href="#" class="related-book-card">
-            <div class="related-cover-wrapper"> <span class="related-top-pill pill-rare">Hiếm Cực
-                            Độ</span> <img class="related-cover-img"
-                                           src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=300&q=80"
-                                           alt="Dragon Ball 1996"></div>
-            <div class="related-info-body"><span class="related-book-series">DRAGON BALL 1996</span>
-                <div class="related-book-name">Tập 1: Viên Ngọc Rồng Đầu Tiên</div>
-                <div class="related-price-row"><span class="related-price-val">1.250.000 đ</span> <span
-                        class="related-grade-val">Grade 8.5</span></div>
-            </div>
-        </a> <!-- Sách 4 --> <a href="#" class="related-book-card">
-            <div class="related-cover-wrapper"> <span class="related-top-pill pill-year">Bản In
-                            2008</span> <img class="related-cover-img"
-                                             src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=300&q=80"
-                                             alt="Bleach #1"></div>
-            <div class="related-info-body"><span class="related-book-series">BLEACH #1</span>
-                <div class="related-book-name">Tập 1: Tử Thần &amp; Dâu Tây</div>
-                <div class="related-price-row"><span class="related-price-val">520.000 đ</span> <span
-                        class="related-grade-val">Grade 9.4</span></div>
-            </div>
-        </a></div>
-    </section>
+    <%--    <section class="related-collection-section">--%>
+    <%--        <div class="related-section-header">--%>
+    <%--            <div>--%>
+    <%--                <div class="related-eyebrow">BỘ SƯU TẬP TƯƠNG QUAN</div>--%>
+    <%--                <h2 class="related-title">Tập Khác Cùng Bộ &amp; Bản Hiếm Tuyển Chọn</h2>--%>
+    <%--            </div>--%>
+    <%--            <a href="#" class="related-link-all"> <span>Xem tất cả One Piece Vault</span> <span--%>
+    <%--                    class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span> </a>--%>
+    <%--        </div>--%>
+    <%--        <div class="related-books-grid"> <!-- Sách 1 --> <a href="#" class="related-book-card">--%>
+    <%--            <div class="related-cover-wrapper"> <span class="related-top-pill pill-edition">1st--%>
+    <%--                            Edition</span> <img class="related-cover-img"--%>
+    <%--                                                src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=300&q=80"--%>
+    <%--                                                alt="One Piece #2"></div>--%>
+    <%--            <div class="related-info-body"><span class="related-book-series">ONE PIECE #2</span>--%>
+    <%--                <div class="related-book-name">Tập 2: Chàng Thợ Săn Hải Tặc</div>--%>
+    <%--                <div class="related-price-row"><span class="related-price-val">380.000 đ</span> <span--%>
+    <%--                        class="related-grade-val">Grade 8.8</span></div>--%>
+    <%--            </div>--%>
+    <%--        </a> <!-- Sách 2 --> <a href="#" class="related-book-card">--%>
+    <%--            <div class="related-cover-wrapper"> <span class="related-top-pill pill-obi">Kèm Obi--%>
+    <%--                            Gốc</span> <img class="related-cover-img"--%>
+    <%--                                            src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=300&q=80"--%>
+    <%--                                            alt="One Piece #4"></div>--%>
+    <%--            <div class="related-info-body"><span class="related-book-series">ONE PIECE #4</span>--%>
+    <%--                <div class="related-book-name">Tập 4: Lưỡi Kiếm Nguyện Ước</div>--%>
+    <%--                <div class="related-price-row"><span class="related-price-val">420.000 đ</span> <span--%>
+    <%--                        class="related-grade-val">Grade 9.0</span></div>--%>
+    <%--            </div>--%>
+    <%--        </a> <!-- Sách 3 --> <a href="#" class="related-book-card">--%>
+    <%--            <div class="related-cover-wrapper"> <span class="related-top-pill pill-rare">Hiếm Cực--%>
+    <%--                            Độ</span> <img class="related-cover-img"--%>
+    <%--                                           src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=300&q=80"--%>
+    <%--                                           alt="Dragon Ball 1996"></div>--%>
+    <%--            <div class="related-info-body"><span class="related-book-series">DRAGON BALL 1996</span>--%>
+    <%--                <div class="related-book-name">Tập 1: Viên Ngọc Rồng Đầu Tiên</div>--%>
+    <%--                <div class="related-price-row"><span class="related-price-val">1.250.000 đ</span> <span--%>
+    <%--                        class="related-grade-val">Grade 8.5</span></div>--%>
+    <%--            </div>--%>
+    <%--        </a> <!-- Sách 4 --> <a href="#" class="related-book-card">--%>
+    <%--            <div class="related-cover-wrapper"> <span class="related-top-pill pill-year">Bản In--%>
+    <%--                            2008</span> <img class="related-cover-img"--%>
+    <%--                                             src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=300&q=80"--%>
+    <%--                                             alt="Bleach #1"></div>--%>
+    <%--            <div class="related-info-body"><span class="related-book-series">BLEACH #1</span>--%>
+    <%--                <div class="related-book-name">Tập 1: Tử Thần &amp; Dâu Tây</div>--%>
+    <%--                <div class="related-price-row"><span class="related-price-val">520.000 đ</span> <span--%>
+    <%--                        class="related-grade-val">Grade 9.4</span></div>--%>
+    <%--            </div>--%>
+    <%--        </a></div>--%>
+    <%--    </section>--%>
 </main>
 <footer class="site-main-footer">
     <div class="footer-inner-shell">
@@ -389,8 +372,8 @@
     const conditionPanel = document.getElementById('condition-panel');
     const descriptionPanel = document.getElementById('description-panel');
 
-    tabButtons.forEach(function(button) {
-        button.addEventListener('click', function() {
+    tabButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
             const selectedTab = button.dataset.tab;
             tabButtons.forEach(tab => tab.classList.remove('active'));
             button.classList.add('active');
@@ -418,7 +401,7 @@
     }
 
     if (btnDecrease && btnIncrease && quantityInput) {
-        btnDecrease.addEventListener('click', function() {
+        btnDecrease.addEventListener('click', function () {
             let current = parseInt(quantityInput.value) || 1;
             if (current > 1) {
                 quantityInput.value = current - 1;
@@ -426,7 +409,7 @@
             }
         });
 
-        btnIncrease.addEventListener('click', function() {
+        btnIncrease.addEventListener('click', function () {
             let current = parseInt(quantityInput.value) || 1;
             if (current < maxStock) {
                 quantityInput.value = current + 1;

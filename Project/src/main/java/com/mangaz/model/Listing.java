@@ -3,6 +3,8 @@ package com.mangaz.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Listing {
 
@@ -23,8 +25,18 @@ public class Listing {
     // Thông tin bổ sung lấy từ các bảng liên quan
     private String productTypeName;
     private String imageUrl;
+    private List<Tag> tags = new ArrayList<>();
+
 
     public Listing() {
+    }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public int getListingId() {

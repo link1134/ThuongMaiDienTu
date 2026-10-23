@@ -554,3 +554,33 @@ LEFT JOIN dbo.ListingImages li
     AND li.IsPrimary = 1
 ORDER BY l.ListingId;
 GO
+IF OBJECT_ID('dbo.Tags', 'U') IS NULL
+BEGIN
+CREATE TABLE dbo.Tags (
+                          TagId INT IDENTITY(1,1) PRIMARY KEY,
+                          TagName NVARCHAR(100) NOT NULL UNIQUE,
+                          Slug VARCHAR(100) NOT NULL UNIQUE,
+                          TagType NVARCHAR(30) NOT NULL,
+                          CreatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME()
+);
+END;
+GO
+IF OBJECT_ID('dbo.ListingTags', 'U') IS NULL
+BEGIN
+CREATE TABLE dbo.ListingTags (
+                                 ListingId INT NOT NULL,
+                                 TagId INT NOT NULL,
+
+                                 CONSTRAINT PK_ListingTags
+                                     PRIMARY KEY (ListingId, TagId),
+
+                                 CONSTRAINT FK_ListingTags_Listings
+                                     FOREIGN KEY (ListingId)
+                                         REFERENCES dbo.Listings(ListingId),
+
+                                 CONSTRAINT FK_ListingTags_Tags
+                                     FOREIGN KEY (TagId)
+                                         REFERENCES dbo.Tags(TagId)
+);
+END;
+GO

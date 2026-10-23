@@ -16,6 +16,15 @@ public class ProductDetail {
     private int soldQuantity;
     private String coverImageUrl;
     private List<String> imageUrls;
+    private List<ProductAttribute> attributes;
+
+    public List<ProductAttribute> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(List<ProductAttribute> attributes) {
+        this.attributes = attributes;
+    }
 
     public ProductDetail() {
         imageUrls = new ArrayList<>();
