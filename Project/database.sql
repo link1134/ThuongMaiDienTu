@@ -204,6 +204,58 @@ GO
 USE MangaZ;
 GO
 
+--Carts: Mỗi User có 1 giỏ hàng duy nhất đang active
+CREATE TABLE dbo.Carts (
+                           CartId INT IDENTITY(1,1) PRIMARY KEY,
+                           UserId INT NOT NULL UNIQUE, -- Đảm bảo quan hệ 1-1 giữa User và Cart hiện tại
+                           CreatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                           UpdatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                           CONSTRAINT FK_Carts_Users FOREIGN KEY (UserId) REFERENCES dbo.Users(Id) ON DELETE CASCADE
+);
+GO
+
+-- Bảng CartItems: Chứa các sản phẩm trong giỏ hàng
+CREATE TABLE dbo.CartItems (
+                               CartItemId INT IDENTITY(1,1) PRIMARY KEY,
+                               CartId INT NOT NULL,
+                               ListingId INT NOT NULL,
+                               Quantity INT NOT NULL DEFAULT 1,
+                               AddedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                               CONSTRAINT FK_CartItems_Carts FOREIGN KEY (CartId) REFERENCES dbo.Carts(CartId) ON DELETE CASCADE,
+                               CONSTRAINT FK_CartItems_Listings FOREIGN KEY (ListingId) REFERENCES dbo.Listings(ListingId) ON DELETE CASCADE,
+                               CONSTRAINT UQ_CartItems_Cart_Listing UNIQUE (CartId, ListingId), -- Tránh trùng lặp 1 sản phẩm trong 1 giỏ
+                               CONSTRAINT CK_CartItems_Quantity CHECK (Quantity > 0)
+);
+GO
+CREATE TABLE dbo.Orders (
+                            OrderId INT IDENTITY(1,1) PRIMARY KEY,
+                            UserId INT NOT NULL,
+                            RecipientName NVARCHAR(100) NOT NULL,
+                            PhoneNumber NVARCHAR(20) NOT NULL,
+                            ShippingAddress NVARCHAR(500) NOT NULL,
+                            ShippingFee DECIMAL(18,2) NOT NULL DEFAULT 0,
+                            TotalAmount DECIMAL(18,2) NOT NULL,
+                            PaymentMethod NVARCHAR(50) NOT NULL DEFAULT N'COD',
+                            DeliveryMethod NVARCHAR(100) NOT NULL DEFAULT N'Vận chuyển nhanh',
+                            Status NVARCHAR(30) NOT NULL DEFAULT N'Pending', -- Pending, Processing, Shipping, Completed, Cancelled
+                            CreatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                            UpdatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                            CONSTRAINT FK_Orders_Users FOREIGN KEY (UserId) REFERENCES dbo.Users(Id)
+);
+GO
+
+-- Bảng OrderDetails: Lưu từng chi tiết sản phẩm trong đơn hàng
+CREATE TABLE dbo.OrderDetails (
+                                  OrderDetailId INT IDENTITY(1,1) PRIMARY KEY,
+                                  OrderId INT NOT NULL,
+                                  ListingId INT NOT NULL,
+                                  Quantity INT NOT NULL DEFAULT 1,
+                                  Price DECIMAL(18,2) NOT NULL, -- Giá tại thời điểm mua
+                                  CONSTRAINT FK_OrderDetails_Orders FOREIGN KEY (OrderId) REFERENCES dbo.Orders(OrderId) ON DELETE CASCADE,
+                                  CONSTRAINT FK_OrderDetails_Listings FOREIGN KEY (ListingId) REFERENCES dbo.Listings(ListingId)
+);
+GO
+
 BEGIN TRY
     BEGIN TRANSACTION;
 

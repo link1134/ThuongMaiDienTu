@@ -108,6 +108,26 @@
         background-color: var(--color-primary-dark);
         color: #ffffff;
     }
+    .icon-utility-button {
+        text-decoration: none;
+        position: relative;
+        padding: 6px;
+        border-radius: 9999px;
+        color: var(--color-text-slate-600);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.15s ease;
+    }
+
+    .icon-utility-button:hover {
+        background-color: var(--color-bg-slate-100);
+    }
+
+    .icon-utility-button .material-symbols-outlined {
+        font-size: 20px;
+    }
 </style>
 <header class="site-header">
     <div class="header-inner"> <!-- Brand Logo --> <a class="brand-identity"
@@ -149,9 +169,18 @@
             <div class="icon-utility-button" title="Yêu thích"> <span
                     class="material-symbols-outlined">favorite_border</span> <span
                     class="utility-badge">2</span></div>
-            <div class="icon-utility-button" title="Giỏ hàng"> <span
-                    class="material-symbols-outlined">shopping_cart</span> <span class="utility-badge">1</span>
-            </div>
+            <a class="icon-utility-button"
+               title="Giỏ hàng"
+               href="${pageContext.request.contextPath}/cart">
+
+                <span class="material-symbols-outlined">shopping_cart</span>
+
+                <c:if test="${cartItemCount > 0}">
+        <span class="utility-badge">
+            <c:out value="${cartItemCount}"/>
+        </span>
+                </c:if>
+            </a>
             <div class="icon-utility-button" title="Thông báo"> <span
                     class="material-symbols-outlined">notifications</span> <span class="utility-badge">0</span>
             </div> <!-- Profile Avatar Trigger -->

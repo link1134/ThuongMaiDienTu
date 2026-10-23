@@ -211,4 +211,47 @@ public class DeliveryAddressDAO {
             return ps.executeUpdate() > 0;
         }
     }
+    /*
+    * Lấy địa chỉ mặc định của người dùng
+    * nếu không có thì sẽ dùng địa chỉ mới nhất
+    * */
+    public DeliveryAddress getDefaultAddress(int userId) throws SQLException {
+        String sql = """
+                SELECT TOP 1 Id, UserId, RecipientName, PhoneNumber,
+                       ProvinceCode, CityProvince,
+                       WardCode, Ward, AddressDetail, IsDefault
+                FROM DeliveryAddresses
+                WHERE UserId = ?
+                ORDER BY IsDefault DESC, Id DESC
+                """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    DeliveryAddress address = new DeliveryAddress();
+
+                    address.setId(rs.getInt("Id"));
+                    address.setUserId(rs.getInt("UserId"));
+                    address.setRecipientName(rs.getString("RecipientName"));
+                    address.setPhoneNumber(rs.getString("PhoneNumber"));
+
+                    address.setProvinceCode(rs.getInt("ProvinceCode"));
+                    address.setCityProvince(rs.getString("CityProvince"));
+
+                    address.setWardCode(rs.getInt("WardCode"));
+                    address.setWard(rs.getString("Ward"));
+
+                    address.setAddressDetail(rs.getString("AddressDetail"));
+                    address.setDefaultAddress(rs.getBoolean("IsDefault"));
+
+                    return address;
+                }
+            }
+        }
+        return null;
+    }
 }
