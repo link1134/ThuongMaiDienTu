@@ -736,7 +736,7 @@ body.site-body {
 /* 1. Order Logistics */
 .order-metrics-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(6, 1fr);
     gap: 12px;
 }
 
@@ -772,6 +772,8 @@ body.site-body {
 .metric-label {
     font-size: 10px;
     font-weight: 800;
+    width: 100%;
+    text-align: center;
     letter-spacing: 0.05em;
     color: var(--color-text-slate-600);
     margin-bottom: 4px;
@@ -1261,7 +1263,7 @@ body.site-body {
 }
 
 .footer-inner-shell {
-    max-width: 1280px;
+    max-width: 1350px;
     margin: 0 auto;
     padding: 48px 16px;
 }
@@ -1884,6 +1886,214 @@ body.site-body {
     }
 }
 .addressItems{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.metric-card.active{
+    color: var(--color-primary);
+    background: #eef2ff;
+}
+.metric-card.active {
+    background: #eef2ff;
+    border: 2px solid var(--color-primary);
+}
+
+.metric-card.active .metric-icon,
+.metric-card.active .metric-number,
+.metric-card.active .metric-label {
+    color: var(--color-primary);
+}
+
+
+
+.order-card {
+    width: 100%;
+    box-sizing: border-box;
+
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid var(--color-border-default);
+    box-shadow: var(--shadow-sm);
+    padding: 24px;
+    font-family: Arial, sans-serif;
+    color: #222222;
+}
+
+/* Trạng thái đơn hàng */
+.order-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e8e8ef;
+    color: #85858f;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.order-status .material-symbols-outlined {
+    font-size: 20px;
+}
+
+/* Sản phẩm */
+.order-product {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+
+    padding: 20px 0;
+    border-bottom: 1px solid #e8e8ef;
+}
+
+.order-product-image {
+    position: relative;
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #e8e8ef;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.order-product-image img {
+    width: 85%;
+    height: 85%;
+    object-fit: contain;
+}
+
+.order-product-quantity {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 8px;
+    background: #eeeeF2;
+    color: #85858f;
+    font-size: 14px;
+    border-radius: 4px 0 4px 0;
+}
+
+.order-product-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.order-product-name {
+    font-size: 13px;
+    line-height: 1.5;
+    font-weight: 400;
+    color: #171717;
+}
+
+.order-seller-name {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #85858f;
+}
+
+.order-product-price {
+    flex-shrink: 0;
+    font-weight: 700;
+    font-size: 13px;
+    color: #45454d;
+    white-space: nowrap;
+}
+
+/* Tổng tiền */
+.order-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-top: 14px;
+}
+
+.order-total {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 17px;
+}
+
+.order-total span {
+    color: #92929b;
+    font-weight: 400;
+}
+
+.order-total strong {
+    color: #45454d;
+    font-size: 21px;
+    font-weight: 500;
+}
+
+/* Các nút */
+.order-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.btn-order {
+    padding: 10px 12px;
+    border: 1px solid #1677ff;
+    border-radius: 5px;
+    background: #ffffff;
+    color: #1677ff;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-order:hover {
+    background: #1677ff;
+    color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .order-card {
+        padding: 14px;
+    }
+
+    .order-product {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .order-product-image {
+        width: 80px;
+        height: 80px;
+    }
+
+    .order-product-info {
+        flex-basis: calc(100% - 100px);
+    }
+
+    .order-product-name {
+        font-size: 14px;
+    }
+
+    .order-product-price {
+        width: 100%;
+        text-align: right;
+    }
+
+    .order-total {
+        gap: 8px;
+        font-size: 17px;
+    }
+
+    .order-total strong {
+        font-size: 18px;
+    }
+
+    .btn-order {
+        font-size: 14px;
+    }
+}
+.orders-section{
     display: flex;
     flex-direction: column;
     gap: 1rem;
