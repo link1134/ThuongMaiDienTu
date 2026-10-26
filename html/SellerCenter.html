@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MangaHub Seller Center - Bảng điều khiển</title> <!-- Google Fonts & Material Symbols Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="../css/SellerCenter.css">
+</head>
+
+<body> <!-- Layout Wrapper -->
+    <div class="seller-layout"> <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-logo"> <span class="material-symbols-outlined brand-icon">auto_stories</span> </div>
+                <div class="brand-text">
+                    <h1 class="brand-title">MangaHub Seller</h1>
+                    <p class="brand-subtitle">Cổng thông tin người bán</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav"> <!-- Nhóm Tổng quan -->
+                <div class="nav-group"> <span class="nav-group-title">TỔNG QUAN</span>
+                    <a href="#" class="nav-item active" data-panel="seller-dashboard-panel">
+                        <span class="material-symbols-outlined nav-icon">dashboard</span>
+                        <span class="nav-label">Dashboard</span>
+                    </a>
+                </div> <!-- Nhóm Quản lý bán hàng -->
+                <div class="nav-group">
+                    <span class="nav-group-title">QUẢN LÝ BÁN HÀNG</span>
+                    <a href="#" class="nav-item" data-panel="post-management-panel">
+                        <span class="material-symbols-outlined nav-icon">menu_book</span>
+                        <span class="nav-label">Quản lý bài đăng</span>
+                        <span class="badge">48</span>
+                    </a>
+                    <a href="#" class="nav-item" data-panel="order-management-panel">
+                        <span class="material-symbols-outlined nav-icon">receipt_long</span>
+                        <span class="nav-label">Quản lý đơn bán</span>
+                        <span class="badge">15</span>
+                    </a>
+                    <a href="#" class="nav-item" data-panel="auction-management-panel">
+                        <span class="material-symbols-outlined nav-icon">gavel</span>
+                        <span class="nav-label">Quản lý đấu giá</span>
+                        <span class="badge">8</span>
+                    </a>
+                </div>
+                <!-- Nhóm Cài đặt -->
+                <div class="nav-group"> <span class="nav-group-title">CÀI ĐẶT</span>
+                    <a href="#" class="nav-item" data-panel="seller-profile-panel">
+                        <span class="material-symbols-outlined nav-icon">account_circle</span>
+                        <span class="nav-label">Hồ sơ người bán</span>
+                    </a>
+                    <a href="#" class="nav-item"> <span class="material-symbols-outlined nav-icon">help</span> <span
+                            class="nav-label">Trợ
+                            giúp</span> </a>
+                </div>
+            </nav> <!-- Sidebar Footer: Hồ sơ người bán tóm tắt -->
+            <div class="sidebar-footer">
+                <div class="seller-profile-card">
+                    <div class="seller-avatar"> <span class="material-symbols-outlined">storefront</span> </div>
+                    <div class="seller-info"> <span class="seller-name">Otaku Store VN</span> <span
+                            class="seller-rating">★ Uy tín 4.9 • Đã xác thực</span> </div>
+                </div> <button class="btn-logout" title="Đăng xuất"> <span
+                        class="material-symbols-outlined">logout</span> <span>Đăng xuất</span> </button>
+            </div>
+        </aside> <!-- MAIN CONTENT -->
+        <main class="main-content"> <!-- Top Bar / Filter Bar -->
+            <div id="seller-dashboard-panel">
+                <header class="content-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Bảng điều khiển Người Bán</h2>
+                        <p class="page-desc">Tổng hợp kết quả kinh doanh và luồng đấu giá manga thời gian thực</p>
+                    </div> <!-- Bộ chọn khoảng thời gian -->
+                    <div class="date-filter-wrapper">
+                        <div class="date-range-selector"> <span
+                                class="material-symbols-outlined date-icon">calendar_today</span> <span
+                                class="date-text">01/10/2023 &rarr; 31/10/2023</span> <span
+                                class="material-symbols-outlined dropdown-icon">expand_more</span> </div>
+                    </div>
+                </header> <!-- KPI Summary Cards -->
+                <div>
+                    <section class="kpi-grid"> <!-- Card 1 -->
+                        <div class="kpi-card">
+                            <div class="kpi-card-header"> <span class="kpi-label">TỔNG DOANH THU</span> <span
+                                    class="kpi-icon-badge blue"> <span class="material-symbols-outlined">payments</span>
+                                </span>
+                            </div>
+                            <div class="kpi-value">84.500.000 <span class="currency">₫</span></div>
+                            <div class="kpi-subtext positive"> <span
+                                    class="material-symbols-outlined trend-icon">trending_up</span> <span>+14.2% so với
+                                    tháng
+                                    trước</span> </div>
+                        </div> <!-- Card 2 -->
+                        <div class="kpi-card">
+                            <div class="kpi-card-header"> <span class="kpi-label">ĐƠN HÀNG HOÀN TẤT</span> <span
+                                    class="kpi-icon-badge sky"> <span class="material-symbols-outlined">task_alt</span>
+                                </span>
+                            </div>
+                            <div class="kpi-value">142 <span class="unit">đơn</span></div>
+                            <!-- <div class="kpi-subtext positive"> 
+                        <span
+                            class="material-symbols-outlined trend-icon">trending_up</span> <span>+8.5% • Tỉ lệ giao
+                            thành công 98%</span> 
+                        </div> -->
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-card-header"> <span class="kpi-label">ĐƠN HÀNG ĐANG XỬ LÝ</span> <span
+                                    class="kpi-icon-badge amber"> <span class="material-symbols-outlined ">
+                                        priority_high
+                                    </span> </span>
+                            </div>
+                            <div class="kpi-value">142 <span class="unit">đơn</span></div>
+                            <!-- <div class="kpi-subtext positive"> 
+                        <span
+                            class="material-symbols-outlined trend-icon">trending_up</span> <span>+8.5% • Tỉ lệ giao
+                            thành công 98%</span> 
+                        </div> -->
+                        </div>
+                        <!-- Card 3 -->
+                        <div class="kpi-card">
+                            <div class="kpi-card-header"> <span class="kpi-label">ĐẤU GIÁ ĐANG DIỄN RA</span> <span
+                                    class="kpi-icon-badge red"> <span class="material-symbols-outlined">gavel</span>
+                                </span>
+                            </div>
+                            <div class="kpi-value-inline"> <span class="kpi-value">8 <span
+                                        class="unit">phiên</span></span>
+                            </div>
+                            <div class="kpi-subtext neutral"> <span
+                                    class="material-symbols-outlined trend-icon">schedule</span>
+                                <span>2 phiên sắp kết thúc trong 1h</span>
+                            </div>
+                        </div> <!-- Card 4 -->
+
+                        <!-- <div class="kpi-card">
+                    <div class="kpi-card-header"> <span class="kpi-label">ĐÁNH GIÁ TÍCH CỰC</span> <span
+                            class="kpi-icon-badge amber"> <span class="material-symbols-outlined">thumb_up</span>
+                        </span> 
+                    </div>
+                    <div class="kpi-value">99.4%</div>
+                    <div class="kpi-subtext amber-text"> <span class="material-symbols-outlined star-icon">star</span>
+                        <span>Từ 318 lượt nhận xét</span> </div>
+                    </div> -->
+                    </section> <!-- Charts Section (Side-by-side) -->
+                    <section class="charts-grid"> <!-- BIỂU ĐỒ CỘT: Doanh thu theo thời gian -->
+                        <div class="dashboard-panel bar-chart-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h3 class="panel-title">Doanh thu theo thời gian</h3>
+                                    <p class="panel-subtitle">Phân tích dòng tiền giữa Bán thẳng Manga &amp; Đấu giá</p>
+                                </div> <!-- Legend trên biểu đồ cột -->
+                                <div class="bar-chart-legend"> <span class="legend-item"> <span
+                                            class="dot bar-primary"></span>
+                                        <span>Bán thẳng manga</span> </span> <span class="legend-item"> <span
+                                            class="dot bar-secondary"></span> <span>Đấu giá manga</span> </span> </div>
+                            </div> <!-- Chart Area -->
+                            <div class="chart-canvas">
+                                <div class="y-axis"> <span>30M ₫</span> <span>20M ₫</span> <span>10M ₫</span> <span>0M
+                                        ₫</span>
+                                </div>
+                                <div class="bars-container">
+                                    <div class="grid-line" style="bottom: 0%;"></div>
+                                    <div class="grid-line" style="bottom: 33.3%;"></div>
+                                    <div class="grid-line" style="bottom: 66.6%;"></div>
+                                    <div class="grid-line" style="bottom: 100%;"></div> <!-- Cột Tuần 1 -->
+                                    <div class="bar-group">
+                                        <div class="bar bar-primary" style="height: 43%;" title="Bán thẳng: 13M"></div>
+                                        <div class="bar bar-secondary" style="height: 27%;" title="Đấu giá: 8M"></div>
+                                        <span class="x-label">Tuần 1</span>
+                                    </div> <!-- Cột Tuần 2 -->
+                                    <div class="bar-group">
+                                        <div class="bar bar-primary" style="height: 56%;" title="Bán thẳng: 17M"></div>
+                                        <div class="bar bar-secondary" style="height: 40%;" title="Đấu giá: 12M"></div>
+                                        <span class="x-label">Tuần 2</span>
+                                    </div> <!-- Cột Tuần 3 (Peak) -->
+                                    <div class="bar-group highlight">
+                                        <div class="bar bar-primary" style="height: 75%;" title="Bán thẳng: 22.5M">
+                                        </div>
+                                        <div class="bar bar-secondary" style="height: 65%;" title="Đấu giá: 19.5M">
+                                        </div> <span class="x-label">Tuần 3 ★</span>
+                                    </div> <!-- Cột Tuần 4 -->
+                                    <div class="bar-group">
+                                        <div class="bar bar-primary" style="height: 50%;" title="Bán thẳng: 15M"></div>
+                                        <div class="bar bar-secondary" style="height: 44%;" title="Đấu giá: 13M"></div>
+                                        <span class="x-label">Tuần 4</span>
+                                    </div> <!-- Cột Dự phòng -->
+                                    <div class="bar-group forecast">
+                                        <div class="bar bar-primary striped" style="height: 35%;" title="Dự kiến: 10M">
+                                        </div>
+                                        <div class="bar bar-secondary striped" style="height: 25%;" title="Dự kiến: 7M">
+                                        </div>
+                                        <span class="x-label">Dự phòng</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer-summary"> <span>Tổng cơ cấu doanh thu tháng này:</span> <strong>Bán
+                                    lẻ:
+                                    55.400.000₫ (65.5%)</strong> <span class="separator">|</span> <strong>Đấu giá:
+                                    29.100.000₫
+                                    (34.5%)</strong> </div>
+                        </div> <!-- BIỂU ĐỒ TRÒN: Cơ cấu trạng thái đơn hàng -->
+                        <div class="dashboard-panel donut-chart-panel">
+                            <div class="panel-header">
+                                <div>
+                                    <h3 class="panel-title">Thống kê đơn hàng</h3>
+                                    <p class="panel-subtitle">Tổng số: 218 đơn</p>
+                                </div> <!-- Nút chuyển đổi % và Số lượng theo yêu cầu -->
+                                <div class="toggle-mode-group"> <button class="btn-toggle active" id="btnPercent">% Tỉ
+                                        lệ</button> <button class="btn-toggle" id="btnCount">Số lượng</button> </div>
+                            </div> <!-- Donut Graphic Container -->
+                            <div class="donut-display-wrapper">
+                                <div class="donut-chart-svg-container"> <!-- SVG Donut Chart 5 Phân khúc màu --> <svg
+                                        class="donut-svg" viewBox="0 0 160 160"> <!-- Vòng nền xám nhẹ -->
+                                        <circle cx="80" cy="80" r="58" class="donut-bg-track" />
+                                        <!-- Hoàn tất: 54% (Xanh ngọc / Emerald) -->
+                                        <circle cx="80" cy="80" r="58" class="donut-segment segment-complete"
+                                            stroke-dasharray="196.7 364.4" stroke-dashoffset="0" />
+                                        <!-- Đang giao: 18% (Tím chàm / Indigo) -->
+                                        <circle cx="80" cy="80" r="58" class="donut-segment segment-shipping"
+                                            stroke-dasharray="65.6 364.4" stroke-dashoffset="-196.7" />
+                                        <!-- Chờ gửi hàng: 14% (Xanh dương / Cyan-Blue) -->
+                                        <circle cx="80" cy="80" r="58" class="donut-segment segment-pending-ship"
+                                            stroke-dasharray="51.0 364.4" stroke-dashoffset="-262.3" />
+                                        <!-- Chờ xác nhận: 8% (Cam vàng / Amber) -->
+                                        <circle cx="80" cy="80" r="58" class="donut-segment segment-pending-confirm"
+                                            stroke-dasharray="29.1 364.4" stroke-dashoffset="-313.3" />
+                                        <!-- Đã hủy: 6% (Đỏ san hô / Coral-Red) -->
+                                        <circle cx="80" cy="80" r="58" class="donut-segment segment-cancelled"
+                                            stroke-dasharray="21.9 364.4" stroke-dashoffset="-342.4" />
+                                    </svg> <!-- Tâm vòng tròn -->
+                                    <div class="donut-center-info"> <span class="donut-center-val"
+                                            id="centerStatValue">54%</span> <span class="donut-center-lbl">Hoàn
+                                            tất</span>
+                                    </div>
+                                </div>
+                            </div> 
+                            <ul class="donut-legend-list">
+                                <li class="legend-row"> <span class="legend-mark-group"> <span
+                                            class="dot-status bg-complete"></span> <span class="status-name">Hoàn
+                                            tất</span>
+                                    </span> <span class="status-data val-percent">54%</span> <span
+                                        class="status-data val-count hidden">118 đơn</span> </li>
+                                <li class="legend-row"> <span class="legend-mark-group"> <span
+                                            class="dot-status bg-shipping"></span> <span class="status-name">Đang
+                                            giao</span>
+                                    </span> <span class="status-data val-percent">18%</span> <span
+                                        class="status-data val-count hidden">39 đơn</span> </li>
+                                <li class="legend-row"> <span class="legend-mark-group"> <span
+                                            class="dot-status bg-pending-ship"></span> <span class="status-name">Chờ gửi
+                                            hàng</span> </span> <span class="status-data val-percent">14%</span> <span
+                                        class="status-data val-count hidden">31 đơn</span> </li>
+                                <li class="legend-row"> <span class="legend-mark-group"> <span
+                                            class="dot-status bg-pending-confirm"></span> <span class="status-name">Chờ
+                                            xác
+                                            nhận</span> </span> <span class="status-data val-percent">8%</span> <span
+                                        class="status-data val-count hidden">17 đơn</span> </li>
+                                <li class="legend-row"> <span class="legend-mark-group"> <span
+                                            class="dot-status bg-cancelled"></span> <span class="status-name">Đã
+                                            hủy</span>
+                                    </span> <span class="status-data val-percent">6%</span> <span
+                                        class="status-data val-count hidden">13 đơn</span> </li>
+                            </ul>
+                        </div>
+                    </section> 
+                    <!-- <section class="dashboard-panel orders-panel">
+                        <div class="panel-header table-panel-header">
+                            <div class="table-title-area">
+                                <h3 class="panel-title">Đơn hàng gần đây</h3> <span class="badge-accent">5 đơn mới
+                                    nhất</span>
+                            </div>
+                            <div class="table-actions"> 
+                                <div class="table-filter-tabs"> <button class="filter-tab active">Tất cả</button>
+                                    <button class="filter-tab">Mua ngay</button> <button class="filter-tab">Đấu giá
+                                        thắng</button>
+                                </div> <button class="btn-secondary"> <span
+                                        class="material-symbols-outlined">download</span>
+                                    <span>Xuất Excel</span> </button> <a href="#" class="link-view-all">Xem tất cả
+                                    &rsaquo;</a>
+                            </div>
+                        </div> 
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>MÃ ĐƠN</th>
+                                        <th>TRUYỆN TRANH / SẢN PHẨM</th>
+                                        <th>NGƯỜI MUA</th>
+                                        <th>NGÀY ĐẶT</th>
+                                        <th>GIÁ TRỊ ĐƠN</th>
+                                        <th>TRẠNG THÁI</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="order-code">#ORD-99824</td>
+                                        <td class="product-cell"> <span class="product-type-tag auction">Đấu giá</span>
+                                            <div class="product-desc"> <span class="product-title">One Piece Tập 1 (Bản
+                                                    in đầu
+                                                    1997 - Japan)</span> <span class="product-sub">Tình trạng: Near Mint
+                                                    9.4 •
+                                                    Kèm bìa lót gốc</span> </div>
+                                        </td>
+                                        <td class="buyer-name">Phạm Hoàng Minh</td>
+                                        <td class="order-date">10 phút trước</td>
+                                        <td class="order-amount highlight-price">3.250.000 ₫</td>
+                                        <td><span class="tag-status status-pending">Chờ xác nhận</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="order-code">#ORD-99818</td>
+                                        <td class="product-cell"> <span class="product-type-tag direct">Mua ngay</span>
+                                            <div class="product-desc"> <span class="product-title">Trọn bộ Slam Dunk
+                                                    Deluxe
+                                                    Boxset 24 tập</span> <span class="product-sub">Nguyên màng co Seal •
+                                                    NXB Kim
+                                                    Đồng</span> </div>
+                                        </td>
+                                        <td class="buyer-name">Lê Quang Hải</td>
+                                        <td class="order-date">2 giờ trước</td>
+                                        <td class="order-amount">1.850.000 ₫</td>
+                                        <td><span class="tag-status status-shipping">Đang giao</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="order-code">#ORD-99805</td>
+                                        <td class="product-cell"> <span class="product-type-tag auction">Đấu giá</span>
+                                            <div class="product-desc"> <span class="product-title">Dragon Ball Tập 42 -
+                                                    Chữ ký
+                                                    tác giả Akira Toriyama</span> <span class="product-sub">Chứng thư
+                                                    giám định
+                                                    CGC Authentic</span> </div>
+                                        </td>
+                                        <td class="buyer-name">Trần Đình Bảo</td>
+                                        <td class="order-date">Hôm qua, 18:30</td>
+                                        <td class="order-amount highlight-price">12.500.000 ₫</td>
+                                        <td><span class="tag-status status-complete">Hoàn tất</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="order-code">#ORD-99792</td>
+                                        <td class="product-cell"> <span class="product-type-tag direct">Mua ngay</span>
+                                            <div class="product-desc"> <span class="product-title">Jujutsu Kaisen Vol 0
+                                                    - Bản
+                                                    bìa áo đặc biệt Anime Expo</span> <span class="product-sub">Mới 100%
+                                                    • Quà
+                                                    tặng kèm bookmark kim loại</span> </div>
+                                        </td>
+                                        <td class="buyer-name">Nguyễn Thảo My</td>
+                                        <td class="order-date">Hôm qua, 14:15</td>
+                                        <td class="order-amount">450.000 ₫</td>
+                                        <td><span class="tag-status status-complete">Hoàn tất</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="order-code">#ORD-99781</td>
+                                        <td class="product-cell"> <span class="product-type-tag direct">Mua ngay</span>
+                                            <div class="product-desc"> <span class="product-title">Berserk Deluxe
+                                                    Edition Vol
+                                                    1-3 (Tiếng Anh, Bìa da)</span> <span class="product-sub">Dark Horse
+                                                    Comics •
+                                                    Khổ lớn</span> </div>
+                                        </td>
+                                        <td class="buyer-name">Đặng Tuấn Kiệt</td>
+                                        <td class="order-date">28/10/2023</td>
+                                        <td class="order-amount">2.100.000 ₫</td>
+                                        <td><span class="tag-status status-cancelled">Đã hủy</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </section> -->
+                </div>
+            </div>
+            <div id="post-management-panel">
+
+            </div>
+            <div id="auction-management-panel">
+
+            </div>
+            <div id="seller-profile-panel">
+
+            </div>
+            <div id="order-management-panel">
+                <header class="content-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Quản lý đơn bán</h2>
+                        <p class="page-desc">Tổng hợp các mua nhận được từ khách hàng</p>
+                    </div> 
+                </header> 
+                <div class="orders-page">
+                    <!-- Thanh công cụ nằm ngoài bảng -->
+                    <div class="orders-toolbar">
+                        <div class="orders-search">
+                            <span class="material-symbols-outlined search-icon">
+search
+</span>
+                            <input type="text" placeholder="Tìm kiếm đơn hàng...">
+                        </div>
+
+                        <div class="orders-filters">
+                            <button class="filter-btn" type="button">
+                                <span>Ngày đặt hàng</span>
+                                <span class="filter-icon">▦</span>
+                            </button>
+
+                            <select class="filter-select">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="pending">Chờ xác nhận</option>
+                                <option value="confirmed">Đã xác nhận</option>
+                                <option value="shipping">Đang giao</option>
+                                <option value="completed">Hoàn thành</option>
+                                <option value="cancelled">Đã hủy</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Container bảng -->
+                    <div class="orders-table-container">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-col">
+                                        <input type="checkbox">
+                                    </th>
+                                    <th>Mã đơn hàng <span class="material-symbols-outlined sort-icon">
+                                            sort
+                                        </span></th>
+                                    <th>Khách hàng <span class="material-symbols-outlined sort-icon">
+                                            sort
+                                        </span></th>
+                                    <th>Ngày đặt <span class="material-symbols-outlined sort-icon">
+                                            sort
+                                        </span></th>
+                                    <th>Tổng tiền <span class="material-symbols-outlined sort-icon">
+                                            sort
+                                        </span></th>
+                                    <th>Số lượng <span class="material-symbols-outlined sort-icon">
+                                            sort
+                                        </span></th>
+                                    <th>Thanh toán <span class="material-symbols-outlined sort-icon">
+                                            sort
+                                        </span></th>
+                                    <th>Trạng thái <span class="material-symbols-outlined sort-icon">
+                                            sort
+                                        </span></th>
+                                    <th class="detail-col"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td class="checkbox-col">
+                                        <input type="checkbox">
+                                    </td>
+                                    <td class="order-id">#ORD-1024</td>
+                                    <td>Nguyễn Văn A</td>
+                                    <td>12/01/2026</td>
+                                    <td class="amount">650.000 ₫</td>
+                                    <td>3</td>
+                                    <td>
+                                        <span class="payment-paid">Đã thanh toán</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-pending">
+                                            Chờ xác nhận
+                                        </span>
+                                    </td>
+                                    <td class="detail-col">
+                                        <button class="detail-btn" type="button" onclick="viewOrder('ORD-1024')">
+                                            Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="checkbox-col">
+                                        <input type="checkbox">
+                                    </td>
+                                    <td class="order-id">#ORD-1025</td>
+                                    <td>Trần Thị B</td>
+                                    <td>13/01/2026</td>
+                                    <td class="amount">320.000 ₫</td>
+                                    <td>2</td>
+                                    <td>
+                                        <span class="payment-unpaid">Chưa thanh toán</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-shipping">
+                                            Đang giao
+                                        </span>
+                                    </td>
+                                    <td class="detail-col">
+                                        <button class="detail-btn" type="button" onclick="viewOrder('ORD-1025')">
+                                            Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="checkbox-col">
+                                        <input type="checkbox">
+                                    </td>
+                                    <td class="order-id">#ORD-1026</td>
+                                    <td>Lê Minh C</td>
+                                    <td>14/01/2026</td>
+                                    <td class="amount">180.000 ₫</td>
+                                    <td>1</td>
+                                    <td>
+                                        <span class="payment-paid">Đã thanh toán</span>
+                                    </td>
+                                    <td>
+                                        <span class="status-badge status-completed">
+                                            Hoàn thành
+                                        </span>
+                                    </td>
+                                    <td class="detail-col">
+                                        <button class="detail-btn" type="button" onclick="viewOrder('ORD-1026')">
+                                            Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div> <!-- Script nhỏ điều khiển toggle % và Số lượng trên biểu đồ tròn -->
+    <script> const btnPercent = document.getElementById('btnPercent'); const btnCount = document.getElementById('btnCount'); const percentVals = document.querySelectorAll('.val-percent'); const countVals = document.querySelectorAll('.val-count'); const centerStat = document.getElementById('centerStatValue'); btnPercent.addEventListener('click', () => { btnPercent.classList.add('active'); btnCount.classList.remove('active'); percentVals.forEach(el => el.classList.remove('hidden')); countVals.forEach(el => el.classList.add('hidden')); centerStat.textContent = '54%'; }); btnCount.addEventListener('click', () => { btnCount.classList.add('active'); btnPercent.classList.remove('active'); percentVals.forEach(el => el.classList.add('hidden')); countVals.forEach(el => el.classList.remove('hidden')); centerStat.textContent = '118'; }); </script>
+    <script>document.addEventListener("DOMContentLoaded", function () {
+            var navItems = document.querySelectorAll(
+                ".sidebar-nav .nav-item[data-panel]"
+            );
+
+            var panels = document.querySelectorAll(
+                ".main-content > div[id]"
+            );
+
+            navItems.forEach(function (item) {
+                item.addEventListener("click", function (event) {
+                    event.preventDefault();
+
+                    // Xóa active khỏi tất cả các nút
+                    navItems.forEach(function (navItem) {
+                        navItem.classList.remove("active");
+                    });
+
+                    // Thêm active vào nút vừa nhấn
+                    item.classList.add("active");
+
+                    // Ẩn tất cả các panel
+                    panels.forEach(function (panel) {
+                        panel.style.display = "none";
+                    });
+
+                    // Hiển thị panel tương ứng
+                    var panelId = item.getAttribute("data-panel");
+                    var targetPanel = document.getElementById(panelId);
+
+                    if (targetPanel) {
+                        targetPanel.style.display = "block";
+                    }
+                });
+            });
+        });</script>
+</body>
+
+</html>
