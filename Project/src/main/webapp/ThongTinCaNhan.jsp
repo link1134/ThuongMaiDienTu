@@ -22,7 +22,8 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/ThongTinCaNhan.css"/>
 </head>
 
-<body data-context-path="${pageContext.request.contextPath}" class="site-body"> <!-- ==================== HEADER ==================== -->
+<body data-context-path="${pageContext.request.contextPath}" class="site-body">
+<!-- ==================== HEADER ==================== -->
 <jsp:include page="/common/header.jsp"/>
 <main class="main-page-container"> <!-- Breadcrumb -->
     <nav class="breadcrumb-nav"><a href="#">Trang chủ</a> <span class="bc-sep">/</span> <a href="#">Tài khoản</a>
@@ -124,52 +125,166 @@
             </div> -->
         </aside> <!-- RIGHT COLUMN -->
         <section class="main-content-column"> <!-- 1. Order Logistics Status -->
-            <div class="card-panel management-section" id="ordersSection">
-                <div class="card-head-row">
-                    <div>
-                        <h2 class="card-main-title">Đơn hàng của tôi</h2>
-                    </div>
-                    <a href="#" class="card-link-action"> <span>Xem tất cả lịch sử (14)</span> <span
-                            class="material-symbols-outlined">arrow_forward</span> </a>
-                </div>
-                <div class="order-metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-top"><span class="material-symbols-outlined metric-icon">wallet</span>
-                            <span class="metric-number">01</span>
+            <div class="orders-section" id="ordersSection">
+                <div class="card-panel management-section">
+                    <div class="card-head-row">
+                        <div>
+                            <h2 class="card-main-title">Đơn hàng của tôi</h2>
                         </div>
-                        <div class="metric-label">CHỜ THANH TOÁN</div>
-                        <div class="metric-badge-sub red-text">Hạn chót 12h</div>
+                        <a href="#" class="card-link-action"> <span>Xem tất cả lịch sử (14)</span> <span
+                                class="material-symbols-outlined">arrow_forward</span> </a>
                     </div>
-                    <div class="metric-card">
-                        <div class="metric-top"> <span
-                                class="material-symbols-outlined metric-icon">inventory</span> <span
-                                class="metric-number">02</span></div>
-                        <div class="metric-label">ĐANG XỬ LÝ</div>
-                        <div class="metric-badge-sub">Kiểm định tem</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-top"> <span
-                                class="material-symbols-outlined metric-icon">local_shipping</span> <span
-                                class="metric-number">01</span></div>
-                        <div class="metric-label">ĐANG GIAO</div>
-                        <div class="metric-badge-sub">Tokyo &rarr; SG</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-top"> <span
-                                class="material-symbols-outlined metric-icon check-icon">check_circle</span> <span
-                                class="metric-number">28</span></div>
-                        <div class="metric-label">ĐÃ GIAO</div>
-                        <div class="metric-badge-sub">Nhập tủ sách</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-top"><span class="material-symbols-outlined metric-icon">cancel</span>
-                            <span class="metric-number">00</span>
+                    <div class="order-metrics-grid">
+                        <div class="metric-card active">
+                            <div class="metric-top"><span class="material-symbols-outlined metric-icon ">
+                            shopping_cart
+                        </span>
+                                <span class="metric-number">00</span>
+                            </div>
+                            <div class="metric-label">TẤT CẢ ĐƠN HÀNG</div>
                         </div>
-                        <div class="metric-label">ĐÃ HỦY</div>
-                        <div class="metric-badge-sub">Hoàn tiền 100%</div>
+                        <div class="metric-card">
+                            <div class="metric-top"><span class="material-symbols-outlined metric-icon">wallet</span>
+                                <span class="metric-number">01</span>
+                            </div>
+                            <div class="metric-label">CHỜ THANH TOÁN</div>
+
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-top"> <span
+                                    class="material-symbols-outlined metric-icon">inventory</span> <span
+                                    class="metric-number">02</span></div>
+                            <div class="metric-label">ĐANG XỬ LÝ</div>
+
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-top"> <span
+                                    class="material-symbols-outlined metric-icon">local_shipping</span> <span
+                                    class="metric-number">01</span></div>
+                            <div class="metric-label">ĐANG GIAO</div>
+
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-top"> <span
+                                    class="material-symbols-outlined metric-icon check-icon">check_circle</span> <span
+                                    class="metric-number">28</span></div>
+                            <div class="metric-label">ĐÃ GIAO</div>
+
+                        </div>
+                        <div class="metric-card">
+                            <div class="metric-top"><span class="material-symbols-outlined metric-icon">cancel</span>
+                                <span class="metric-number">00</span>
+                            </div>
+                            <div class="metric-label">ĐÃ HỦY</div>
+
+                        </div>
                     </div>
                 </div>
-            </div> <!-- 2. Personal Information Dossier -->
+                <div class="order-card">
+                    <!-- Trạng thái đơn hàng -->
+                    <div class="order-status">
+                            <span class="material-symbols-outlined">
+                            local_shipping
+                                </span>
+                        <span>Giao hàng thành công</span>
+                    </div>
+
+                    <!-- Danh sách sản phẩm -->
+                    <div class="order-product">
+                        <div class="order-product-image">
+                            <img src="images/xiaomi-redmi-note-9s.jpg"
+                                 alt="Xiaomi Redmi Note 9S">
+
+                            <span class="order-product-quantity">x1</span>
+                        </div>
+
+                        <div class="order-product-info">
+                            <div class="order-product-name">
+                                ĐIỆN THOẠI XIAOMI REDMI NOTE 9S - HÀNG
+                                CHÍNH HÃNG - Xanh cực quang - 4GB + 64GB
+                            </div>
+
+                            <div class="order-seller-name">
+                                Mimall
+                            </div>
+                        </div>
+
+                        <div class="order-product-price">
+                            4.480.000 ₫
+                        </div>
+                    </div>
+
+                    <!-- Tổng tiền và nút thao tác -->
+                    <div class="order-footer">
+                        <div class="order-total">
+                            <span>Tổng tiền:</span>
+                            <strong>4.282.000 ₫</strong>
+                        </div>
+
+                        <div class="order-actions">
+                            <button type="button" class="btn-order btn-buy-again">
+                                Mua lại
+                            </button>
+
+                            <button type="button" class="btn-order btn-order-detail">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="order-card">
+                    <!-- Trạng thái đơn hàng -->
+                    <div class="order-status">
+                            <span class="material-symbols-outlined">
+                            local_shipping
+                                </span>
+                        <span>Giao hàng thành công</span>
+                    </div>
+
+                    <!-- Danh sách sản phẩm -->
+                    <div class="order-product">
+                        <div class="order-product-image">
+                            <img src="images/xiaomi-redmi-note-9s.jpg"
+                                 alt="Xiaomi Redmi Note 9S">
+
+                            <span class="order-product-quantity">x1</span>
+                        </div>
+
+                        <div class="order-product-info">
+                            <div class="order-product-name">
+                                ĐIỆN THOẠI XIAOMI REDMI NOTE 9S - HÀNG
+                                CHÍNH HÃNG - Xanh cực quang - 4GB + 64GB
+                            </div>
+
+                            <div class="order-seller-name">
+                                Mimall
+                            </div>
+                        </div>
+
+                        <div class="order-product-price">
+                            4.480.000 ₫
+                        </div>
+                    </div>
+
+                    <!-- Tổng tiền và nút thao tác -->
+                    <div class="order-footer">
+                        <div class="order-total">
+                            <span>Tổng tiền:</span>
+                            <strong>4.282.000 ₫</strong>
+                        </div>
+
+                        <div class="order-actions">
+                            <button type="button" class="btn-order btn-buy-again">
+                                Mua lại
+                            </button>
+
+                            <button type="button" class="btn-order btn-order-detail">
+                                Xem chi tiết
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- 2. Personal Information Dossier -->
             <div class="card-panel management-section" id="profileSection">
                 <div class="card-head-row">
@@ -337,7 +452,7 @@
                 <div class="address-list">
 
                     <!-- Khu vực được tải lại bằng fetch -->
-                    <div class="addressItems" id="addressItems" >
+                    <div class="addressItems" id="addressItems">
                         <!-- Các địa chỉ sẽ được Servlet trả về tại đây -->
                     </div>
 

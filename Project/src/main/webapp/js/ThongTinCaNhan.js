@@ -1,10 +1,7 @@
 // Script số 1: fetch api chỉnh sửa
 document.addEventListener("DOMContentLoaded", function () {
-
     var editableFields = document.querySelectorAll(".editable-field");
-
     editableFields.forEach(function (field) {
-
         var editButton = field.querySelector(".edit-trigger");
         var actionGroup = field.querySelector(".group-action-icon");
         var valueElement = field.querySelector(".field-value");
@@ -312,12 +309,10 @@ document.addEventListener("DOMContentLoaded", function () {
 })();
 
 //Script số 2: Khiến 4 nút quản lý có thể nhấn và thay đổi tab
-
 document.addEventListener("DOMContentLoaded", function () {
     var menuItems = document.querySelectorAll(
         ".sidebar-nav-item[data-section]"
     );
-
     var sections = {
         orders: [document.getElementById("ordersSection")],
         address: [document.getElementById("addressSection")],
@@ -327,7 +322,6 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("settingsSection")
         ]
     };
-
     var allSections = Object.values(sections).flat();
 
     function showSection(sectionName) {
