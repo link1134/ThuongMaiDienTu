@@ -237,7 +237,7 @@
                                             tất</span>
                                     </div>
                                 </div>
-                            </div> 
+                            </div>
                             <ul class="donut-legend-list">
                                 <li class="legend-row"> <span class="legend-mark-group"> <span
                                             class="dot-status bg-complete"></span> <span class="status-name">Hoàn
@@ -265,7 +265,7 @@
                                         class="status-data val-count hidden">13 đơn</span> </li>
                             </ul>
                         </div>
-                    </section> 
+                    </section>
                     <!-- <section class="dashboard-panel orders-panel">
                         <div class="panel-header table-panel-header">
                             <div class="table-title-area">
@@ -373,7 +373,189 @@
                 </div>
             </div>
             <div id="post-management-panel">
+                <header class="content-header">
+                    <div class="header-titles">
+                        <h2 class="page-title">Quản lý bài đăng</h2>
+                        <p class="page-desc">Tổng hợp các bài đăng bán/đấu giá của bạn</p>
+                    </div>
+                </header>
+                <div class="orders-page">
+                    <!-- Thanh công cụ nằm ngoài bảng -->
+                    <div class="post-toolbar">
+                        <div class="post-tabs">
+                            <button class="post-tab active" type="button">
+                                Đăng bài
+                            </button>
 
+                            <button class="post-tab" type="button">
+                                Đấu giá
+                            </button>
+                        </div>
+                        <div class="new-post-group-btn">
+                            <button class="btn-create-post" type="button" id="postDropdownBtn">
+                                <span class="material-symbols-outlined">add</span>
+                                Đăng bài mới
+                            </button>
+                            <div class="post-menu" id="postMenu">
+                                <button type="button"  id="openListingPopup">
+                                    Đăng bài bán
+                                </button>
+
+                                <button type="button" >
+                                    Đăng bài đấu giá
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="orders-toolbar">
+                        <div class="orders-search">
+                            <span class="material-symbols-outlined search-icon">
+                                search
+                            </span>
+                            <input type="text" placeholder="Tìm kiếm đơn hàng...">
+                        </div>
+
+                        <!-- <div class="orders-filters">
+                            <button class="filter-btn" type="button">
+                                <span>Ngày đặt hàng</span>
+                                <span class="filter-icon">▦</span>
+                            </button>
+
+                            <select class="filter-select">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="pending">Chờ xác nhận</option>
+                                <option value="confirmed">Đã xác nhận</option>
+                                <option value="shipping">Đang giao</option>
+                                <option value="completed">Hoàn thành</option>
+                                <option value="cancelled">Đã hủy</option>
+                            </select>
+                        </div> -->
+                    </div>
+
+                    <!-- Container bảng -->
+
+                    <div class="orders-table-container">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th class="checkbox-col">
+                                        <input type="checkbox">
+                                    </th>
+                                    <th>
+                                        Mã bài đăng
+                                        <span class="material-symbols-outlined sort-icon">sort</span>
+                                    </th>
+                                    <th>
+                                        Tên bài đăng
+                                        <span class="material-symbols-outlined sort-icon">sort</span>
+                                    </th>
+                                    <th>
+                                        Giá bán
+                                        <span class="material-symbols-outlined sort-icon">sort</span>
+                                    </th>
+                                    <th>
+                                        Số lượng
+                                        <span class="material-symbols-outlined sort-icon">sort</span>
+                                    </th>
+                                    <th>
+                                        Trạng thái
+                                        <span class="material-symbols-outlined sort-icon">sort</span>
+                                    </th>
+                                    <th>
+                                        Cập nhật lần cuối
+                                        <span class="material-symbols-outlined sort-icon">sort</span>
+                                    </th>
+                                    <th>
+                                        Loại sản phẩm
+                                        <span class="material-symbols-outlined sort-icon">sort</span>
+                                    </th>
+                                    <th class="detail-col"></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <tr>
+                                    <td class="checkbox-col">
+                                        <input type="checkbox">
+                                    </td>
+                                    <td class="order-id">#LST-1024</td>
+                                    <td class="product-name">Chuyển Sinh Thành Slime - Tập 1</td>
+                                    <td class="amount">65.000 ₫</td>
+                                    <td>5</td>
+                                    <td>
+                                        <span class="listing-status status-active">
+                                            Đang hiển thị
+                                        </span>
+                                    </td>
+                                    <td class="listing-updated">28/10/2026 08:30</td>
+                                    <td>
+                                        <span class="product-type type-manga">
+                                            Manga
+                                        </span>
+                                    </td>
+                                    <td class="detail-col">
+                                        <button class="detail-btn" type="button" onclick="viewListing('LST-1024')">
+                                            Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="checkbox-col">
+                                        <input type="checkbox">
+                                    </td>
+                                    <td class="order-id">#LST-1025</td>
+                                    <td class="product-name">Doraemon - Tuyển tập truyện ngắn</td>
+                                    <td class="amount">120.000 ₫</td>
+                                    <td>2</td>
+                                    <td>
+                                        <span class="listing-status status-pending">
+                                            Chờ duyệt
+                                        </span>
+                                    </td>
+                                    <td class="listing-updated">27/10/2026 21:15</td>
+                                    <td>
+                                        <span class="product-type type-manga">
+                                            Manga
+                                        </span>
+                                    </td>
+                                    <td class="detail-col">
+                                        <button class="detail-btn" type="button" onclick="viewListing('LST-1025')">
+                                            Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="checkbox-col">
+                                        <input type="checkbox">
+                                    </td>
+                                    <td class="order-id">#LST-1026</td>
+                                    <td class="product-name">Art Book - Thế giới Ghibli</td>
+                                    <td class="amount">350.000 ₫</td>
+                                    <td>1</td>
+                                    <td>
+                                        <span class="listing-status status-hidden">
+                                            Đã ẩn
+                                        </span>
+                                    </td>
+                                    <td class="listing-updated">26/10/2026 14:40</td>
+                                    <td>
+                                        <span class="product-type type-artbook">
+                                            Art Book
+                                        </span>
+                                    </td>
+                                    <td class="detail-col">
+                                        <button class="detail-btn" type="button" onclick="viewListing('LST-1026')">
+                                            Chi tiết
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
             </div>
             <div id="auction-management-panel">
 
@@ -384,17 +566,17 @@
             <div id="order-management-panel">
                 <header class="content-header">
                     <div class="header-titles">
-                        <h2 class="page-title">Quản lý đơn bán</h2>
+                        <h2 class="page-title">Quản lý đơn hàng</h2>
                         <p class="page-desc">Tổng hợp các mua nhận được từ khách hàng</p>
-                    </div> 
-                </header> 
+                    </div>
+                </header>
                 <div class="orders-page">
                     <!-- Thanh công cụ nằm ngoài bảng -->
                     <div class="orders-toolbar">
                         <div class="orders-search">
                             <span class="material-symbols-outlined search-icon">
-search
-</span>
+                                search
+                            </span>
                             <input type="text" placeholder="Tìm kiếm đơn hàng...">
                         </div>
 
@@ -527,6 +709,337 @@ search
                 </div>
             </div>
         </main>
+    </div>
+     <div class="listing-modal" id="listingModal">
+
+        <div class="listing-popup" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+
+            <!-- Header -->
+            <header class="popup-header">
+                <div class="popup-heading">
+                    <h2 id="popupTitle">Tạo bài đăng mới</h2>
+                    <p>Điền thông tin sản phẩm bạn muốn bán trên MangaZ.</p>
+                </div>
+
+                <button type="button" class="close-popup-button" id="closeListingPopup" aria-label="Đóng popup">
+                    ×
+                </button>
+            </header>
+
+            <!-- Nội dung có thanh cuộn -->
+            <form id="createListingForm" action="#" method="post" enctype="multipart/form-data">
+
+                <div class="popup-body">
+
+                    <!-- 01. Thông tin cơ bản -->
+                    <section class="form-section">
+
+                        <div class="section-heading">
+                            <div class="section-number">01</div>
+                            <div>
+                                <h3>Thông tin cơ bản</h3>
+                                <p>Thông tin nhận diện sản phẩm.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+
+                            <div class="form-group full-width">
+                                <label for="productType">
+                                    Loại sản phẩm <span class="required">*</span>
+                                </label>
+
+                                <select id="productType" name="productTypeId" required>
+                                    <option value="">Chọn loại sản phẩm</option>
+                                    <option value="1">Manga</option>
+                                    <option value="2">ArtBook</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="title">
+                                    Tên sản phẩm <span class="required">*</span>
+                                </label>
+
+                                <input type="text" id="title" name="title" maxlength="200"
+                                    placeholder="Ví dụ: Chuyển Sinh Thành Slime - Tập 1" required>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <div class="label-with-action">
+                                    <label>Tác giả</label>
+                                    <button type="button" class="add-person-button" data-add-target="authors">
+                                        + Thêm tác giả
+                                    </button>
+                                </div>
+
+                                <div class="person-list" id="authors">
+                                    <div class="person-row">
+                                        <input type="text" name="authors[]" placeholder="Tên tác giả">
+
+                                        <button type="button" class="remove-person-button" disabled>−</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <div class="label-with-action">
+                                    <label>Họa sĩ / Minh họa</label>
+                                    <button type="button" class="add-person-button" data-add-target="artists">
+                                        + Thêm họa sĩ
+                                    </button>
+                                </div>
+
+                                <div class="person-list" id="artists">
+                                    <div class="person-row">
+                                        <input type="text" name="artists[]" placeholder="Tên họa sĩ">
+
+                                        <button type="button" class="remove-person-button" disabled>−</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- 02. Ảnh bìa -->
+                    <section class="form-section">
+
+                        <div class="section-heading">
+                            <div class="section-number">02</div>
+                            <div>
+                                <h3>Ảnh bìa sản phẩm</h3>
+                                <p>Chọn ảnh đại diện cho bài đăng.</p>
+                            </div>
+                        </div>
+
+                        <div class="cover-upload">
+
+                            <div class="cover-preview">
+                                <div class="cover-placeholder" id="coverPlaceholder">
+                                    Chưa có ảnh bìa
+                                </div>
+
+                                <img id="coverImage" alt="Ảnh bìa xem trước" hidden>
+                            </div>
+
+                            <div class="cover-upload-info">
+                                <p>
+                                    Chọn ảnh rõ nét, thể hiện đúng sản phẩm.
+                                    Hỗ trợ JPG, PNG, WEBP, tối đa 5 MB.
+                                </p>
+
+                                <label for="coverFile" class="upload-button">
+                                    ↑ Chọn ảnh bìa
+                                </label>
+
+                                <input type="file" id="coverFile" name="coverImage"
+                                    accept="image/jpeg,image/png,image/webp" hidden>
+
+                                <p id="coverFileName"></p>
+
+                                <button type="button" class="remove-cover-button" id="removeCover" hidden>
+                                    Xóa ảnh đã chọn
+                                </button>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- 03. Tình trạng -->
+                    <section class="form-section">
+
+                        <div class="section-heading">
+                            <div class="section-number">03</div>
+                            <div>
+                                <h3>Tình trạng sản phẩm</h3>
+                                <p>Mô tả thực tế tình trạng của sản phẩm.</p>
+                            </div>
+                        </div>
+
+                        <div class="attribute-note">
+                            <p>
+                                Các thuộc tính phụ thuộc vào loại sản phẩm.
+                                Trường có dấu <span class="required">*</span>
+                                là bắt buộc.
+                            </p>
+                        </div>
+
+                        <!-- DEMO thuộc tính Manga.
+                         JSP thực tế sẽ sinh các trường từ database. -->
+                        <div class="attribute-grid" id="conditionAttributes">
+
+                            <div class="form-group">
+                                <label for="attr2">
+                                    Tình trạng tổng thể <span class="required">*</span>
+                                </label>
+                                <textarea id="attr2" name="attributes[2]"
+                                    placeholder="Mức độ mới và chất lượng tổng thể..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr3">
+                                    Tình trạng bìa <span class="required">*</span>
+                                </label>
+                                <textarea id="attr3" name="attributes[3]" placeholder="Độ nguyên vẹn, trầy xước..."
+                                    required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr4">Tình trạng gáy</label>
+                                <textarea id="attr4" name="attributes[4]"
+                                    placeholder="Độ liên kết, cong hoặc rách..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr5">Tình trạng giấy</label>
+                                <textarea id="attr5" name="attributes[5]"
+                                    placeholder="Màu sắc và chất lượng giấy..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr6">Độ đầy đủ trang</label>
+                                <textarea id="attr6" name="attributes[6]"
+                                    placeholder="Đầy đủ trang, có thiếu trang không..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr7">Tình trạng góc sách</label>
+                                <textarea id="attr7" name="attributes[7]"
+                                    placeholder="Góc sách cong, cấn hoặc rách..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr8">Tình trạng chữ viết</label>
+                                <textarea id="attr8" name="attributes[8]"
+                                    placeholder="Ghi chú hoặc đánh dấu trên sách..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr9">Tình trạng ẩm mốc</label>
+                                <textarea id="attr9" name="attributes[9]"
+                                    placeholder="Dấu hiệu ẩm mốc nếu có..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr10">Tình trạng mùi</label>
+                                <textarea id="attr10" name="attributes[10]"
+                                    placeholder="Mùi của sách nếu có..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="attr11">Phụ kiện đi kèm</label>
+                                <textarea id="attr11" name="attributes[11]"
+                                    placeholder="Phụ kiện, quà tặng đi kèm..."></textarea>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- 04. Mô tả -->
+                    <section class="form-section">
+
+                        <div class="section-heading">
+                            <div class="section-number">04</div>
+                            <div>
+                                <h3>Mô tả sản phẩm</h3>
+                                <p>Giới thiệu ngắn gọn và cung cấp thông tin chi tiết.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+
+                            <div class="form-group full-width">
+                                <label for="shortDescription">
+                                    Mô tả ngắn <span class="required">*</span>
+                                </label>
+
+                                <textarea id="shortDescription" name="shortDescription" rows="2" maxlength="300"
+                                    placeholder="Giới thiệu ngắn về sản phẩm..." required></textarea>
+
+                                <div class="field-footer">
+                                    <span>Hiển thị trên thẻ sản phẩm.</span>
+                                    <span id="shortDescriptionCount">0/300</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="description">Mô tả chi tiết</label>
+
+                                <textarea id="description" name="description" rows="4"
+                                    placeholder="Thông tin bổ sung dành cho người mua..."></textarea>
+                            </div>
+
+                        </div>
+                    </section>
+
+                    <!-- 05. Giá bán -->
+                    <section class="form-section">
+
+                        <div class="section-heading">
+                            <div class="section-number">05</div>
+                            <div>
+                                <h3>Thông tin bán hàng</h3>
+                                <p>Thiết lập giá bán và số lượng.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-grid">
+
+                            <div class="form-group">
+                                <label for="price">
+                                    Giá bán (VNĐ) <span class="required">*</span>
+                                </label>
+
+                                <div class="price-input">
+                                    <input type="number" id="price" name="price" min="1" step="1" placeholder="65000"
+                                        required>
+                                    <span>₫</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="originalPrice">Giá gốc (VNĐ)</label>
+
+                                <div class="price-input">
+                                    <input type="number" id="originalPrice" name="originalPrice" min="0" step="1"
+                                        placeholder="85000">
+                                    <span>₫</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="quantity">
+                                    Số lượng <span class="required">*</span>
+                                </label>
+
+                                <input type="number" id="quantity" name="quantity" min="1" step="1" value="1" required>
+                            </div>
+
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- Footer luôn nằm dưới popup -->
+                <footer class="popup-footer">
+                    <p>
+                        <span class="required">*</span> Trường bắt buộc
+                    </p>
+
+                    <div class="footer-actions">
+                        <button type="button" class="button-secondary" id="cancelListing">
+                            Hủy
+                        </button>
+
+                        <button type="submit" class="button-primary">
+                            Gửi duyệt →
+                        </button>
+                    </div>
+                </footer>
+
+            </form>
+        </div>
     </div> <!-- Script nhỏ điều khiển toggle % và Số lượng trên biểu đồ tròn -->
     <script> const btnPercent = document.getElementById('btnPercent'); const btnCount = document.getElementById('btnCount'); const percentVals = document.querySelectorAll('.val-percent'); const countVals = document.querySelectorAll('.val-count'); const centerStat = document.getElementById('centerStatValue'); btnPercent.addEventListener('click', () => { btnPercent.classList.add('active'); btnCount.classList.remove('active'); percentVals.forEach(el => el.classList.remove('hidden')); countVals.forEach(el => el.classList.add('hidden')); centerStat.textContent = '54%'; }); btnCount.addEventListener('click', () => { btnCount.classList.add('active'); btnPercent.classList.remove('active'); percentVals.forEach(el => el.classList.add('hidden')); countVals.forEach(el => el.classList.remove('hidden')); centerStat.textContent = '118'; }); </script>
     <script>document.addEventListener("DOMContentLoaded", function () {
@@ -565,6 +1078,214 @@ search
                 });
             });
         });</script>
+        <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var postButton = document.getElementById("postDropdownBtn");
+        var postMenu = document.getElementById("postMenu");
+
+        postButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+
+            if (postMenu.style.display === "block") {
+                postMenu.style.display = "none";
+            } else {
+                postMenu.style.display = "block";
+            }
+        });
+
+        document.addEventListener("click", function () {
+            postMenu.style.display = "none";
+        });
+    });
+</script>
+<script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            var modal = document.getElementById("listingModal");
+            var openButton = document.getElementById("openListingPopup");
+            var closeButton = document.getElementById("closeListingPopup");
+            var cancelButton = document.getElementById("cancelListing");
+            var form = document.getElementById("createListingForm");
+
+            // Mở và đóng popup
+            function openPopup() {
+                modal.classList.add("show");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closePopup() {
+                modal.classList.remove("show");
+                document.body.style.overflow = "";
+            }
+
+            openButton.addEventListener("click", openPopup);
+            closeButton.addEventListener("click", closePopup);
+            cancelButton.addEventListener("click", closePopup);
+
+            // Nhấn vào nền bên ngoài khung popup để đóng
+            modal.addEventListener("click", function (event) {
+                if (event.target === modal) {
+                    closePopup();
+                }
+            });
+
+            // Đóng bằng phím Escape
+            document.addEventListener("keydown", function (event) {
+                if (event.key === "Escape" && modal.classList.contains("show")) {
+                    closePopup();
+                }
+            });
+
+            // Thêm tác giả / họa sĩ
+            document.querySelectorAll("[data-add-target]").forEach(function (button) {
+
+                button.addEventListener("click", function () {
+                    var targetId = button.getAttribute("data-add-target");
+                    var list = document.getElementById(targetId);
+
+                    var row = document.createElement("div");
+                    row.className = "person-row";
+
+                    var input = document.createElement("input");
+                    input.type = "text";
+
+                    if (targetId === "authors") {
+                        input.name = "authors[]";
+                        input.placeholder = "Tên tác giả";
+                    } else {
+                        input.name = "artists[]";
+                        input.placeholder = "Tên họa sĩ";
+                    }
+
+                    var removeButton = document.createElement("button");
+                    removeButton.type = "button";
+                    removeButton.className = "remove-person-button";
+                    removeButton.textContent = "−";
+                    removeButton.setAttribute("aria-label", "Xóa dòng");
+
+                    removeButton.addEventListener("click", function () {
+                        row.remove();
+                        updateRemoveButtons(list);
+                    });
+
+                    row.appendChild(input);
+                    row.appendChild(removeButton);
+                    list.appendChild(row);
+
+                    updateRemoveButtons(list);
+                    input.focus();
+                });
+            });
+
+            // Xóa các dòng có sẵn
+            document.querySelectorAll(".person-list").forEach(function (list) {
+
+                list.querySelectorAll(".remove-person-button").forEach(function (button) {
+
+                    button.addEventListener("click", function () {
+                        var rows = list.querySelectorAll(".person-row");
+
+                        if (rows.length > 1) {
+                            button.closest(".person-row").remove();
+                            updateRemoveButtons(list);
+                        }
+                    });
+                });
+
+                updateRemoveButtons(list);
+            });
+
+            function updateRemoveButtons(list) {
+                var rows = list.querySelectorAll(".person-row");
+
+                rows.forEach(function (row) {
+                    row.querySelector(".remove-person-button").disabled =
+                        rows.length === 1;
+                });
+            }
+
+            // Xem trước ảnh bìa
+            var coverFile = document.getElementById("coverFile");
+            var coverImage = document.getElementById("coverImage");
+            var coverPlaceholder = document.getElementById("coverPlaceholder");
+            var coverFileName = document.getElementById("coverFileName");
+            var removeCover = document.getElementById("removeCover");
+
+            var currentImageUrl = null;
+
+            coverFile.addEventListener("change", function () {
+                var file = coverFile.files[0];
+
+                if (!file) {
+                    return;
+                }
+
+                var allowedTypes = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/webp"
+                ];
+
+                if (!allowedTypes.includes(file.type)) {
+                    alert("Vui lòng chọn ảnh JPG, PNG hoặc WEBP.");
+                    coverFile.value = "";
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    alert("Ảnh bìa không được vượt quá 5 MB.");
+                    coverFile.value = "";
+                    return;
+                }
+
+                if (currentImageUrl) {
+                    URL.revokeObjectURL(currentImageUrl);
+                }
+
+                currentImageUrl = URL.createObjectURL(file);
+
+                coverImage.src = currentImageUrl;
+                coverImage.hidden = false;
+                coverPlaceholder.hidden = true;
+                coverFileName.textContent = file.name;
+                removeCover.hidden = false;
+            });
+
+            removeCover.addEventListener("click", function () {
+                coverFile.value = "";
+                coverImage.removeAttribute("src");
+                coverImage.hidden = true;
+                coverPlaceholder.hidden = false;
+                coverFileName.textContent = "";
+                removeCover.hidden = true;
+
+                if (currentImageUrl) {
+                    URL.revokeObjectURL(currentImageUrl);
+                    currentImageUrl = null;
+                }
+            });
+
+            // Đếm ký tự mô tả ngắn
+            var shortDescription = document.getElementById("shortDescription");
+            var counter = document.getElementById("shortDescriptionCount");
+
+            shortDescription.addEventListener("input", function () {
+                counter.textContent = shortDescription.value.length + "/300";
+            });
+
+            // DEMO: Chưa kết nối Servlet
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                if (!form.reportValidity()) {
+                    return;
+                }
+
+                alert("Form hợp lệ. Cần kết nối Servlet để lưu bài đăng.");
+            });
+
+        });
+    </script>
 </body>
 
 </html>
