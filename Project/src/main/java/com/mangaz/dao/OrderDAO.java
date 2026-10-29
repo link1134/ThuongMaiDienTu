@@ -5,6 +5,8 @@ import com.mangaz.model.OrderDetail;
 import com.mangaz.util.DBConnection;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDAO {
     public boolean createOrder(Order order) {
@@ -117,6 +119,74 @@ public class OrderDAO {
                 }
             }
         }
+    }
+    // Lấy danh sách đơn hàng theo UserId kèm danh sách chi tiết sản phẩm
+    public List<Order> getOrdersByUserId(int userId) {
+        List<Order> orders = new ArrayList<>();
+        String sqlOrders = """
+            SELECT OrderId, UserId, RecipientName, PhoneNumber, ShippingAddress, 
+                   ShippingFee, TotalAmount, PaymentMethod, DeliveryMethod, Status, CreatedAt 
+            FROM dbo.Orders 
+            WHERE UserId = ? 
+            ORDER BY CreatedAt DESC
+        """;
+
+        String sqlDetails = """
+            SELECT od.OrderDetailId, od.OrderId, od.ListingId, od.Quantity, od.Price, 
+                   l.Title, COALESCE(u.FullName, u.Username) AS SellerName, li.ImageUrl
+            FROM dbo.OrderDetails od
+            JOIN dbo.Listings l ON od.ListingId = l.ListingId
+            JOIN dbo.Users u ON l.SellerId = u.Id
+            LEFT JOIN dbo.ListingImages li ON l.ListingId = li.ListingId AND li.IsPrimary = 1
+            WHERE od.OrderId = ?
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement psOrder = conn.prepareStatement(sqlOrders)) {
+
+            psOrder.setInt(1, userId);
+            try (ResultSet rsOrder = psOrder.executeQuery()) {
+                while (rsOrder.next()) {
+                    Order order = new Order();
+                    order.setOrderId(rsOrder.getInt("OrderId"));
+                    order.setUserId(rsOrder.getInt("UserId"));
+                    order.setRecipientName(rsOrder.getString("RecipientName"));
+                    order.setPhoneNumber(rsOrder.getString("PhoneNumber"));
+                    order.setShippingAddress(rsOrder.getString("ShippingAddress"));
+                    order.setShippingFee(rsOrder.getBigDecimal("ShippingFee"));
+                    order.setTotalAmount(rsOrder.getBigDecimal("TotalAmount"));
+                    order.setPaymentMethod(rsOrder.getString("PaymentMethod"));
+                    order.setDeliveryMethod(rsOrder.getString("DeliveryMethod"));
+                    order.setStatus(rsOrder.getString("Status"));
+                    order.setCreatedAt(rsOrder.getTimestamp("CreatedAt"));
+
+                    // Load danh sách OrderDetails cho đơn hàng này
+                    List<OrderDetail> details = new ArrayList<>();
+                    try (PreparedStatement psDetail = conn.prepareStatement(sqlDetails)) {
+                        psDetail.setInt(1, order.getOrderId());
+                        try (ResultSet rsDetail = psDetail.executeQuery()) {
+                            while (rsDetail.next()) {
+                                OrderDetail detail = new OrderDetail();
+                                detail.setOrderDetailId(rsDetail.getInt("OrderDetailId"));
+                                detail.setOrderId(rsDetail.getInt("OrderId"));
+                                detail.setListingId(rsDetail.getInt("ListingId"));
+                                detail.setQuantity(rsDetail.getInt("Quantity"));
+                                detail.setPrice(rsDetail.getBigDecimal("Price"));
+                                detail.setProductTitle(rsDetail.getString("Title"));
+                                detail.setSellerName(rsDetail.getString("SellerName"));
+                                detail.setProductImageUrl(rsDetail.getString("ImageUrl"));
+                                details.add(detail);
+                            }
+                        }
+                    }
+                    order.setDetails(details);
+                    orders.add(order);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return orders;
     }
 }
 

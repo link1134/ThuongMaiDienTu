@@ -139,13 +139,13 @@
                             <div class="metric-top"><span class="material-symbols-outlined metric-icon ">
                             shopping_cart
                         </span>
-                                <span class="metric-number">00</span>
+                                <span class="metric-number"><fmt:formatNumber value="${totalOrdersCount}" pattern="00"/></span>
                             </div>
                             <div class="metric-label">TẤT CẢ ĐƠN HÀNG</div>
                         </div>
                         <div class="metric-card">
                             <div class="metric-top"><span class="material-symbols-outlined metric-icon">wallet</span>
-                                <span class="metric-number">01</span>
+                                <span class="metric-number"><fmt:formatNumber value="${pendingCount}" pattern="00"/></span>
                             </div>
                             <div class="metric-label">CHỜ THANH TOÁN</div>
 
@@ -153,27 +153,27 @@
                         <div class="metric-card">
                             <div class="metric-top"> <span
                                     class="material-symbols-outlined metric-icon">inventory</span> <span
-                                    class="metric-number">02</span></div>
+                                    class="metric-number"><fmt:formatNumber value="${processingCount}" pattern="00"/></span></div>
                             <div class="metric-label">ĐANG XỬ LÝ</div>
 
                         </div>
                         <div class="metric-card">
                             <div class="metric-top"> <span
                                     class="material-symbols-outlined metric-icon">local_shipping</span> <span
-                                    class="metric-number">01</span></div>
+                                    class="metric-number"><fmt:formatNumber value="${shippingCount}" pattern="00"/></span></div>
                             <div class="metric-label">ĐANG GIAO</div>
 
                         </div>
                         <div class="metric-card">
                             <div class="metric-top"> <span
                                     class="material-symbols-outlined metric-icon check-icon">check_circle</span> <span
-                                    class="metric-number">28</span></div>
+                                    class="metric-number"><fmt:formatNumber value="${completedCount}" pattern="00"/></span></div>
                             <div class="metric-label">ĐÃ GIAO</div>
 
                         </div>
                         <div class="metric-card">
                             <div class="metric-top"><span class="material-symbols-outlined metric-icon">cancel</span>
-                                <span class="metric-number">00</span>
+                                <span class="metric-number"><fmt:formatNumber value="${cancelledCount}" pattern="00"/></span>
                             </div>
                             <div class="metric-label">ĐÃ HỦY</div>
 
@@ -182,108 +182,92 @@
                 </div>
                 <div class="order-card">
                     <!-- Trạng thái đơn hàng -->
-                    <div class="order-status">
-                            <span class="material-symbols-outlined">
-                            local_shipping
-                                </span>
-                        <span>Giao hàng thành công</span>
-                    </div>
-
-                    <!-- Danh sách sản phẩm -->
-                    <div class="order-product">
-                        <div class="order-product-image">
-                            <img src="images/xiaomi-redmi-note-9s.jpg"
-                                 alt="Xiaomi Redmi Note 9S">
-
-                            <span class="order-product-quantity">x1</span>
-                        </div>
-
-                        <div class="order-product-info">
-                            <div class="order-product-name">
-                                ĐIỆN THOẠI XIAOMI REDMI NOTE 9S - HÀNG
-                                CHÍNH HÃNG - Xanh cực quang - 4GB + 64GB
+                    <!-- DANH SÁCH ĐƠN HÀNG ĐỘNG -->
+                    <c:choose>
+                        <c:when test="${empty orders}">
+                            <div class="card-panel" style="text-align: center; padding: 40px; color: #666; margin-top: 15px;">
+                                <span class="material-symbols-outlined" style="font-size: 48px; color: #ccc;">receipt_long</span>
+                                <p style="margin-top: 10px;">Bạn chưa có đơn hàng nào.</p>
                             </div>
+                        </c:when>
+                        <c:otherwise>
+                            <c:forEach var="order" items="${orders}">
+                                <div class="order-card">
+                                    <!-- Trạng thái đơn hàng -->
+                                    <div class="order-status">
+                                        <c:choose>
+                                            <c:when test="${order.status eq 'Completed'}">
+                                                <span class="material-symbols-outlined" style="color: #10b981;">check_circle</span>
+                                                <span>Giao hàng thành công</span>
+                                            </c:when>
+                                            <c:when test="${order.status eq 'Shipping'}">
+                                                <span class="material-symbols-outlined" style="color: #3b82f6;">local_shipping</span>
+                                                <span>Đang giao hàng</span>
+                                            </c:when>
+                                            <c:when test="${order.status eq 'Processing'}">
+                                                <span class="material-symbols-outlined metric-icon" style="color: #b45309">inventory</span>
+                                                <span>Đang xử lý</span>
+                                            </c:when>
+                                            <c:when test="${order.status eq 'Cancelled'}">
+                                                <span class="material-symbols-outlined" style="color: #ef4444;">cancel</span>
+                                                <span>Đã hủy</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="material-symbols-outlined metric-icon" style="color: #7c3aed">wallet</span>
+                                                <span>Chờ thanh toán</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
 
-                            <div class="order-seller-name">
-                                Mimall
-                            </div>
-                        </div>
+                                    <!-- Danh sách sản phẩm trong đơn -->
+                                    <c:forEach var="detail" items="${order.details}">
+                                        <div class="order-product">
+                                            <div class="order-product-image">
+                                                <img src="${pageContext.request.contextPath}${detail.productImageUrl}"
+                                                     alt="<c:out value='${detail.productTitle}'/>"
+                                                     onerror="this.src='https://picsum.photos/200/300'">
+                                                <span class="order-product-quantity">x${detail.quantity}</span>
+                                            </div>
 
-                        <div class="order-product-price">
-                            4.480.000 ₫
-                        </div>
-                    </div>
+                                            <div class="order-product-info">
+                                                <div class="order-product-name">
+                                                    <c:out value="${detail.productTitle}"/>
+                                                </div>
+                                                <div class="order-seller-name">
+                                                    <c:out value="${detail.sellerName}" default="MangaVault Seller"/>
+                                                </div>
+                                            </div>
 
-                    <!-- Tổng tiền và nút thao tác -->
-                    <div class="order-footer">
-                        <div class="order-total">
-                            <span>Tổng tiền:</span>
-                            <strong>4.282.000 ₫</strong>
-                        </div>
+                                            <div class="order-product-price">
+                                                <fmt:formatNumber value="${detail.price}" pattern="#,##0"/> ₫
+                                            </div>
+                                        </div>
+                                    </c:forEach>
 
-                        <div class="order-actions">
-                            <button type="button" class="btn-order btn-buy-again">
-                                Mua lại
-                            </button>
+                                    <!-- Tổng tiền và nút thao tác -->
+                                    <div class="order-footer">
+                                        <div class="order-total">
+                                            <span>Mã đơn #${order.orderId} - Tổng tiền:</span>
+                                            <strong><fmt:formatNumber value="${order.totalAmount}" pattern="#,##0"/> ₫</strong>
+                                        </div>
 
-                            <button type="button" class="btn-order btn-order-detail">
-                                Xem chi tiết
-                            </button>
-                        </div>
-                    </div>
+                                        <div class="order-actions">
+                                            <c:if test="${not empty order.details}">
+                                                <a href="${pageContext.request.contextPath}/product-detail?id=${order.details[0].listingId}" class="btn-order btn-buy-again" style="text-decoration:none; text-align:center;">
+                                                    Mua lại
+                                                </a>
+                                            </c:if>
+                                            <button type="button" class="btn-order btn-order-detail">
+                                                Xem chi tiết
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
-                <div class="order-card">
-                    <!-- Trạng thái đơn hàng -->
-                    <div class="order-status">
-                            <span class="material-symbols-outlined">
-                            local_shipping
-                                </span>
-                        <span>Giao hàng thành công</span>
-                    </div>
 
-                    <!-- Danh sách sản phẩm -->
-                    <div class="order-product">
-                        <div class="order-product-image">
-                            <img src="images/xiaomi-redmi-note-9s.jpg"
-                                 alt="Xiaomi Redmi Note 9S">
-
-                            <span class="order-product-quantity">x1</span>
-                        </div>
-
-                        <div class="order-product-info">
-                            <div class="order-product-name">
-                                ĐIỆN THOẠI XIAOMI REDMI NOTE 9S - HÀNG
-                                CHÍNH HÃNG - Xanh cực quang - 4GB + 64GB
-                            </div>
-
-                            <div class="order-seller-name">
-                                Mimall
-                            </div>
-                        </div>
-
-                        <div class="order-product-price">
-                            4.480.000 ₫
-                        </div>
-                    </div>
-
-                    <!-- Tổng tiền và nút thao tác -->
-                    <div class="order-footer">
-                        <div class="order-total">
-                            <span>Tổng tiền:</span>
-                            <strong>4.282.000 ₫</strong>
-                        </div>
-
-                        <div class="order-actions">
-                            <button type="button" class="btn-order btn-buy-again">
-                                Mua lại
-                            </button>
-
-                            <button type="button" class="btn-order btn-order-detail">
-                                Xem chi tiết
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- 2. Personal Information Dossier -->
             <div class="card-panel management-section" id="profileSection">
