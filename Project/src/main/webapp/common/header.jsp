@@ -108,6 +108,7 @@
         background-color: var(--color-primary-dark);
         color: #ffffff;
     }
+
     .header-inner {
         max-width: 1440px;
         margin: 0 auto;
@@ -118,6 +119,7 @@
         justify-content: space-between;
         gap: 16px;
     }
+
     @media (min-width: 640px) {
         .header-inner {
             padding: 0 24px;
@@ -129,6 +131,7 @@
             padding: 0 32px;
         }
     }
+
     .icon-utility-button {
         text-decoration: none;
         position: relative;
@@ -255,14 +258,30 @@
                                         Admin page
                                     </a>
                                 </c:if>
-
+                                <c:if test="${hasSellerProfile}">
+                                    <a class="user-menu-item"
+                                       href="${pageContext.request.contextPath}/seller/dashboard" target="_blank">
+        <span class="material-symbols-outlined"
+              style="font-size: 18px; vertical-align: middle; margin-right: 6px;">
+            storefront
+        </span>
+                                        Kênh người bán
+                                    </a>
+                                </c:if>
                                 <a class="user-menu-item"
                                    href="${pageContext.request.contextPath}/profile">
+                                    <span class="material-symbols-outlined" style="font-size: 18px; vertical-align: middle; margin-right: 6px;">
+person
+</span>
                                     Profile
                                 </a>
 
                                 <a class="user-menu-logout"
                                    href="${pageContext.request.contextPath}/logout">
+                                    <span class="material-symbols-outlined"
+                                          style="font-size: 18px; vertical-align: middle; margin-right: 6px;">
+            logout
+        </span>
                                     Đăng xuất
                                 </a>
                             </div>
