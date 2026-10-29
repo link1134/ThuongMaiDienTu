@@ -1,4 +1,6 @@
 package com.mangaz.filter;
+import com.mangaz.dao.SellerProfileDAO;
+import com.mangaz.model.User;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -11,6 +13,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 @WebFilter("/*")
 public class AuthFilter implements Filter {
+    private SellerProfileDAO sellerProfileDAO = new SellerProfileDAO();
+
     @Override
     public void doFilter(
             ServletRequest request,
@@ -24,6 +28,15 @@ public class AuthFilter implements Filter {
         String contextPath = req.getContextPath();
         String uri = req.getRequestURI();
         String path = uri.substring(contextPath.length());
+        // Kiểm tra Seller Profile cho header trên các trang
+        HttpSession session = req.getSession(false);
+
+        if (session != null && session.getAttribute("user") != null) {
+            User user = (User) session.getAttribute("user");
+            boolean hasSellerProfile =
+                    SellerProfileDAO.existsBySellerId(user.getId());
+            req.setAttribute("hasSellerProfile", hasSellerProfile);
+        }
         // =========================
         // CÁC TRANG ĐƯỢC TRUY CẬP TỰ DO
         // =========================
@@ -54,11 +67,15 @@ public class AuthFilter implements Filter {
         // =========================
         // KIỂM TRA ĐĂNG NHẬP
         // =========================
-        HttpSession session = req.getSession(false);
         boolean loggedIn =
                 session != null &&
                         session.getAttribute("user") != null;
         if (loggedIn) {
+            User user = (User) session.getAttribute("user");
+            boolean hasSellerProfile =
+                    SellerProfileDAO.existsBySellerId(user.getId());
+            req.setAttribute("hasSellerProfile", hasSellerProfile);
+
             chain.doFilter(request, response);
             return;
         }
