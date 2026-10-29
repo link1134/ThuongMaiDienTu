@@ -81,7 +81,7 @@
                             <span class="material-symbols-outlined">inventory_2</span>
                             <span>Đơn hàng</span>
                         </div>
-                        <span class="count-pill">14 mục</span>
+                        <span class="count-pill"><fmt:formatNumber value="${totalOrdersCount}" pattern="00"/> mục</span>
                     </a>
 
                     <a href="#addressSection" class="sidebar-nav-item"
@@ -131,11 +131,9 @@
                         <div>
                             <h2 class="card-main-title">Đơn hàng của tôi</h2>
                         </div>
-                        <a href="#" class="card-link-action"> <span>Xem tất cả lịch sử (14)</span> <span
-                                class="material-symbols-outlined">arrow_forward</span> </a>
                     </div>
                     <div class="order-metrics-grid">
-                        <div class="metric-card active">
+                        <div class="metric-card active"data-status="ALL" style="cursor: pointer;">
                             <div class="metric-top"><span class="material-symbols-outlined metric-icon ">
                             shopping_cart
                         </span>
@@ -143,35 +141,35 @@
                             </div>
                             <div class="metric-label">TẤT CẢ ĐƠN HÀNG</div>
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card"data-status="Pending" style="cursor: pointer;">
                             <div class="metric-top"><span class="material-symbols-outlined metric-icon">wallet</span>
                                 <span class="metric-number"><fmt:formatNumber value="${pendingCount}" pattern="00"/></span>
                             </div>
                             <div class="metric-label">CHỜ THANH TOÁN</div>
 
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card"data-status="Processing" style="cursor: pointer;">
                             <div class="metric-top"> <span
                                     class="material-symbols-outlined metric-icon">inventory</span> <span
                                     class="metric-number"><fmt:formatNumber value="${processingCount}" pattern="00"/></span></div>
                             <div class="metric-label">ĐANG XỬ LÝ</div>
 
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card"data-status="Shipping" style="cursor: pointer;">
                             <div class="metric-top"> <span
                                     class="material-symbols-outlined metric-icon">local_shipping</span> <span
                                     class="metric-number"><fmt:formatNumber value="${shippingCount}" pattern="00"/></span></div>
                             <div class="metric-label">ĐANG GIAO</div>
 
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card"data-status="Completed" style="cursor: pointer;">
                             <div class="metric-top"> <span
                                     class="material-symbols-outlined metric-icon check-icon">check_circle</span> <span
                                     class="metric-number"><fmt:formatNumber value="${completedCount}" pattern="00"/></span></div>
                             <div class="metric-label">ĐÃ GIAO</div>
 
                         </div>
-                        <div class="metric-card">
+                        <div class="metric-card"data-status="Cancelled" style="cursor: pointer;">
                             <div class="metric-top"><span class="material-symbols-outlined metric-icon">cancel</span>
                                 <span class="metric-number"><fmt:formatNumber value="${cancelledCount}" pattern="00"/></span>
                             </div>
@@ -192,7 +190,7 @@
                         </c:when>
                         <c:otherwise>
                             <c:forEach var="order" items="${orders}">
-                                <div class="order-card">
+                                <div class="order-card"data-status="${order.status}">
                                     <!-- Trạng thái đơn hàng -->
                                     <div class="order-status">
                                         <c:choose>
@@ -243,7 +241,6 @@
                                             </div>
                                         </div>
                                     </c:forEach>
-
                                     <!-- Tổng tiền và nút thao tác -->
                                     <div class="order-footer">
                                         <div class="order-total">
@@ -266,6 +263,11 @@
                             </c:forEach>
                         </c:otherwise>
                     </c:choose>
+                    <!-- Thông báo khi lọc không có đơn nào -->
+                    <div id="empty-filter-notice" class="card-panel" style="display: none; text-align: center; padding: 40px; color: #666; margin-top: 15px;">
+                        <span class="material-symbols-outlined" style="font-size: 48px; color: #ccc;">search_off</span>
+                        <p style="margin-top: 10px;">Không tìm thấy đơn hàng nào ở trạng thái này.</p>
+                    </div>
                 </div>
 
             </div>
@@ -839,6 +841,45 @@
 </footer>
 
 <script src="${pageContext.request.contextPath}/js/ThongTinCaNhan.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const metricCards = document.querySelectorAll(".metric-card[data-status]");
+        const orderCards = document.querySelectorAll(".order-card[data-status]");
+        const emptyNotice = document.getElementById("empty-filter-notice");
+
+        metricCards.forEach(card => {
+            card.addEventListener("click", function () {
+                const selectedStatus = this.getAttribute("data-status");
+
+                // 1. Đổi active viền/màu cho thẻ vừa chọn
+                metricCards.forEach(c => c.classList.remove("active"));
+                this.classList.add("active");
+
+                // 2. Lọc danh sách đơn hàng
+                let visibleCount = 0;
+                orderCards.forEach(order => {
+                    const orderStatus = order.getAttribute("data-status");
+
+                    if (selectedStatus === "ALL" || orderStatus.toLowerCase() === selectedStatus.toLowerCase()) {
+                        order.style.display = "block";
+                        visibleCount++;
+                    } else {
+                        order.style.display = "none";
+                    }
+                });
+
+                // 3. Hiển thị thông báo rỗng nếu trạng thái đó chưa có đơn hàng nào
+                if (emptyNotice) {
+                    if (visibleCount === 0 && orderCards.length > 0) {
+                        emptyNotice.style.display = "block";
+                    } else {
+                        emptyNotice.style.display = "none";
+                    }
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
 
