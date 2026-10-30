@@ -3,12 +3,10 @@ package com.mangaz.dao;
 
 import com.mangaz.model.Listing;
 import com.mangaz.util.DBConnection;
+
+import java.sql.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,34 +24,34 @@ public class ListingDAO {
         String trimmedKeyword = keyword == null ? "" : keyword.trim();
 
         StringBuilder sql = new StringBuilder("""
-            SELECT
-                l.ListingId,
-                l.ListingCode,
-                l.SellerId,
-                l.ProductTypeId,
-                l.Title,
-                l.Description,
-                l.ShortDescription,
-                l.Price,
-                l.OriginalPrice,
-                l.Quantity,
-                l.ListingType,
-                l.Status,
-                l.CreatedAt,
-                l.UpdatedAt,
-                pt.ProductTypeName,
-                (
-                    SELECT TOP 1 li.ImageUrl
-                    FROM dbo.ListingImages li
-                    WHERE li.ListingId = l.ListingId
-                    ORDER BY li.IsPrimary DESC, li.DisplayOrder ASC
-                ) AS ImageUrl
-            FROM dbo.Listings l
-            JOIN dbo.ProductType pt
-                ON l.ProductTypeId = pt.ProductTypeId
-            WHERE l.Status = 'Active'
-                AND l.Title LIKE ?
-            """);
+                SELECT
+                    l.ListingId,
+                    l.ListingCode,
+                    l.SellerId,
+                    l.ProductTypeId,
+                    l.Title,
+                    l.Description,
+                    l.ShortDescription,
+                    l.Price,
+                    l.OriginalPrice,
+                    l.Quantity,
+                    l.ListingType,
+                    l.Status,
+                    l.CreatedAt,
+                    l.UpdatedAt,
+                    pt.ProductTypeName,
+                    (
+                        SELECT TOP 1 li.ImageUrl
+                        FROM dbo.ListingImages li
+                        WHERE li.ListingId = l.ListingId
+                        ORDER BY li.IsPrimary DESC, li.DisplayOrder ASC
+                    ) AS ImageUrl
+                FROM dbo.Listings l
+                JOIN dbo.ProductType pt
+                    ON l.ProductTypeId = pt.ProductTypeId
+                WHERE l.Status = 'Active'
+                    AND l.Title LIKE ?
+                """);
 
         if ("Auction".equals(type)) {
             sql.append(" AND l.ListingType = 'Auction' ");
@@ -62,14 +60,14 @@ public class ListingDAO {
         }
 
         sql.append("""
-            ORDER BY
-                CASE
-                    WHEN l.Title = ? THEN 0
-                    WHEN l.Title LIKE ? THEN 1
-                    ELSE 2
-                END,
-                l.CreatedAt DESC
-            """);
+                ORDER BY
+                    CASE
+                        WHEN l.Title = ? THEN 0
+                        WHEN l.Title LIKE ? THEN 1
+                        ELSE 2
+                    END,
+                    l.CreatedAt DESC
+                """);
 
         try (Connection connection = DBConnection.getConnection();
              PreparedStatement statement =
@@ -250,4 +248,66 @@ public class ListingDAO {
         return listings;
     }
 
+    public List<Listing> getListingsBySellerId(int sellerId) {
+        List<Listing> listings = new ArrayList<>();
+
+        String sql = """
+                SELECT
+                    l.ListingId,
+                    l.ListingCode,
+                    l.Title,
+                    l.Price,
+                    l.Quantity,
+                    l.Status,
+                    l.ListingType,
+                    l.CreatedAt,
+                    l.UpdatedAt,
+                    (
+                        SELECT TOP 1 li.ImageUrl
+                        FROM ListingImages li
+                        WHERE li.ListingId = l.ListingId
+                        ORDER BY li.IsPrimary DESC
+                    ) AS ImageUrl
+                FROM Listings l
+                WHERE l.SellerId = ?
+                ORDER BY l.CreatedAt DESC
+                """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, sellerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Listing listing = new Listing();
+
+                    listing.setListingId(rs.getInt("ListingId"));
+                    listing.setListingCode(rs.getString("ListingCode"));
+                    listing.setTitle(rs.getString("Title"));
+                    listing.setPrice(rs.getBigDecimal("Price"));
+                    listing.setQuantity(rs.getInt("Quantity"));
+                    listing.setStatus(rs.getString("Status"));
+                    listing.setListingType(rs.getString("ListingType"));
+                    listing.setImageUrl(rs.getString("ImageUrl"));
+
+                    Timestamp createdAt = rs.getTimestamp("CreatedAt");
+                    if (createdAt != null) {
+                        listing.setCreatedAt(createdAt.toLocalDateTime());
+                    }
+
+                    Timestamp updatedAt = rs.getTimestamp("UpdatedAt");
+                    if (updatedAt != null) {
+                        listing.setUpdatedAt(updatedAt.toLocalDateTime());
+                    }
+
+                    listings.add(listing);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return listings;
+    }
 }

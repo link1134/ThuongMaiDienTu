@@ -5,6 +5,7 @@ import com.mangaz.model.OrderDetail;
 import com.mangaz.util.DBConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,7 +134,7 @@ public class OrderDAO {
 
         String sqlDetails = """
             SELECT od.OrderDetailId, od.OrderId, od.ListingId, od.Quantity, od.Price, 
-                   l.Title, COALESCE(u.FullName, u.Username) AS SellerName, li.ImageUrl
+                   l.Title, li.ImageUrl
             FROM dbo.OrderDetails od
             JOIN dbo.Listings l ON od.ListingId = l.ListingId
             JOIN dbo.Users u ON l.SellerId = u.Id
@@ -173,7 +174,7 @@ public class OrderDAO {
                                 detail.setQuantity(rsDetail.getInt("Quantity"));
                                 detail.setPrice(rsDetail.getBigDecimal("Price"));
                                 detail.setProductTitle(rsDetail.getString("Title"));
-                                detail.setSellerName(rsDetail.getString("SellerName"));
+
                                 detail.setProductImageUrl(rsDetail.getString("ImageUrl"));
                                 details.add(detail);
                             }
@@ -188,5 +189,205 @@ public class OrderDAO {
         }
         return orders;
     }
+
+    public List<Order> getOrdersBySellerId(
+            int sellerId,
+            String keyword,
+            String status,
+            LocalDate startDate,
+            LocalDate endDate) throws SQLException {
+
+        List<Order> orders = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder("""
+        SELECT
+            o.OrderId,
+            o.UserId,
+            o.RecipientName,
+            o.PhoneNumber,
+            o.ShippingAddress,
+            o.ShippingFee,
+            o.PaymentMethod,
+            o.DeliveryMethod,
+            o.Status,
+            o.CreatedAt,
+            COALESCE(buyer.FullName, buyer.Username) AS BuyerName,
+
+            (
+                SELECT SUM(od.Price * od.Quantity)
+                FROM dbo.OrderDetails od
+                JOIN dbo.Listings l ON l.ListingId = od.ListingId
+                WHERE od.OrderId = o.OrderId
+                  AND l.SellerId = ?
+            ) AS SellerTotal
+
+        FROM dbo.Orders o
+        LEFT JOIN dbo.Users buyer ON buyer.Id = o.UserId
+
+        WHERE EXISTS (
+            SELECT 1
+            FROM dbo.OrderDetails od
+            JOIN dbo.Listings l ON l.ListingId = od.ListingId
+            WHERE od.OrderId = o.OrderId
+              AND l.SellerId = ?
+        )
+        """);
+
+        List<Object> params = new ArrayList<>();
+
+        // Tham số đầu tiên: tính tổng tiền sản phẩm của người bán
+        params.add(sellerId);
+
+        // Tham số thứ hai: chỉ lấy đơn có sản phẩm của người bán này
+        params.add(sellerId);
+
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append("""
+            AND (
+                o.RecipientName LIKE ?
+                OR buyer.FullName LIKE ?
+                OR buyer.Username LIKE ?
+                OR EXISTS (
+                    SELECT 1
+                    FROM dbo.OrderDetails od
+                    JOIN dbo.Listings l ON l.ListingId = od.ListingId
+                    WHERE od.OrderId = o.OrderId
+                      AND l.SellerId = ?
+                      AND l.Title LIKE ?
+                )
+            )
+            """);
+
+            String search = "%" + keyword.trim() + "%";
+
+            params.add(search);
+            params.add(search);
+            params.add(search);
+            params.add(sellerId);
+            params.add(search);
+        }
+
+        if (status != null && !status.trim().isEmpty()
+                && !"All".equalsIgnoreCase(status)) {
+            sql.append(" AND o.Status = ? ");
+            params.add(status.trim());
+        }
+
+        if (startDate != null) {
+            sql.append(" AND o.CreatedAt >= ? ");
+            params.add(Date.valueOf(startDate));
+        }
+
+        if (endDate != null) {
+            sql.append(" AND o.CreatedAt < DATEADD(day, 1, ?) ");
+            params.add(Date.valueOf(endDate));
+        }
+
+        sql.append(" ORDER BY o.CreatedAt DESC, o.OrderId DESC ");
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                Object value = params.get(i);
+
+                if (value instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) value);
+                } else if (value instanceof String) {
+                    ps.setString(i + 1, (String) value);
+                } else if (value instanceof Date) {
+                    ps.setDate(i + 1, (Date) value);
+                }
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Order order = new Order();
+
+                    order.setOrderId(rs.getInt("OrderId"));
+                    order.setUserId(rs.getInt("UserId"));
+                    order.setRecipientName(rs.getString("RecipientName"));
+                    order.setPhoneNumber(rs.getString("PhoneNumber"));
+                    order.setShippingAddress(rs.getString("ShippingAddress"));
+
+                    order.setShippingFee(rs.getBigDecimal("ShippingFee"));
+
+                    // Đây là tổng tiền sản phẩm của người bán hiện tại,
+                    // không phải tổng tiền của toàn bộ đơn hàng nhiều người bán.
+                    order.setTotalAmount(rs.getBigDecimal("SellerTotal"));
+
+                    order.setPaymentMethod(rs.getString("PaymentMethod"));
+                    order.setDeliveryMethod(rs.getString("DeliveryMethod"));
+                    order.setStatus(rs.getString("Status"));
+                    order.setCreatedAt(rs.getTimestamp("CreatedAt"));
+
+                    // Nạp chi tiết chỉ gồm sản phẩm do người bán hiện tại đăng.
+                    order.setDetails(
+                            getOrderDetailsBySeller(conn, order.getOrderId(), sellerId)
+                    );
+
+                    orders.add(order);
+                }
+            }
+        }
+
+        return orders;
+    }
+
+
+    private List<OrderDetail> getOrderDetailsBySeller(
+            Connection conn, int orderId, int sellerId) throws SQLException {
+
+        List<OrderDetail> details = new ArrayList<>();
+
+        String sql = """
+        SELECT
+            od.OrderDetailId,
+            od.OrderId,
+            od.ListingId,
+            od.Quantity,
+            od.Price,
+            l.Title,
+       
+            productImage.ImageUrl
+        FROM dbo.OrderDetails od
+        JOIN dbo.Listings l ON l.ListingId = od.ListingId
+        JOIN dbo.Users seller ON seller.Id = l.SellerId
+        OUTER APPLY (
+            SELECT TOP 1 li.ImageUrl
+            FROM dbo.ListingImages li
+            WHERE li.ListingId = l.ListingId
+            ORDER BY li.IsPrimary DESC, li.DisplayOrder ASC
+        ) productImage
+        WHERE od.OrderId = ?
+          AND l.SellerId = ?
+        ORDER BY od.OrderDetailId
+        """;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, orderId);
+            ps.setInt(2, sellerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    OrderDetail detail = new OrderDetail();
+
+                    detail.setOrderDetailId(rs.getInt("OrderDetailId"));
+                    detail.setOrderId(rs.getInt("OrderId"));
+                    detail.setListingId(rs.getInt("ListingId"));
+                    detail.setQuantity(rs.getInt("Quantity"));
+                    detail.setPrice(rs.getBigDecimal("Price"));
+                    detail.setProductTitle(rs.getString("Title"));
+
+                    detail.setProductImageUrl(rs.getString("ImageUrl"));
+
+                    details.add(detail);
+                }
+            }
+        }
+
+        return details;
+    }
+
 }
 

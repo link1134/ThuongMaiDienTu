@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MangaHub Seller Center - Bảng điều khiển</title> <!-- Google Fonts & Material Symbols Icons -->
+    <title>MangaZ Seller Center</title> <!-- Google Fonts & Material Symbols Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
@@ -66,9 +66,13 @@
         </nav> <!-- Sidebar Footer: Hồ sơ người bán tóm tắt -->
         <div class="sidebar-footer">
             <div class="seller-profile-card">
-                <div class="seller-avatar"><span class="material-symbols-outlined">storefront</span></div>
-                <div class="seller-info"><span class="seller-name">Otaku Store VN</span> <span
-                        class="seller-rating">★ Uy tín 4.9 • Đã xác thực</span></div>
+               <img src="${sessionScope.user.avatarUrl}"
+                                                alt="Ảnh đại diện"
+                                                class="seller-avatar">
+                <div class="seller-info"><span class="seller-name">${sessionScope.user.fullName}</span >
+<%--                    <span--%>
+<%--                        class="seller-rating">★ Uy tín 4.9 • Đã xác thực</span>--%>
+                </div>
             </div>
             <button class="btn-logout" title="Đăng xuất"> <span
                     class="material-symbols-outlined">logout</span> <span>Đăng xuất</span></button>
@@ -129,11 +133,11 @@
                             <span id="totalRevenue">0</span>
                             <span class="currency">₫</span>
                         </div>
-                        <div class="kpi-subtext positive"> <span
-                                class="material-symbols-outlined trend-icon">trending_up</span> <span>+14.2% so với
-                                    tháng
-                                    trước</span></div>
-                    </div> <!-- Card 2 -->
+<%--                        <div class="kpi-subtext positive"> <span--%>
+<%--                                class="material-symbols-outlined trend-icon">trending_up</span> <span>+14.2% so với--%>
+<%--                                    tháng--%>
+<%--                                    trước</span></div>--%>
+                    </div>
                     <div class="kpi-card">
                         <div class="kpi-card-header"><span class="kpi-label">ĐƠN HÀNG HOÀN TẤT</span> <span
                                 class="kpi-icon-badge sky"> <span class="material-symbols-outlined">task_alt</span>
@@ -150,11 +154,16 @@
                     </div> -->
                     </div>
                     <div class="kpi-card">
-                        <div class="kpi-card-header"><span class="kpi-label">ĐƠN HÀNG ĐANG XỬ LÝ</span> <span
-                                class="kpi-icon-badge amber"> <span class="material-symbols-outlined ">
-                                        priority_high
+                        <div class="kpi-card-header"><span class="kpi-label">ĐƠN HÀNG ĐANG ĐƯỢC CHUẨN BỊ</span> <span
+                                class="kpi-icon-badge purple"> <span class="material-symbols-outlined ">
+                                        box
                                     </span> </span>
                         </div>
+<%--                        <div class="kpi-card-header"><span class="kpi-label">ĐƠN HÀNG ĐANG XỬ LÝ</span> <span--%>
+<%--                                class="kpi-icon-badge amber"> <span class="material-symbols-outlined ">--%>
+<%--                                        priority_high--%>
+<%--                                    </span> </span>--%>
+<%--                        </div>--%>
                         <div class="kpi-value">
                             <span id="processingOrders">0</span>
                             <span class="unit">đơn</span>
@@ -525,83 +534,79 @@
                         </thead>
 
                         <tbody>
-                        <tr>
-                            <td class="checkbox-col">
-                                <input type="checkbox">
-                            </td>
-                            <td class="order-id">#LST-1024</td>
-                            <td class="product-name">Chuyển Sinh Thành Slime - Tập 1</td>
-                            <td class="amount">65.000 ₫</td>
-                            <td>5</td>
-                            <td>
-                                        <span class="listing-status status-active">
-                                            Đang hiển thị
-                                        </span>
-                            </td>
-                            <td class="listing-updated">28/10/2026 08:30</td>
-                            <td>
-                                        <span class="product-type type-manga">
-                                            Manga
-                                        </span>
-                            </td>
-                            <td class="detail-col">
-                                <button class="detail-btn" type="button" onclick="viewListing('LST-1024')">
-                                    Chi tiết
-                                </button>
-                            </td>
-                        </tr>
+                        <c:forEach var="listing" items="${sellerListings}">
+                            <tr>
+                                <td class="checkbox-col">
+                                    <input type="checkbox">
+                                </td>
 
-                        <tr>
-                            <td class="checkbox-col">
-                                <input type="checkbox">
-                            </td>
-                            <td class="order-id">#LST-1025</td>
-                            <td class="product-name">Doraemon - Tuyển tập truyện ngắn</td>
-                            <td class="amount">120.000 ₫</td>
-                            <td>2</td>
-                            <td>
-                                        <span class="listing-status status-pending">
-                                            Chờ duyệt
-                                        </span>
-                            </td>
-                            <td class="listing-updated">27/10/2026 21:15</td>
-                            <td>
-                                        <span class="product-type type-manga">
-                                            Manga
-                                        </span>
-                            </td>
-                            <td class="detail-col">
-                                <button class="detail-btn" type="button" onclick="viewListing('LST-1025')">
-                                    Chi tiết
-                                </button>
-                            </td>
-                        </tr>
+                                <td class="order-id">
+                                    #${listing.listingCode}
+                                </td>
 
-                        <tr>
-                            <td class="checkbox-col">
-                                <input type="checkbox">
-                            </td>
-                            <td class="order-id">#LST-1026</td>
-                            <td class="product-name">Art Book - Thế giới Ghibli</td>
-                            <td class="amount">350.000 ₫</td>
-                            <td>1</td>
-                            <td>
-                                        <span class="listing-status status-hidden">
-                                            Đã ẩn
-                                        </span>
-                            </td>
-                            <td class="listing-updated">26/10/2026 14:40</td>
-                            <td>
-                                        <span class="product-type type-artbook">
-                                            Art Book
-                                        </span>
-                            </td>
-                            <td class="detail-col">
-                                <button class="detail-btn" type="button" onclick="viewListing('LST-1026')">
-                                    Chi tiết
-                                </button>
-                            </td>
-                        </tr>
+                                <td class="product-name">
+                                    <c:out value="${listing.title}" />
+                                </td>
+
+                                <td class="amount">
+                                    <fmt:formatNumber value="${listing.price}"
+                                                      type="number"
+                                                      groupingUsed="true" /> ₫
+                                </td>
+
+                                <td>${listing.quantity}</td>
+
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${listing.status == 'Active'}">
+                        <span class="listing-status status-active">
+                            Đang hiển thị
+                        </span>
+                                        </c:when>
+                                        <c:when test="${listing.status == 'Pending'}">
+                        <span class="listing-status status-pending">
+                            Chờ duyệt
+                        </span>
+                                        </c:when>
+                                        <c:when test="${listing.status == 'Hidden'}">
+                        <span class="listing-status status-hidden">
+                            Đã ẩn
+                        </span>
+                                        </c:when>
+                                        <c:otherwise>
+                        <span class="listing-status">
+                            <c:out value="${listing.status}" />
+                        </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+
+                                <td class="listing-updated">
+                                    <c:if test="${not empty listing.updatedAt}">
+                                        <fmt:parseDate value="${listing.updatedAt}"
+                                                       pattern="yyyy-MM-dd'T'HH:mm"
+                                                       var="updatedDate"
+                                                       type="both" />
+                                        <fmt:formatDate value="${updatedDate}"
+                                                        pattern="dd/MM/yyyy HH:mm" />
+                                    </c:if>
+                                </td>
+
+                                <td>
+                <span class="product-type type-manga">
+                    Manga
+                </span>
+                                </td>
+
+                                <td class="detail-col">
+                                    <button class="detail-btn"
+                                            type="button"
+                                            onclick="viewListing('<c:out value="${listing.listingCode}" />')">
+                                        Chi tiết
+                                    </button>
+                                </td>
+                            </tr>
+                        </c:forEach>
                         </tbody>
                     </table>
                 </div>
@@ -681,79 +686,137 @@
                         </tr>
                         </thead>
 
+
                         <tbody>
-                        <tr>
-                            <td class="checkbox-col">
-                                <input type="checkbox">
-                            </td>
-                            <td class="order-id">#ORD-1024</td>
-                            <td>Nguyễn Văn A</td>
-                            <td>12/01/2026</td>
-                            <td class="amount">650.000 ₫</td>
-                            <td>3</td>
-                            <td>
-                                <span class="payment-paid">Đã thanh toán</span>
-                            </td>
-                            <td>
-                                        <span class="status-badge status-pending">
-                                            Chờ xác nhận
-                                        </span>
-                            </td>
-                            <td class="detail-col">
-                                <button class="detail-btn" type="button" onclick="viewOrder('ORD-1024')">
-                                    Chi tiết
-                                </button>
-                            </td>
-                        </tr>
+                        <c:choose>
+                            <c:when test="${not empty sellerOrders}">
+                                <c:forEach var="order" items="${sellerOrders}">
+                                    <%-- Tính tổng số lượng sản phẩm của người bán trong đơn --%>
+                                    <c:set var="totalQuantity" value="0" />
 
-                        <tr>
-                            <td class="checkbox-col">
-                                <input type="checkbox">
-                            </td>
-                            <td class="order-id">#ORD-1025</td>
-                            <td>Trần Thị B</td>
-                            <td>13/01/2026</td>
-                            <td class="amount">320.000 ₫</td>
-                            <td>2</td>
-                            <td>
-                                <span class="payment-unpaid">Chưa thanh toán</span>
-                            </td>
-                            <td>
-                                        <span class="status-badge status-shipping">
-                                            Đang giao
-                                        </span>
-                            </td>
-                            <td class="detail-col">
-                                <button class="detail-btn" type="button" onclick="viewOrder('ORD-1025')">
-                                    Chi tiết
-                                </button>
-                            </td>
-                        </tr>
+                                    <c:forEach var="detail" items="${order.details}">
+                                        <c:set var="totalQuantity"
+                                               value="${totalQuantity + detail.quantity}" />
+                                    </c:forEach>
 
-                        <tr>
-                            <td class="checkbox-col">
-                                <input type="checkbox">
-                            </td>
-                            <td class="order-id">#ORD-1026</td>
-                            <td>Lê Minh C</td>
-                            <td>14/01/2026</td>
-                            <td class="amount">180.000 ₫</td>
-                            <td>1</td>
-                            <td>
-                                <span class="payment-paid">Đã thanh toán</span>
-                            </td>
-                            <td>
-                                        <span class="status-badge status-completed">
-                                            Hoàn thành
-                                        </span>
-                            </td>
-                            <td class="detail-col">
-                                <button class="detail-btn" type="button" onclick="viewOrder('ORD-1026')">
-                                    Chi tiết
-                                </button>
-                            </td>
-                        </tr>
+                                    <tr>
+                                        <td class="checkbox-col">
+                                            <input type="checkbox"
+                                                   value="${order.orderId}">
+                                        </td>
+
+                                        <td class="order-id">
+                                            #ORD-<c:out value="${order.orderId}" />
+                                        </td>
+
+                                        <td>
+                                            <c:out value="${order.recipientName}" />
+                                        </td>
+
+                                        <td>
+                                            <fmt:formatDate
+                                                    value="${order.createdAt}"
+                                                    pattern="dd/MM/yyyy HH:mm" />
+                                        </td>
+
+                                        <td class="amount">
+                                            <fmt:formatNumber
+                                                    value="${order.totalAmount}"
+                                                    type="number"
+                                                    groupingUsed="true" /> ₫
+                                        </td>
+
+                                        <td>
+                                            <c:out value="${totalQuantity}" />
+                                        </td>
+
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${order.paymentMethod == 'COD'}">
+                                <span class="payment-unpaid">
+                                    Thanh toán khi nhận hàng
+                                </span>
+                                                </c:when>
+
+                                                <c:when test="${order.paymentMethod == 'MoMo'}">
+                                <span class="payment-paid">
+                                    MoMo
+                                </span>
+                                                </c:when>
+
+                                                <c:when test="${order.paymentMethod == 'ZaloPay'}">
+                                <span class="payment-paid">
+                                    ZaloPay
+                                </span>
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <c:out value="${order.paymentMethod}" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+
+                                        <td>
+                                            <c:choose>
+                                                <c:when test="${order.status == 'Pending'}">
+                                <span class="status-badge status-pending">
+                                    Chờ xác nhận
+                                </span>
+                                                </c:when>
+
+                                                <c:when test="${order.status == 'Processing'}">
+                                <span class="status-badge status-shipping">
+                                    Đang chuẩn bị
+                                </span>
+                                                </c:when>
+
+                                                <c:when test="${order.status == 'Shipping'}">
+                                <span class="status-badge status-shipping">
+                                    Đang giao
+                                </span>
+                                                </c:when>
+
+                                                <c:when test="${order.status == 'Completed'}">
+                                <span class="status-badge status-completed">
+                                    Hoàn thành
+                                </span>
+                                                </c:when>
+
+                                                <c:when test="${order.status == 'Cancelled'}">
+                                <span class="status-badge status-cancelled">
+                                    Đã hủy
+                                </span>
+                                                </c:when>
+
+                                                <c:otherwise>
+                                <span class="status-badge">
+                                    <c:out value="${order.status}" />
+                                </span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+
+                                        <td class="detail-col">
+                                            <button class="detail-btn"
+                                                    type="button"
+                                                    onclick="viewOrder('ORD-${order.orderId}')">
+                                                Chi tiết
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </c:forEach>
+                            </c:when>
+
+                            <c:otherwise>
+                                <tr>
+                                    <td colspan="9" style="text-align: center; padding: 30px;">
+                                        Bạn chưa có đơn hàng nào.
+                                    </td>
+                                </tr>
+                            </c:otherwise>
+                        </c:choose>
                         </tbody>
+
                     </table>
 
                 </div>
@@ -1454,22 +1517,17 @@
     });
 </script>
 <script>
-
     const contextPath = '${pageContext.request.contextPath}';
-
     async function loadDashboard(startDate = '', endDate = '') {
         const params = new URLSearchParams();
-
         // Không có ngày nghĩa là ALL.
         if (startDate && endDate) {
             params.set('startDate', startDate);
             params.set('endDate', endDate);
         }
-
         const query = params.toString();
         const url = contextPath + '/seller/dashboard-data'
             + (query ? '?' + query : '');
-
         try {
             const response = await fetch(url, {
                 method: 'GET',
@@ -1477,9 +1535,7 @@
                     'Accept': 'application/json'
                 }
             });
-
             const data = await response.json();
-
             if (!response.ok) {
                 throw new Error(data.error || 'Không thể tải dữ liệu.');
             }
@@ -1512,7 +1568,6 @@
             alert(error.message || 'Có lỗi khi tải dữ liệu dashboard.');
         }
     }
-
     document.addEventListener('DOMContentLoaded', function () {
         const dateButton = document.getElementById('dateRangeButton');
         const datePopup = document.getElementById('dateRangePopup');
