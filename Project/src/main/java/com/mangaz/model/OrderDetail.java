@@ -10,8 +10,17 @@ public class OrderDetail {
     private BigDecimal price;
     private String productTitle;
     private String productImageUrl;
+    private String sellerName;
+
 
     /*Getter & Setter*/
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
 
     public int getOrderDetailId() {
         return orderDetailId;
