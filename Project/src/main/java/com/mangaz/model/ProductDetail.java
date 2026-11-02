@@ -17,7 +17,7 @@ public class ProductDetail {
     private String coverImageUrl;
     private List<String> imageUrls;
     private List<ProductAttribute> attributes;
-
+    private int sellerId;
     public List<ProductAttribute> getAttributes() {
         return attributes;
     }
@@ -108,5 +108,13 @@ public class ProductDetail {
 
     public void setImageUrls(List<String> imageUrls) {
         this.imageUrls = imageUrls;
+    }
+
+    public int getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(int sellerId) {
+        this.sellerId = sellerId;
     }
 }

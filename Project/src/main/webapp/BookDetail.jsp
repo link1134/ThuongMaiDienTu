@@ -189,10 +189,9 @@
             <!-- Chua trien khai binh luan -->
             <button class="tab-nav-btn"
                     type="button"
-                    disabled
-                    title="Tính năng đang được phát triển">
+                    data-tab="comment">
                 <span>Bình luận &amp; Hỏi Đáp</span>
-                <span class="tab-counter-badge">4</span>
+                <span class="tab-counter-badge">${commentCount != null ? commentCount : 0}</span>
             </button>
         </div>
 
@@ -254,6 +253,110 @@
                 </c:choose>
             </div>
 
+        </div>
+        <!-- TAB 3: BÌNH LUẬN & HỎI ĐÁP -->
+        <div class="spec-tab-panel" id="comment-panel" hidden>
+            <div style="padding: 20px 0;">
+
+                <!-- Form gửi câu hỏi mới -->
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user}">
+                        <form action="${pageContext.request.contextPath}/comment/add" method="POST" style="margin-bottom: 30px;">
+                            <input type="hidden" name="listingId" value="${product.productId}"/>
+                            <div style="display: flex; gap: 12px; align-items: flex-start;">
+                                <textarea name="content" rows="3" required placeholder="Hỏi người bán về tình trạng sách, phí ship..."
+                                          style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #d1d5db; font-family: inherit; font-size: 14px; resize: vertical;"></textarea>
+                                <button type="submit" style="padding: 12px 24px; background: #111827; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                    Gửi câu hỏi
+                                </button>
+                            </div>
+                        </form>
+                    </c:when>
+                    <c:otherwise>
+                        <div style="background: #f9fafb; padding: 16px; border-radius: 8px; text-align: center; margin-bottom: 24px; border: 1px solid #e5e7eb;">
+                            Vui lòng <a href="${pageContext.request.contextPath}/Login.jsp" style="color: #2563eb; font-weight: 600;">đăng nhập</a> để đặt câu hỏi cho người bán.
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+
+                <!-- Danh sách các bình luận -->
+                <c:choose>
+                    <c:when test="${empty comments}">
+                        <div style="text-align: center; padding: 30px; color: #6b7280;">
+                            Chưa có bình luận nào. Hãy là người đầu tiên đặt câu hỏi!
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                            <c:forEach var="c" items="${comments}">
+                                <div style="border-bottom: 1px solid #f3f4f6; padding-bottom: 16px;">
+                                    <!-- Người đăng câu hỏi -->
+                                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                                        <strong style="font-size: 14px; color: #111827;">
+                                            <c:out value="${not empty c.userFullName ? c.userFullName : c.username}"/>
+                                        </strong>
+                                        <c:if test="${c.seller}">
+                                            <span style="background: #dbeafe; color: #1e40af; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600;">Người bán</span>
+                                        </c:if>
+                                        <span style="font-size: 12px; color: #9ca3af;">
+                                            <fmt:formatDate value="${c.createdAt}" pattern="HH:mm dd/MM/yyyy"/>
+                                        </span>
+                                    </div>
+
+                                    <div style="font-size: 14px; color: #374151; line-height: 1.5; margin-bottom: 8px;">
+                                        <c:out value="${c.content}"/>
+                                    </div>
+
+                                    <!-- Nút Mở form Trả lời -->
+                                    <c:if test="${not empty sessionScope.user}">
+                                        <button type="button" onclick="document.getElementById('reply-form-${c.commentId}').hidden = !document.getElementById('reply-form-${c.commentId}').hidden"
+                                                style="background: none; border: none; color: #2563eb; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
+                                            Trả lời
+                                        </button>
+                                    </c:if>
+
+                                    <!-- Form Trả lời Ẩn/Hiện -->
+                                    <div id="reply-form-${c.commentId}" hidden style="margin-top: 10px; padding-left: 20px;">
+                                        <form action="${pageContext.request.contextPath}/comment/add" method="POST" style="display: flex; gap: 8px;">
+                                            <input type="hidden" name="listingId" value="${product.productId}"/>
+                                            <input type="hidden" name="parentCommentId" value="${c.commentId}"/>
+                                            <input type="text" name="content" required placeholder="Viết câu trả lời..."
+                                                   style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 13px;"/>
+                                            <button type="submit" style="padding: 8px 16px; background: #374151; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">Gửi</button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Danh sách câu trả lời con (Replies) -->
+                                    <c:if test="${not empty c.replies}">
+                                        <div style="margin-top: 12px; padding-left: 20px; border-left: 2px solid #e5e7eb; display: flex; flex-direction: column; gap: 12px;">
+                                            <c:forEach var="reply" items="${c.replies}">
+                                                <div>
+                                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                                        <strong style="font-size: 13px; color: #111827;">
+                                                            <c:out value="${not empty reply.userFullName ? reply.userFullName : reply.username}"/>
+                                                        </strong>
+                                                        <c:if test="${reply.seller}">
+                                                            <span style="background: #dbeafe; color: #1e40af; font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600;">Người bán</span>
+                                                        </c:if>
+                                                        <span style="font-size: 11px; color: #9ca3af;">
+                                                            <fmt:formatDate value="${reply.createdAt}" pattern="HH:mm dd/MM/yyyy"/>
+                                                        </span>
+                                                    </div>
+                                                    <div style="font-size: 13px; color: #4b5563;">
+                                                        <c:out value="${reply.content}"/>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
+                                        </div>
+                                    </c:if>
+
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+
+            </div>
         </div>
 
     </div>
@@ -371,16 +474,22 @@
     const tabButtons = document.querySelectorAll('.spec-tabs-nav button[data-tab]');
     const conditionPanel = document.getElementById('condition-panel');
     const descriptionPanel = document.getElementById('description-panel');
+    const commentPanel = document.getElementById('comment-panel');
 
     tabButtons.forEach(function (button) {
         button.addEventListener('click', function () {
             const selectedTab = button.dataset.tab;
             tabButtons.forEach(tab => tab.classList.remove('active'));
             button.classList.add('active');
-            conditionPanel.hidden = selectedTab !== 'condition';
-            descriptionPanel.hidden = selectedTab !== 'description';
+            if (conditionPanel) conditionPanel.hidden = selectedTab !== 'condition';
+            if (descriptionPanel) descriptionPanel.hidden = selectedTab !== 'description';
+            if (commentPanel) commentPanel.hidden = selectedTab !== 'comment';
         });
     });
+    if (window.location.hash === '#comment-panel') {
+        const commentTabBtn = document.querySelector('.spec-tabs-nav button[data-tab="comment"]');
+        if (commentTabBtn) commentTabBtn.click();
+    }
 
     // 2. Xử lý Nút Tăng/Giảm số lượng & Tự động tính Tạm tính
     const unitPrice = ${product.price};
