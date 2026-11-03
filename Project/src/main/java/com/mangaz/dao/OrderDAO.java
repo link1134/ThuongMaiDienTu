@@ -121,6 +121,234 @@ public class OrderDAO {
             }
         }
     }
+
+    // Tạo đơn hàng VNPay ở trạng thái chờ thanh toán
+    public boolean createPendingOrder(Order order) {
+
+        String insertOrderSql = """
+        INSERT INTO dbo.Orders
+        (UserId, RecipientName, PhoneNumber, ShippingAddress,
+         ShippingFee, TotalAmount, PaymentMethod, DeliveryMethod,
+         Status, PaymentStatus)
+        VALUES (?, ?, ?, ?, ?, ?, N'VNPay', ?, N'Pending', N'Unpaid')
+        """;
+
+        String insertDetailSql = """
+        INSERT INTO dbo.OrderDetails
+        (OrderId, ListingId, Quantity, Price)
+        VALUES (?, ?, ?, ?)
+        """;
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+                int orderId = -1;
+
+                // 1. Tạo đơn hàng
+                try (PreparedStatement ps = conn.prepareStatement(
+                        insertOrderSql, Statement.RETURN_GENERATED_KEYS)) {
+
+                    ps.setInt(1, order.getUserId());
+                    ps.setString(2, order.getRecipientName());
+                    ps.setString(3, order.getPhoneNumber());
+                    ps.setString(4, order.getShippingAddress());
+                    ps.setBigDecimal(5, order.getShippingFee());
+                    ps.setBigDecimal(6, order.getTotalAmount());
+                    ps.setString(7, order.getDeliveryMethod());
+
+                    ps.executeUpdate();
+
+                    try (ResultSet rs = ps.getGeneratedKeys()) {
+                        if (rs.next()) {
+                            orderId = rs.getInt(1);
+                            order.setOrderId(orderId);
+                        }
+                    }
+                }
+
+                if (orderId == -1) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // 2. Lưu chi tiết đơn hàng
+                try (PreparedStatement ps = conn.prepareStatement(insertDetailSql)) {
+
+                    for (OrderDetail detail : order.getDetails()) {
+
+                        ps.setInt(1, orderId);
+                        ps.setInt(2, detail.getListingId());
+                        ps.setInt(3, detail.getQuantity());
+                        ps.setBigDecimal(4, detail.getPrice());
+
+                        ps.executeUpdate();
+                    }
+                }
+
+                // Chưa trừ kho và chưa xóa giỏ hàng
+                conn.commit();
+                return true;
+
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Xác nhận thanh toán VNPay thành công
+    public boolean confirmVnpayPayment(int orderId, java.math.BigDecimal paidAmount) {
+
+        String checkOrderSql = """
+        SELECT TotalAmount, PaymentStatus, PaymentMethod
+        FROM dbo.Orders WITH (UPDLOCK, ROWLOCK)
+        WHERE OrderId = ?
+        """;
+
+        String getDetailsSql = """
+        SELECT ListingId, Quantity
+        FROM dbo.OrderDetails
+        WHERE OrderId = ?
+        """;
+
+        String updateStockSql = """
+        UPDATE dbo.Listings
+        SET Quantity = Quantity - ?
+        WHERE ListingId = ? AND Quantity >= ?
+        """;
+
+        String clearCartSql = """
+        DELETE ci
+        FROM dbo.CartItems ci
+        JOIN dbo.Carts c ON ci.CartId = c.CartId
+        WHERE c.UserId = (
+            SELECT UserId FROM dbo.Orders WHERE OrderId = ?
+        )
+        """;
+
+        String updatePaymentSql = """
+        UPDATE dbo.Orders
+        SET PaymentStatus = N'Paid',
+            UpdatedAt = SYSDATETIME()
+        WHERE OrderId = ? AND PaymentStatus = N'Unpaid'
+        """;
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+                java.math.BigDecimal totalAmount;
+                String paymentStatus;
+                String paymentMethod;
+
+                // 1. Kiểm tra đơn hàng và khóa bản ghi
+                try (PreparedStatement ps = conn.prepareStatement(checkOrderSql)) {
+
+                    ps.setInt(1, orderId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return false;
+                        }
+
+                        totalAmount = rs.getBigDecimal("TotalAmount");
+                        paymentStatus = rs.getString("PaymentStatus");
+                        paymentMethod = rs.getString("PaymentMethod");
+                    }
+                }
+
+                // Chỉ chấp nhận đơn hàng thanh toán bằng VNPay
+                if (!"VNPay".equalsIgnoreCase(paymentMethod)) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // Kiểm tra số tiền VNPay trả về
+                if (totalAmount == null || paidAmount == null
+                        || totalAmount.compareTo(paidAmount) != 0) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // Nếu đã thanh toán trước đó thì không trừ kho lần nữa
+                if ("Paid".equalsIgnoreCase(paymentStatus)) {
+                    conn.commit();
+                    return true;
+                }
+
+                if (!"Unpaid".equalsIgnoreCase(paymentStatus)) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // 2. Trừ tồn kho sau khi xác nhận thanh toán
+                try (PreparedStatement psDetail = conn.prepareStatement(getDetailsSql);
+                     PreparedStatement psStock = conn.prepareStatement(updateStockSql)) {
+
+                    psDetail.setInt(1, orderId);
+
+                    try (ResultSet rs = psDetail.executeQuery()) {
+
+                        while (rs.next()) {
+
+                            int listingId = rs.getInt("ListingId");
+                            int quantity = rs.getInt("Quantity");
+
+                            psStock.setInt(1, quantity);
+                            psStock.setInt(2, listingId);
+                            psStock.setInt(3, quantity);
+
+                            int updatedRows = psStock.executeUpdate();
+
+                            if (updatedRows == 0) {
+                                conn.rollback();
+                                return false;
+                            }
+                        }
+                    }
+                }
+
+                // 3. Đánh dấu đã thanh toán
+                try (PreparedStatement ps = conn.prepareStatement(updatePaymentSql)) {
+
+                    ps.setInt(1, orderId);
+
+                    if (ps.executeUpdate() == 0) {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+
+                // 4. Xóa giỏ hàng sau khi thanh toán thành công
+                try (PreparedStatement ps = conn.prepareStatement(clearCartSql)) {
+
+                    ps.setInt(1, orderId);
+                    ps.executeUpdate();
+                }
+
+                conn.commit();
+                return true;
+
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     // Lấy danh sách đơn hàng theo UserId kèm danh sách chi tiết sản phẩm
     public List<Order> getOrdersByUserId(int userId) {
         List<Order> orders = new ArrayList<>();
