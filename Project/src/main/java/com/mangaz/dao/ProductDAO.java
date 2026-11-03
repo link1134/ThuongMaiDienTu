@@ -59,7 +59,7 @@ public class ProductDAO {
     }
     public ProductDetail findById(int listingId) {
         String sql = """
-                SELECT ListingId, Title, Description,
+                SELECT ListingId, SellerId, Title, Description,
                        Price, OriginalPrice, Quantity, ShortDescription
                 FROM Listings
                 WHERE ListingId = ?
@@ -73,6 +73,7 @@ public class ProductDAO {
                 if (resultSet.next()) {
                     ProductDetail product = new ProductDetail();
                     product.setProductId(resultSet.getInt("ListingId"));
+                    product.setSellerId(resultSet.getInt("SellerId"));
                     product.setTitle(resultSet.getString("Title"));
                     product.setDescription(resultSet.getString("Description"));
                     product.setPrice(resultSet.getBigDecimal("Price"));

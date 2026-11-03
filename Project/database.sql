@@ -657,3 +657,27 @@ CREATE TABLE dbo.SellerProfiles
 GO
 INSERT INTO dbo.SellerProfiles (SellerId, PickupAddressId, Status)
 VALUES (2, NULL, N'Approved');
+ --     Tạo bảng lưu trữ bình luận / hỏi đáp
+IF OBJECT_ID('dbo.ListingComments', 'U') IS NULL
+BEGIN
+CREATE TABLE dbo.ListingComments (
+                                     CommentId INT IDENTITY(1,1) PRIMARY KEY,
+                                     ListingId INT NOT NULL,
+                                     UserId INT NOT NULL,
+                                     ParentCommentId INT NULL, -- NULL: Câu hỏi gốc | Có ID: Câu trả lời
+                                     Content NVARCHAR(1000) NOT NULL,
+                                     CreatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+
+                                     CONSTRAINT FK_ListingComments_Listings FOREIGN KEY (ListingId) REFERENCES dbo.Listings(ListingId) ON DELETE CASCADE,
+                                     CONSTRAINT FK_ListingComments_Users FOREIGN KEY (UserId) REFERENCES dbo.Users(Id),
+                                     CONSTRAINT FK_ListingComments_Parent FOREIGN KEY (ParentCommentId) REFERENCES dbo.ListingComments(CommentId)
+);
+END;
+GO
+
+--  Thêm dữ liệu mẫu thử nghiệm (Giả định ListingId = 1, UserId = 1 hoặc 2)
+INSERT INTO dbo.ListingComments (ListingId, UserId, ParentCommentId, Content)
+VALUES
+    (1, 1, NULL, N'Sách này còn mới khoảng bao nhiêu % vậy shop? Gáy có bị nếp gấp không?'),
+    (1, 2, 1, N'Chào bạn, sách mới 95% nhé, gáy phẳng đẹp không cấn nếp ạ!');
+GO
