@@ -255,6 +255,7 @@
 
         </div>
         <!-- TAB 3: BÌNH LUẬN & HỎI ĐÁP -->
+        <!-- TAB 3: BÌNH LUẬN & HỎI ĐÁP -->
         <div class="spec-tab-panel" id="comment-panel" hidden>
             <div style="padding: 20px 0;">
 
@@ -290,7 +291,8 @@
                         <div style="display: flex; flex-direction: column; gap: 20px;">
                             <c:forEach var="c" items="${comments}">
                                 <div style="border-bottom: 1px solid #f3f4f6; padding-bottom: 16px;">
-                                    <!-- Người đăng câu hỏi -->
+
+                                    <!-- THÔNG TIN NGƯỜI ĐĂNG CÂU HỎI CHA -->
                                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
                                         <strong style="font-size: 14px; color: #111827;">
                                             <c:out value="${not empty c.userFullName ? c.userFullName : c.username}"/>
@@ -301,21 +303,57 @@
                                         <span style="font-size: 12px; color: #9ca3af;">
                                             <fmt:formatDate value="${c.createdAt}" pattern="HH:mm dd/MM/yyyy"/>
                                         </span>
+                                        <!-- Nhãn đã chỉnh sửa -->
+                                        <c:if test="${c.edited}">
+                                            <span style="font-size: 11px; color: #6b7280; font-style: italic;">(Đã chỉnh sửa)</span>
+                                        </c:if>
                                     </div>
 
-                                    <div style="font-size: 14px; color: #374151; line-height: 1.5; margin-bottom: 8px;">
+                                    <!-- Nội dung bình luận cha -->
+                                    <div id="comment-text-${c.commentId}" style="font-size: 14px; color: #374151; line-height: 1.5; margin-bottom: 8px;">
                                         <c:out value="${c.content}"/>
                                     </div>
 
-                                    <!-- Nút Mở form Trả lời -->
-                                    <c:if test="${not empty sessionScope.user}">
-                                        <button type="button" onclick="document.getElementById('reply-form-${c.commentId}').hidden = !document.getElementById('reply-form-${c.commentId}').hidden"
-                                                style="background: none; border: none; color: #2563eb; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
-                                            Trả lời
-                                        </button>
-                                    </c:if>
+                                    <!-- NÚT THAO TÁC (Trả lời, Sửa, Xóa) -->
+                                    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
+                                        <c:if test="${not empty sessionScope.user}">
+                                            <button type="button" onclick="document.getElementById('reply-form-${c.commentId}').hidden = !document.getElementById('reply-form-${c.commentId}').hidden"
+                                                    style="background: none; border: none; color: #2563eb; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
+                                                Trả lời
+                                            </button>
+                                        </c:if>
 
-                                    <!-- Form Trả lời Ẩn/Hiện -->
+                                        <!-- Nút Sửa / Xóa (Chỉ hiện khi là chính chủ) -->
+                                        <c:if test="${not empty sessionScope.user and sessionScope.user.id eq c.userId}">
+                                            <button type="button" onclick="toggleEditForm(${c.commentId})"
+                                                    style="background: none; border: none; color: #059669; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
+                                                Sửa
+                                            </button>
+
+                                            <form action="${pageContext.request.contextPath}/comment/delete" method="POST" style="display: inline-flex; align-items: center; margin: 0;"
+                                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
+                                                <input type="hidden" name="listingId" value="${product.productId}"/>
+                                                <input type="hidden" name="commentId" value="${c.commentId}"/>
+                                                <button type="submit" style="background: none; border: none; color: #dc2626; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
+                                                    Xóa
+                                                </button>
+                                            </form>
+                                        </c:if>
+                                    </div>
+
+                                    <!-- Form Chỉnh sửa inline cho bình luận cha (Ẩn mặc định) -->
+                                    <div id="edit-form-${c.commentId}" hidden style="margin-bottom: 12px;">
+                                        <form action="${pageContext.request.contextPath}/comment/update" method="POST" style="display: flex; gap: 8px;">
+                                            <input type="hidden" name="listingId" value="${product.productId}"/>
+                                            <input type="hidden" name="commentId" value="${c.commentId}"/>
+                                            <input type="text" name="content" value="<c:out value='${c.content}'/>" required
+                                                   style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 13px;"/>
+                                            <button type="submit" style="padding: 8px 16px; background: #059669; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">Lưu</button>
+                                            <button type="button" onclick="toggleEditForm(${c.commentId})" style="padding: 8px 12px; background: #9ca3af; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">Hủy</button>
+                                        </form>
+                                    </div>
+
+                                    <!-- Form Trả lời (Ẩn mặc định) -->
                                     <div id="reply-form-${c.commentId}" hidden style="margin-top: 10px; padding-left: 20px;">
                                         <form action="${pageContext.request.contextPath}/comment/add" method="POST" style="display: flex; gap: 8px;">
                                             <input type="hidden" name="listingId" value="${product.productId}"/>
@@ -326,7 +364,7 @@
                                         </form>
                                     </div>
 
-                                    <!-- Danh sách câu trả lời con (Replies) -->
+                                    <!-- DANH SÁCH CÂU TRẢ LỜI CON (REPLIES) -->
                                     <c:if test="${not empty c.replies}">
                                         <div style="margin-top: 12px; padding-left: 20px; border-left: 2px solid #e5e7eb; display: flex; flex-direction: column; gap: 12px;">
                                             <c:forEach var="reply" items="${c.replies}">
@@ -341,10 +379,44 @@
                                                         <span style="font-size: 11px; color: #9ca3af;">
                                                             <fmt:formatDate value="${reply.createdAt}" pattern="HH:mm dd/MM/yyyy"/>
                                                         </span>
+                                                        <c:if test="${reply.edited}">
+                                                            <span style="font-size: 10px; color: #6b7280; font-style: italic;">(Đã chỉnh sửa)</span>
+                                                        </c:if>
                                                     </div>
-                                                    <div style="font-size: 13px; color: #4b5563;">
+
+                                                    <div id="comment-text-${reply.commentId}" style="font-size: 13px; color: #4b5563; margin-bottom: 4px;">
                                                         <c:out value="${reply.content}"/>
                                                     </div>
+
+                                                    <!-- Nút Sửa / Xóa cho câu trả lời con -->
+                                                    <c:if test="${not empty sessionScope.user and sessionScope.user.id eq reply.userId}">
+                                                        <div style="display: flex; gap: 10px; margin-bottom: 6px;">
+                                                            <button type="button" onclick="toggleEditForm(${reply.commentId})"
+                                                                    style="background: none; border: none; color: #059669; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">
+                                                                Sửa
+                                                            </button>
+                                                            <form action="${pageContext.request.contextPath}/comment/delete" method="POST" style="display: inline;"
+                                                                  onsubmit="return confirm('Bạn có chắc chắn muốn xóa câu trả lời này không?');">
+                                                                <input type="hidden" name="listingId" value="${product.productId}"/>
+                                                                <input type="hidden" name="commentId" value="${reply.commentId}"/>
+                                                                <button type="submit" style="background: none; border: none; color: #dc2626; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">
+                                                                    Xóa
+                                                                </button>
+                                                            </form>
+                                                        </div>
+
+                                                        <!-- Form sửa cho câu trả lời con -->
+                                                        <div id="edit-form-${reply.commentId}" hidden style="margin-bottom: 8px;">
+                                                            <form action="${pageContext.request.contextPath}/comment/update" method="POST" style="display: flex; gap: 6px;">
+                                                                <input type="hidden" name="listingId" value="${product.productId}"/>
+                                                                <input type="hidden" name="commentId" value="${reply.commentId}"/>
+                                                                <input type="text" name="content" value="<c:out value='${reply.content}'/>" required
+                                                                       style="flex: 1; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 12px;"/>
+                                                                <button type="submit" style="padding: 6px 12px; background: #059669; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer;">Lưu</button>
+                                                                <button type="button" onclick="toggleEditForm(${reply.commentId})" style="padding: 6px 10px; background: #9ca3af; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer;">Hủy</button>
+                                                            </form>
+                                                        </div>
+                                                    </c:if>
                                                 </div>
                                             </c:forEach>
                                         </div>
@@ -527,6 +599,16 @@
         });
 
         quantityInput.addEventListener('input', updateSubtotal);
+    }
+    function toggleEditForm(commentId) {
+        const editForm = document.getElementById('edit-form-' + commentId);
+        const commentText = document.getElementById('comment-text-' + commentId);
+        if (editForm) {
+            editForm.hidden = !editForm.hidden;
+        }
+        if (commentText) {
+            commentText.style.display = editForm.hidden ? 'block' : 'none';
+        }
     }
 </script>
 </body>

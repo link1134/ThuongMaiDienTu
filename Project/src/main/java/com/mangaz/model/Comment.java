@@ -16,6 +16,8 @@ public class Comment {
     private String userAvatarUrl;
     private boolean isSeller;
     private List<Comment> replies = new ArrayList<>();
+    private boolean isEdited;
+    private Timestamp updatedAt;
 
     /*Getter &setter*/
 
@@ -107,4 +109,19 @@ public class Comment {
         this.replies = replies;
     }
 
+    public boolean isEdited() {
+        return isEdited;
+    }
+
+    public void setEdited(boolean edited) {
+        isEdited = edited;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
