@@ -395,7 +395,7 @@
                                                                     style="background: none; border: none; color: #059669; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">
                                                                 Sửa
                                                             </button>
-                                                            <form action="${pageContext.request.contextPath}/comment/delete" method="POST" style="display: inline;"
+                                                            <form action="${pageContext.request.contextPath}/comment/delete" method="POST" style="display: inline-flex; align-items: center; margin: 0;""
                                                                   onsubmit="return confirm('Bạn có chắc chắn muốn xóa câu trả lời này không?');">
                                                                 <input type="hidden" name="listingId" value="${product.productId}"/>
                                                                 <input type="hidden" name="commentId" value="${reply.commentId}"/>
