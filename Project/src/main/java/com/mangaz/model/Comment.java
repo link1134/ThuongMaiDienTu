@@ -18,6 +18,7 @@ public class Comment {
     private List<Comment> replies = new ArrayList<>();
     private boolean isEdited;
     private Timestamp updatedAt;
+    private String sentiment = "NEUTRAL";
 
     /*Getter &setter*/
 
@@ -123,5 +124,13 @@ public class Comment {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getSentiment() {
+        return sentiment;
+    }
+
+    public void setSentiment(String sentiment) {
+        this.sentiment = sentiment;
     }
 }

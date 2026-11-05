@@ -300,6 +300,18 @@
                                         <c:if test="${c.seller}">
                                             <span style="background: #dbeafe; color: #1e40af; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 600;">Người bán</span>
                                         </c:if>
+                                        <!-- NHÃN CẢM XÚC  -->
+                                        <c:choose>
+                                            <c:when test="${c.sentiment eq 'POSITIVE'}">
+                                                <span class="badge-sentiment positive">Tích cực</span>
+                                            </c:when>
+                                            <c:when test="${c.sentiment eq 'NEGATIVE'}">
+                                                <span class="badge-sentiment negative">Tiêu cực</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="badge-sentiment neutral">Trung tính</span>
+                                            </c:otherwise>
+                                        </c:choose>
                                         <span style="font-size: 12px; color: #9ca3af;">
                                             <fmt:formatDate value="${c.createdAt}" pattern="HH:mm dd/MM/yyyy"/>
                                         </span>
@@ -376,6 +388,18 @@
                                                         <c:if test="${reply.seller}">
                                                             <span style="background: #dbeafe; color: #1e40af; font-size: 10px; padding: 1px 6px; border-radius: 10px; font-weight: 600;">Người bán</span>
                                                         </c:if>
+                                                        <!-- NHÃN CẢM XÚC CHO REPLIES  -->
+                                                        <c:choose>
+                                                            <c:when test="${reply.sentiment eq 'POSITIVE'}">
+                                                                <span class="badge-sentiment positive" style="font-size: 10px; padding: 2px 6px;">Tích cực</span>
+                                                            </c:when>
+                                                            <c:when test="${reply.sentiment eq 'NEGATIVE'}">
+                                                                <span class="badge-sentiment negative" style="font-size: 10px; padding: 2px 6px;">Tiêu cực</span>
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <span class="badge-sentiment neutral" style="font-size: 10px; padding: 2px 6px;">Trung tính</span>
+                                                            </c:otherwise>
+                                                        </c:choose>
                                                         <span style="font-size: 11px; color: #9ca3af;">
                                                             <fmt:formatDate value="${reply.createdAt}" pattern="HH:mm dd/MM/yyyy"/>
                                                         </span>

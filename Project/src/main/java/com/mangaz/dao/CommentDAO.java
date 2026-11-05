@@ -2,6 +2,7 @@ package com.mangaz.dao;
 
 import com.mangaz.model.Comment;
 import com.mangaz.util.DBConnection;
+import com.mangaz.util.SentimentClient;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -19,8 +20,8 @@ public class CommentDAO {
         Map<Integer, Comment> commentMap = new HashMap<>();
 
         String sql = """
-            SELECT c.CommentId, c.ListingId, c.UserId, c.ParentCommentId, c.Content, c.CreatedAt, c.IsEdited,
-                   u.FullName, u.Username, u.AvatarUrl
+            SELECT c.CommentId, c.ListingId, c.UserId, c.ParentCommentId, c.Content, c.Sentiment, 
+                   c.CreatedAt, c.IsEdited, u.FullName, u.Username, u.AvatarUrl
             FROM dbo.ListingComments c
             JOIN dbo.Users u ON c.UserId = u.Id
             WHERE c.ListingId = ?
@@ -38,6 +39,10 @@ public class CommentDAO {
                     comment.setListingId(rs.getInt("ListingId"));
                     comment.setUserId(rs.getInt("UserId"));
                     comment.setEdited(rs.getBoolean("IsEdited"));
+
+                    String sentiment = rs.getString("Sentiment");
+                    comment.setSentiment(sentiment != null ? sentiment : "NEUTRAL");
+
                     int parentId = rs.getInt("ParentCommentId");
                     if (!rs.wasNull()) {
                         comment.setParentCommentId(parentId);
@@ -69,9 +74,13 @@ public class CommentDAO {
     }
     // Thêm bình luận hoặc câu trả lời mới
     public boolean addComment(Comment comment) {
+        // Gọi Python API để dự đoán cảm xúc
+        String sentiment = SentimentClient.analyzeSentiment(comment.getContent());
+        comment.setSentiment(sentiment);
+
         String sql = """
-            INSERT INTO dbo.ListingComments (ListingId, UserId, ParentCommentId, Content)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO dbo.ListingComments (ListingId, UserId, ParentCommentId, Content, Sentiment)
+            VALUES (?, ?, ?, ?, ?)
         """;
 
         try (Connection conn = DBConnection.getConnection();
@@ -87,6 +96,8 @@ public class CommentDAO {
             }
 
             ps.setString(4, comment.getContent());
+            ps.setString(5, comment.getSentiment());
+
             return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
@@ -96,18 +107,21 @@ public class CommentDAO {
     }
     //Phương thức chỉnh sửa bình luận
     public boolean updateComment(int commentId, int userId, String newContent) {
+        String newSentiment = SentimentClient.analyzeSentiment(newContent);
+
         String sql = """
-        UPDATE dbo.ListingComments
-        SET Content = ?, IsEdited = 1, UpdatedAt = SYSDATETIME()
-        WHERE CommentId = ? AND UserId = ?
-    """;
+            UPDATE dbo.ListingComments
+            SET Content = ?, Sentiment = ?, IsEdited = 1, UpdatedAt = SYSDATETIME()
+            WHERE CommentId = ? AND UserId = ?
+        """;
 
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, newContent);
-            ps.setInt(2, commentId);
-            ps.setInt(3, userId);
+            ps.setString(2, newSentiment);
+            ps.setInt(3, commentId);
+            ps.setInt(4, userId);
 
             return ps.executeUpdate() > 0;
         } catch (Exception e) {
@@ -135,9 +149,8 @@ public class CommentDAO {
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
-            conn.setAutoCommit(false); // Bắt đầu Transaction
+            conn.setAutoCommit(false);
 
-            // Bước 1: Nếu đây là comment cha của chính chủ, xóa tất cả câu trả lời con trước
             try (PreparedStatement psReplies = conn.prepareStatement(deleteRepliesSql)) {
                 psReplies.setInt(1, commentId);
                 psReplies.setInt(2, commentId);
@@ -145,7 +158,6 @@ public class CommentDAO {
                 psReplies.executeUpdate();
             }
 
-            // Bước 2: Xóa chính comment đó
             int rowsAffected;
             try (PreparedStatement psComment = conn.prepareStatement(deleteCommentSql)) {
                 psComment.setInt(1, commentId);
@@ -158,11 +170,7 @@ public class CommentDAO {
 
         } catch (Exception e) {
             if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                try { conn.rollback(); } catch (Exception ex) { ex.printStackTrace(); }
             }
             e.printStackTrace();
         } finally {
@@ -170,9 +178,7 @@ public class CommentDAO {
                 try {
                     conn.setAutoCommit(true);
                     conn.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                } catch (Exception e) { e.printStackTrace(); }
             }
         }
         return false;
