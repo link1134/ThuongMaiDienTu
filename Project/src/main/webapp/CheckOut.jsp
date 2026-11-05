@@ -97,9 +97,7 @@
                     <label class="payment-method active">
                         <div><input type="radio" name="payment-method" value="COD" class="check-box-mod" checked></div>
                         <div class="payment-method-information">
-                            <span class="material-symbols-outlined payment-google-icon-mod">
-payments
-</span>
+                            <span class="material-symbols-outlined payment-google-icon-mod">payments</span>
                             <div class="payment-method-name-des">
                                 <span class="payment-method-name">Thanh toán trực tiếp (COD)</span>
                                 <span class="payment-method-des">Trả bằng tiền mặt khi hàng giao tới bạn</span>
@@ -107,11 +105,11 @@ payments
                         </div>
                     </label>
                     <label class="payment-method">
-                        <div><input type="radio" name="payment-method" value="MoMo" class="check-box-mod"></div>
+                        <div><input type="radio" name="payment-method" value="VNPay" class="check-box-mod"></div>
                         <div class="payment-method-information">
-                            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Logo-MoMo-Square.png" alt="">
+                            <img src="https://cdn.haitrieu.com/wp-content/uploads/2022/10/Icon-VNPAY-QR.png" alt="">
                             <div class="payment-method-name-des">
-                                <span class="payment-method-name">Ví MoMo</span>
+                                <span class="payment-method-name">VNPay</span>
                             </div>
                         </div>
                     </label>
