@@ -293,7 +293,7 @@
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="comment-list-container"  style="display: flex; flex-direction: column; gap: 20px; max-height: 500px; overflow-y:auto ">
                             <c:forEach var="c" items="${comments}">
                                 <div style="border-bottom: 1px solid #f3f4f6; padding-bottom: 16px;">
 
@@ -711,7 +711,8 @@
 
             // 1. Gửi dữ liệu đến CommentServlet
             const formData = new FormData(form);
-
+            const submittedContent = (formData.get('content') || '').trim();
+            const isAddingComment = form.action.includes('/comment/add');
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: new URLSearchParams(formData)
@@ -753,9 +754,62 @@
             if (!newCommentPanel || !currentCommentPanel) {
                 throw new Error('Không tìm thấy khu vực bình luận!');
             }
-
+            // Lưu vị trí thanh cuộn hiện tại
+            const currentCommentList = currentCommentPanel.querySelector('.comment-list-container');
+            const scrollPosition = currentCommentList ? currentCommentList.scrollTop : 0;
             // 5. Chỉ cập nhật nội dung khu vực bình luận
             currentCommentPanel.innerHTML = newCommentPanel.innerHTML;
+            // 6. Cuộn đến bình luận vừa gửi
+            const updatedCommentList = currentCommentPanel.querySelector('.comment-list-container');
+
+            if (updatedCommentList) {
+                updatedCommentList.scrollTop = scrollPosition;
+            }
+            if (isAddingComment && !formData.get('parentCommentId')) {
+                const commentElements = currentCommentPanel.querySelectorAll(
+                    '[id^="comment-text-"]'
+                );
+
+                let newCommentElement = null;
+
+                commentElements.forEach(function (element) {
+                    if (element.textContent.trim() === submittedContent) {
+                        newCommentElement = element;
+                    }
+                });
+
+                if (newCommentElement) {
+
+                    // 1. Cuộn đến bình luận
+                    newCommentElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+
+                    // 2. Chờ cuộn xong rồi làm sáng bình luận
+                    setTimeout(function () {
+
+                        newCommentElement.classList.add('comment-highlight');
+
+                        // 3. Giữ màu xanh trong 1 giây
+                        setTimeout(function () {
+
+                            // 4. Từ từ đưa màu nền về ban đầu
+                            newCommentElement.classList.add('comment-highlight-fade');
+
+                            // 5. Xóa class sau khi hiệu ứng hoàn tất
+                            setTimeout(function () {
+                                newCommentElement.classList.remove(
+                                    'comment-highlight',
+                                    'comment-highlight-fade'
+                                );
+                            }, 1500);
+
+                        }, 1000);
+
+                    }, 500);
+                }
+            }
 
             // 6. Cập nhật số lượng bình luận trên tab
             const newCounter = newDocument.querySelector('.tab-counter-badge');
