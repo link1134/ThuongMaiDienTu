@@ -11,10 +11,16 @@ import java.util.List;
 
 public class OrderDAO {
     public boolean createOrder(Order order) {
+        return createOrder(order, false);
+    }
+
+    public boolean createOrder(Order order, boolean isBuyNow) {
         String insertOrderSql = """
-                    INSERT INTO dbo.Orders 
-                    (UserId, RecipientName, PhoneNumber, ShippingAddress, ShippingFee, TotalAmount, PaymentMethod, DeliveryMethod, Status)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO dbo.Orders
+                    (UserId, RecipientName, PhoneNumber, ShippingAddress,
+                    ShippingFee, TotalAmount, PaymentMethod, DeliveryMethod,
+                    Status, IsBuyNow)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """;
 
         String insertDetailSql = """
@@ -51,6 +57,7 @@ public class OrderDAO {
                 psOrder.setString(7, order.getPaymentMethod());
                 psOrder.setString(8, order.getDeliveryMethod());
                 psOrder.setString(9, order.getStatus());
+                psOrder.setBoolean(10, isBuyNow);
 
                 psOrder.executeUpdate();
                 ResultSet rs = psOrder.getGeneratedKeys();
@@ -92,9 +99,11 @@ public class OrderDAO {
             }
 
             // 3. Xóa các mặt hàng khỏi giỏ hàng
-            try (PreparedStatement psCart = conn.prepareStatement(clearCartSql)) {
-                psCart.setInt(1, order.getUserId());
-                psCart.executeUpdate();
+            if (!isBuyNow) {
+                try (PreparedStatement psCart = conn.prepareStatement(clearCartSql)) {
+                    psCart.setInt(1, order.getUserId());
+                    psCart.executeUpdate();
+                }
             }
 
             conn.commit(); // Hoàn tất Transaction thành công
@@ -124,13 +133,17 @@ public class OrderDAO {
 
     // Tạo đơn hàng VNPay ở trạng thái chờ thanh toán
     public boolean createPendingOrder(Order order) {
+        return createPendingOrder(order, false);
+    }
+
+    public boolean createPendingOrder(Order order, boolean isBuyNow) {
 
         String insertOrderSql = """
-        INSERT INTO dbo.Orders
-        (UserId, RecipientName, PhoneNumber, ShippingAddress,
-         ShippingFee, TotalAmount, PaymentMethod, DeliveryMethod,
-         Status, PaymentStatus)
-        VALUES (?, ?, ?, ?, ?, ?, N'VNPay', ?, N'Pending', N'Unpaid')
+                INSERT INTO dbo.Orders
+                (UserId, RecipientName, PhoneNumber, ShippingAddress,
+                ShippingFee, TotalAmount, PaymentMethod, DeliveryMethod,
+                Status, PaymentStatus, IsBuyNow)
+                VALUES (?, ?, ?, ?, ?, ?, N'VNPay', ?, N'Pending', N'Unpaid', ?)
         """;
 
         String insertDetailSql = """
@@ -157,6 +170,7 @@ public class OrderDAO {
                     ps.setBigDecimal(5, order.getShippingFee());
                     ps.setBigDecimal(6, order.getTotalAmount());
                     ps.setString(7, order.getDeliveryMethod());
+                    ps.setBoolean(8, isBuyNow);
 
                     ps.executeUpdate();
 
@@ -206,7 +220,7 @@ public class OrderDAO {
     public boolean confirmVnpayPayment(int orderId, java.math.BigDecimal paidAmount) {
 
         String checkOrderSql = """
-        SELECT TotalAmount, PaymentStatus, PaymentMethod
+        SELECT TotalAmount, PaymentStatus, PaymentMethod, IsBuyNow
         FROM dbo.Orders WITH (UPDLOCK, ROWLOCK)
         WHERE OrderId = ?
         """;
@@ -247,6 +261,7 @@ public class OrderDAO {
                 java.math.BigDecimal totalAmount;
                 String paymentStatus;
                 String paymentMethod;
+                boolean isBuyNow;
 
                 // 1. Kiểm tra đơn hàng và khóa bản ghi
                 try (PreparedStatement ps = conn.prepareStatement(checkOrderSql)) {
@@ -263,6 +278,7 @@ public class OrderDAO {
                         totalAmount = rs.getBigDecimal("TotalAmount");
                         paymentStatus = rs.getString("PaymentStatus");
                         paymentMethod = rs.getString("PaymentMethod");
+                        isBuyNow = rs.getBoolean("IsBuyNow");
                     }
                 }
 
@@ -329,10 +345,11 @@ public class OrderDAO {
                 }
 
                 // 4. Xóa giỏ hàng sau khi thanh toán thành công
-                try (PreparedStatement ps = conn.prepareStatement(clearCartSql)) {
-
-                    ps.setInt(1, orderId);
-                    ps.executeUpdate();
+                if (!isBuyNow) {
+                    try (PreparedStatement ps = conn.prepareStatement(clearCartSql)) {
+                        ps.setInt(1, orderId);
+                        ps.executeUpdate();
+                    }
                 }
 
                 conn.commit();

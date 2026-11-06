@@ -83,6 +83,46 @@ public class CartDAO {
         return cart;
     }
 
+
+    public CartItem getProductByListingId(int listingId) {
+        String sql = """
+        SELECT l.ListingId, l.Title, l.Price,
+               l.Quantity AS StockQuantity,
+               li.ImageUrl
+        FROM Listings l
+        LEFT JOIN ListingImages li
+            ON l.ListingId = li.ListingId
+            AND li.IsPrimary = 1
+        WHERE l.ListingId = ?
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, listingId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    CartItem item = new CartItem();
+
+                    item.setListingId(rs.getInt("ListingId"));
+                    item.setProductTitle(rs.getString("Title"));
+                    item.setProductPrice(rs.getBigDecimal("Price"));
+                    item.setStockQuantity(rs.getInt("StockQuantity"));
+                    item.setProductImageUrl(rs.getString("ImageUrl"));
+
+                    return item;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
     /*
      * Tạo giỏ hàng mới theo ID của người dùng
      * */

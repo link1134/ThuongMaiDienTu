@@ -52,6 +52,17 @@
     </c:if>
 
     <form action="${pageContext.request.contextPath}/checkout" method="POST" id="checkout-form">
+        <!-- Xác định nguồn đặt hàng -->
+        <input type="hidden" name="buyNow" value="${isBuyNow}">
+
+        <!-- Thông tin sản phẩm nếu đặt hàng bằng Mua ngay -->
+        <c:if test="${isBuyNow}">
+            <input type="hidden" name="listingId"
+                   value="${cart.items[0].listingId}">
+
+            <input type="hidden" name="quantity"
+                   value="${cart.items[0].quantity}">
+        </c:if>
         <!-- Hidden Input Địa chỉ -->
         <input type="hidden" name="recipientName" id="input-recipient-name" value="${defaultAddress.recipientName}">
         <input type="hidden" name="phoneNumber" id="input-phone-number" value="${defaultAddress.phoneNumber}">

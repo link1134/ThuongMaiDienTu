@@ -23,31 +23,82 @@ public class CheckoutServlet extends HttpServlet {
     private final DeliveryAddressDAO addressDAO = new DeliveryAddressDAO();
     private final OrderDAO orderDAO = new OrderDAO();
 
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
         HttpSession session = req.getSession();
         User user = (User) session.getAttribute("user");
 
-        Cart cart = cartDAO.getCartByUserId(user.getId());
-        if (cart.getItems() == null || cart.getItems().isEmpty()) {
-            resp.sendRedirect(req.getContextPath() + "/cart");
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
+        // Kiểm tra người dùng đi từ nút Mua ngay hay từ giỏ hàng
+        boolean isBuyNow = "true".equals(req.getParameter("buyNow"));
+
+        Cart cart;
+
+        if (isBuyNow) {
+            // Chỉ lấy sản phẩm được chọn để mua ngay
+            try {
+                int listingId = Integer.parseInt(req.getParameter("listingId"));
+                int quantity = Integer.parseInt(req.getParameter("quantity"));
+
+                CartItem item = cartDAO.getProductByListingId(listingId);
+
+                if (item == null || quantity <= 0
+                        || quantity > item.getStockQuantity()) {
+                    resp.sendRedirect(req.getContextPath() + "/cart");
+                    return;
+                }
+
+                item.setQuantity(quantity);
+
+                cart = new Cart();
+                List<CartItem> items = new ArrayList<>();
+                items.add(item);
+                cart.setItems(items);
+
+            } catch (NumberFormatException e) {
+                resp.sendRedirect(req.getContextPath() + "/cart");
+                return;
+            }
+
+        } else {
+            // Giữ nguyên chức năng checkout từ giỏ hàng
+            cart = cartDAO.getCartByUserId(user.getId());
+
+            if (cart.getItems() == null || cart.getItems().isEmpty()) {
+                resp.sendRedirect(req.getContextPath() + "/cart");
+                return;
+            }
+        }
+
         try {
-            DeliveryAddress defaultAddress = addressDAO.getDefaultAddress(user.getId());
-            List<DeliveryAddress> addresses = addressDAO.findByUserId(user.getId());
+            DeliveryAddress defaultAddress =
+                    addressDAO.getDefaultAddress(user.getId());
+
+            List<DeliveryAddress> addresses =
+                    addressDAO.findByUserId(user.getId());
 
             req.setAttribute("cart", cart);
             req.setAttribute("defaultAddress", defaultAddress);
             req.setAttribute("addresses", addresses);
 
+            // Gửi trạng thái Mua ngay sang trang checkout
+            req.setAttribute("isBuyNow", isBuyNow);
+
             req.getRequestDispatcher("/CheckOut.jsp").forward(req, resp);
+
         } catch (Exception e) {
             e.printStackTrace();
             resp.sendRedirect(req.getContextPath() + "/cart");
         }
     }
+
 
 
     @Override
@@ -64,11 +115,43 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
-        Cart cart = cartDAO.getCartByUserId(user.getId());
+        boolean isBuyNow = "true".equals(req.getParameter("buyNow"));
 
-        if (cart == null || cart.getItems() == null || cart.getItems().isEmpty()) {
-            resp.sendRedirect(req.getContextPath() + "/cart");
-            return;
+        Cart cart;
+
+        if (isBuyNow) {
+            try {
+                int listingId = Integer.parseInt(req.getParameter("listingId"));
+                int quantity = Integer.parseInt(req.getParameter("quantity"));
+
+                CartItem item = cartDAO.getProductByListingId(listingId);
+
+                if (item == null || quantity <= 0
+                        || quantity > item.getStockQuantity()) {
+                    resp.sendRedirect(req.getContextPath() + "/cart");
+                    return;
+                }
+
+                item.setQuantity(quantity);
+
+                cart = new Cart();
+                List<CartItem> items = new ArrayList<>();
+                items.add(item);
+                cart.setItems(items);
+
+            } catch (NumberFormatException e) {
+                resp.sendRedirect(req.getContextPath() + "/cart");
+                return;
+            }
+
+        } else {
+            cart = cartDAO.getCartByUserId(user.getId());
+
+            if (cart == null || cart.getItems() == null
+                    || cart.getItems().isEmpty()) {
+                resp.sendRedirect(req.getContextPath() + "/cart");
+                return;
+            }
         }
 
         String recipientName = req.getParameter("recipientName");
@@ -151,7 +234,7 @@ public class CheckoutServlet extends HttpServlet {
 
             try {
                 // 1. Tạo đơn hàng chờ thanh toán
-                boolean success = orderDAO.createPendingOrder(order);
+                boolean success = orderDAO.createPendingOrder(order, isBuyNow);
 
                 if (!success) {
                     req.setAttribute(
@@ -195,7 +278,7 @@ public class CheckoutServlet extends HttpServlet {
         } else if ("COD".equalsIgnoreCase(paymentMethod)) {
 
             // Giữ nguyên quy trình thanh toán COD
-            boolean success = orderDAO.createOrder(order);
+            boolean success = orderDAO.createOrder(order, isBuyNow);
 
             if (success) {
                 req.setAttribute("orderSuccess", true);
