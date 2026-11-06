@@ -1606,3 +1606,33 @@ body.site-body {
     font-size: 14px;
     font-style: italic;
 }
+/* Styling huy hiệu cảm xúc dạng chữ thuần */
+.badge-sentiment {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    line-height: 1.2;
+}
+
+/* Tích cực: Chữ xanh lá đậm, Nền xanh lá nhạt */
+.badge-sentiment.positive {
+    color: #166534;
+    background-color: #dcfce7;
+    border: 1px solid #bbf7d0;
+}
+
+/* Tiêu cực: Chữ đỏ đậm, Nền đỏ nhạt */
+.badge-sentiment.negative {
+    color: #991b1b;
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
+}
+
+/* Trung tính: Chữ xám Slate đậm, Nền xám nhạt dễ nhìn */
+.badge-sentiment.neutral {
+    color: #475569;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+}

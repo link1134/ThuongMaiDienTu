@@ -658,26 +658,176 @@ GO
 INSERT INTO dbo.SellerProfiles (SellerId, PickupAddressId, Status)
 VALUES (2, NULL, N'Approved');
  --     Tạo bảng lưu trữ bình luận / hỏi đáp
-IF OBJECT_ID('dbo.ListingComments', 'U') IS NULL
-BEGIN
+IF OBJECT_ID(N'dbo.ListingComments', N'U') IS NOT NULL
+DROP TABLE dbo.ListingComments;
+GO
 CREATE TABLE dbo.ListingComments (
-                                     CommentId INT IDENTITY(1,1) PRIMARY KEY,
+                                     CommentId INT IDENTITY(1,1) NOT NULL
+                                         CONSTRAINT PK_ListingComments PRIMARY KEY,
+
                                      ListingId INT NOT NULL,
                                      UserId INT NOT NULL,
-                                     ParentCommentId INT NULL, -- NULL: Câu hỏi gốc | Có ID: Câu trả lời
-                                     Content NVARCHAR(1000) NOT NULL,
-                                     CreatedAt DATETIME2 NOT NULL DEFAULT SYSDATETIME(),
+                                     ParentCommentId INT NULL,
 
-                                     CONSTRAINT FK_ListingComments_Listings FOREIGN KEY (ListingId) REFERENCES dbo.Listings(ListingId) ON DELETE CASCADE,
-                                     CONSTRAINT FK_ListingComments_Users FOREIGN KEY (UserId) REFERENCES dbo.Users(Id),
-                                     CONSTRAINT FK_ListingComments_Parent FOREIGN KEY (ParentCommentId) REFERENCES dbo.ListingComments(CommentId)
+                                     Content NVARCHAR(1000) NOT NULL,
+
+                                     IsEdited BIT NOT NULL
+                                         CONSTRAINT DF_ListingComments_IsEdited DEFAULT 0,
+
+                                     CreatedAt DATETIME2 NOT NULL
+                                         CONSTRAINT DF_ListingComments_CreatedAt DEFAULT SYSDATETIME(),
+
+                                     UpdatedAt DATETIME2 NULL,
+
+                                     Sentiment NVARCHAR(20) NOT NULL
+                                         CONSTRAINT DF_ListingComments_Sentiment DEFAULT N'NEUTRAL',
+
+                                     CONSTRAINT FK_ListingComments_Listings
+                                         FOREIGN KEY (ListingId)
+                                             REFERENCES dbo.Listings(ListingId)
+                                             ON DELETE CASCADE,
+
+                                     CONSTRAINT FK_ListingComments_Users
+                                         FOREIGN KEY (UserId)
+                                             REFERENCES dbo.Users(Id),
+
+                                     CONSTRAINT FK_ListingComments_Parent
+                                         FOREIGN KEY (ParentCommentId)
+                                             REFERENCES dbo.ListingComments(CommentId)
+                                             ON DELETE NO ACTION
 );
-END;
+GO
+USE MangaZ;
 GO
 
---  Thêm dữ liệu mẫu thử nghiệm (Giả định ListingId = 1, UserId = 1 hoặc 2)
-INSERT INTO dbo.ListingComments (ListingId, UserId, ParentCommentId, Content)
-VALUES
-    (1, 1, NULL, N'Sách này còn mới khoảng bao nhiêu % vậy shop? Gáy có bị nếp gấp không?'),
-    (1, 2, 1, N'Chào bạn, sách mới 95% nhé, gáy phẳng đẹp không cấn nếp ạ!');
+
+BEGIN TRY
+BEGIN TRANSACTION;
+
+    DECLARE @ListingId INT;
+    DECLARE @BuyerId INT;
+    DECLARE @SellerId INT;
+
+    -- 1. Lấy tự động 1 ListingId bất kỳ đang Active
+SELECT TOP 1
+        @ListingId = ListingId,
+    @SellerId = SellerId
+FROM dbo.Listings
+WHERE Status = 'Active'
+ORDER BY ListingId ASC;
+
+-- 2. Lấy 1 UserId làm Người mua (khác với Người bán)
+SELECT TOP 1 @BuyerId = Id
+FROM dbo.Users
+WHERE Id <> @SellerId
+ORDER BY Id ASC;
+
+-- Nếu không tìm thấy người mua khác, dùng tạm người bán làm mẫu
+IF @BuyerId IS NULL
+        SET @BuyerId = @SellerId;
+
+    -- Kiểm tra nếu có đủ ListingId để chèn
+    IF @ListingId IS NOT NULL
+BEGIN
+            DECLARE @ParentCommentId1 INT;
+            DECLARE @ParentCommentId2 INT;
+
+            -- -------------------------------------------------------------
+            -- MẪU 1: Câu hỏi về tình trạng sách + Người bán trả lời
+            -- -------------------------------------------------------------
+
+INSERT INTO dbo.ListingComments
+(ListingId, UserId, ParentCommentId, Content,
+ IsEdited, CreatedAt, Sentiment)
+VALUES (
+           @ListingId,
+           @BuyerId,
+           NULL,
+           N'Chào shop, tập này là bản in năm nào vậy ạ? Bìa có bị gập nếp hay gáy bị trầy xước nhiều không?',
+           0,
+           DATEADD(HOUR, -5, SYSDATETIME()),
+           N'NEUTRAL'
+       );
+
+SET @ParentCommentId1 = SCOPE_IDENTITY();
+
+            -- Câu trả lời của Người bán cho Mẫu 1
+INSERT INTO dbo.ListingComments
+(ListingId, UserId, ParentCommentId, Content,
+ IsEdited, CreatedAt, Sentiment)
+VALUES (
+           @ListingId,
+           @SellerId,
+           @ParentCommentId1,
+           N'Chào bạn! Đây là bản in tái bản 2021 nhé. Sách giữ rất kỹ nên gáy còn nguyên, bìa bọc nylon từ lúc mới mua ạ.',
+           0,
+           DATEADD(HOUR, -4, SYSDATETIME()),
+           N'POSITIVE'
+       );
+
+-- -------------------------------------------------------------
+-- MẪU 2: Câu hỏi về đóng gói/vận chuyển + Bình luận ĐÃ CHỈNH SỬA
+-- -------------------------------------------------------------
+
+INSERT INTO dbo.ListingComments
+(ListingId, UserId, ParentCommentId, Content,
+ IsEdited, CreatedAt, UpdatedAt, Sentiment)
+VALUES (
+           @ListingId,
+           @BuyerId,
+           NULL,
+           N'Shop có đóng gói xốp nổ chống sốc cẩn thận không ạ? Mình mua gửi đi xa sợ bị móp góc sách. (Đã sửa: Thêm hỏi về phí ship)',
+           1,
+           DATEADD(HOUR, -3, SYSDATETIME()),
+           DATEADD(HOUR, -2, SYSDATETIME()),
+           N'NEUTRAL'
+       );
+
+SET @ParentCommentId2 = SCOPE_IDENTITY();
+
+            -- Câu trả lời của Người bán cho Mẫu 2
+INSERT INTO dbo.ListingComments
+(ListingId, UserId, ParentCommentId, Content,
+ IsEdited, CreatedAt, Sentiment)
+VALUES (
+           @ListingId,
+           @SellerId,
+           @ParentCommentId2,
+           N'Bạn yên tâm nhé, bên mình luôn bọc 3-4 lớp chống sốc và chèn bìa carton phẳng 2 mặt trước khi cho vào hộp ạ.',
+           0,
+           DATEADD(HOUR, -1, SYSDATETIME()),
+           N'POSITIVE'
+       );
+
+PRINT N'=== THÊM DỮ LIỆU MẪU BÌNH LUẬN THÀNH CÔNG ===';
+END
+ELSE
+BEGIN
+            PRINT N'Không tìm thấy bài đăng (Listing) nào có trạng thái Active.';
+END;
+
+COMMIT TRANSACTION;
+END TRY
+BEGIN CATCH
+IF @@TRANCOUNT > 0
+        ROLLBACK TRANSACTION;
+
+    THROW;
+END CATCH;
+GO
+
+-- Kiểm tra lại danh sách bình luận vừa chèn
+SELECT
+    c.CommentId,
+    c.ListingId,
+    u.FullName AS [NguoiBinhLuan],
+    c.ParentCommentId,
+    c.Content,
+    c.IsEdited,
+    c.Sentiment,
+    c.CreatedAt,
+    c.UpdatedAt
+FROM dbo.ListingComments c
+    JOIN dbo.Users u ON c.UserId = u.Id
+ORDER BY c.CommentId ASC;
 GO
