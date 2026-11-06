@@ -1636,3 +1636,13 @@ body.site-body {
     background-color: #f1f5f9;
     border: 1px solid #e2e8f0;
 }
+/* Hiệu ứng làm nổi bật bình luận mới */
+.comment-highlight {
+    background-color: #dbeafe !important;
+    transition: background-color 1.5s ease;
+}
+
+/* Làm mượt quá trình chuyển màu */
+.comment-highlight-fade {
+    background-color: transparent !important;
+}
