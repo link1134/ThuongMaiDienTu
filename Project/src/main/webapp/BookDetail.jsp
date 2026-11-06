@@ -262,12 +262,15 @@
                 <!-- Form gửi câu hỏi mới -->
                 <c:choose>
                     <c:when test="${not empty sessionScope.user}">
-                        <form action="${pageContext.request.contextPath}/comment/add" method="POST" style="margin-bottom: 30px;">
+                        <form action="${pageContext.request.contextPath}/comment/add" method="POST"
+                              style="margin-bottom: 30px;">
                             <input type="hidden" name="listingId" value="${product.productId}"/>
                             <div style="display: flex; gap: 12px; align-items: flex-start;">
-                                <textarea name="content" rows="3" required placeholder="Hỏi người bán về tình trạng sách, phí ship..."
+                                <textarea name="content" rows="3" required
+                                          placeholder="Hỏi người bán về tình trạng sách, phí ship..."
                                           style="flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #d1d5db; font-family: inherit; font-size: 14px; resize: vertical;"></textarea>
-                                <button type="submit" style="padding: 12px 24px; background: #111827; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                <button type="submit"
+                                        style="padding: 12px 24px; background: #111827; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer;">
                                     Gửi câu hỏi
                                 </button>
                             </div>
@@ -275,7 +278,9 @@
                     </c:when>
                     <c:otherwise>
                         <div style="background: #f9fafb; padding: 16px; border-radius: 8px; text-align: center; margin-bottom: 24px; border: 1px solid #e5e7eb;">
-                            Vui lòng <a href="${pageContext.request.contextPath}/Login.jsp" style="color: #2563eb; font-weight: 600;">đăng nhập</a> để đặt câu hỏi cho người bán.
+                            Vui lòng <a href="${pageContext.request.contextPath}/Login.jsp"
+                                        style="color: #2563eb; font-weight: 600;">đăng nhập</a> để đặt câu hỏi cho người
+                            bán.
                         </div>
                     </c:otherwise>
                 </c:choose>
@@ -322,14 +327,16 @@
                                     </div>
 
                                     <!-- Nội dung bình luận cha -->
-                                    <div id="comment-text-${c.commentId}" style="font-size: 14px; color: #374151; line-height: 1.5; margin-bottom: 8px;">
+                                    <div id="comment-text-${c.commentId}"
+                                         style="font-size: 14px; color: #374151; line-height: 1.5; margin-bottom: 8px;">
                                         <c:out value="${c.content}"/>
                                     </div>
 
                                     <!-- NÚT THAO TÁC (Trả lời, Sửa, Xóa) -->
                                     <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 10px;">
                                         <c:if test="${not empty sessionScope.user}">
-                                            <button type="button" onclick="document.getElementById('reply-form-${c.commentId}').hidden = !document.getElementById('reply-form-${c.commentId}').hidden"
+                                            <button type="button"
+                                                    onclick="document.getElementById('reply-form-${c.commentId}').hidden = !document.getElementById('reply-form-${c.commentId}').hidden"
                                                     style="background: none; border: none; color: #2563eb; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
                                                 Trả lời
                                             </button>
@@ -342,11 +349,14 @@
                                                 Sửa
                                             </button>
 
-                                            <form action="${pageContext.request.contextPath}/comment/delete" method="POST" style="display: inline-flex; align-items: center; margin: 0;"
+                                            <form action="${pageContext.request.contextPath}/comment/delete"
+                                                  method="POST"
+                                                  style="display: inline-flex; align-items: center; margin: 0;"
                                                   onsubmit="return confirm('Bạn có chắc chắn muốn xóa bình luận này không?');">
                                                 <input type="hidden" name="listingId" value="${product.productId}"/>
                                                 <input type="hidden" name="commentId" value="${c.commentId}"/>
-                                                <button type="submit" style="background: none; border: none; color: #dc2626; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
+                                                <button type="submit"
+                                                        style="background: none; border: none; color: #dc2626; font-size: 13px; font-weight: 600; cursor: pointer; padding: 0;">
                                                     Xóa
                                                 </button>
                                             </form>
@@ -355,24 +365,37 @@
 
                                     <!-- Form Chỉnh sửa inline cho bình luận cha (Ẩn mặc định) -->
                                     <div id="edit-form-${c.commentId}" hidden style="margin-bottom: 12px;">
-                                        <form action="${pageContext.request.contextPath}/comment/update" method="POST" style="display: flex; gap: 8px;">
+                                        <form action="${pageContext.request.contextPath}/comment/update" method="POST"
+                                              style="display: flex; gap: 8px;">
                                             <input type="hidden" name="listingId" value="${product.productId}"/>
                                             <input type="hidden" name="commentId" value="${c.commentId}"/>
-                                            <input type="text" name="content" value="<c:out value='${c.content}'/>" required
+                                            <input type="text" name="content" value="<c:out value='${c.content}'/>"
+                                                   required
                                                    style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 13px;"/>
-                                            <button type="submit" style="padding: 8px 16px; background: #059669; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">Lưu</button>
-                                            <button type="button" onclick="toggleEditForm(${c.commentId})" style="padding: 8px 12px; background: #9ca3af; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">Hủy</button>
+                                            <button type="submit"
+                                                    style="padding: 8px 16px; background: #059669; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">
+                                                Lưu
+                                            </button>
+                                            <button type="button" onclick="toggleEditForm(${c.commentId})"
+                                                    style="padding: 8px 12px; background: #9ca3af; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">
+                                                Hủy
+                                            </button>
                                         </form>
                                     </div>
 
                                     <!-- Form Trả lời (Ẩn mặc định) -->
-                                    <div id="reply-form-${c.commentId}" hidden style="margin-top: 10px; padding-left: 20px;">
-                                        <form action="${pageContext.request.contextPath}/comment/add" method="POST" style="display: flex; gap: 8px;">
+                                    <div id="reply-form-${c.commentId}" hidden
+                                         style="margin-top: 10px; padding-left: 20px;">
+                                        <form action="${pageContext.request.contextPath}/comment/add" method="POST"
+                                              style="display: flex; gap: 8px;">
                                             <input type="hidden" name="listingId" value="${product.productId}"/>
                                             <input type="hidden" name="parentCommentId" value="${c.commentId}"/>
                                             <input type="text" name="content" required placeholder="Viết câu trả lời..."
                                                    style="flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 13px;"/>
-                                            <button type="submit" style="padding: 8px 16px; background: #374151; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">Gửi</button>
+                                            <button type="submit"
+                                                    style="padding: 8px 16px; background: #374151; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer;">
+                                                Gửi
+                                            </button>
                                         </form>
                                     </div>
 
@@ -391,53 +414,77 @@
                                                         <!-- NHÃN CẢM XÚC CHO REPLIES  -->
                                                         <c:choose>
                                                             <c:when test="${reply.sentiment eq 'POSITIVE'}">
-                                                                <span class="badge-sentiment positive" style="font-size: 10px; padding: 2px 6px;">Tích cực</span>
+                                                                <span class="badge-sentiment positive"
+                                                                      style="font-size: 10px; padding: 2px 6px;">Tích cực</span>
                                                             </c:when>
                                                             <c:when test="${reply.sentiment eq 'NEGATIVE'}">
-                                                                <span class="badge-sentiment negative" style="font-size: 10px; padding: 2px 6px;">Tiêu cực</span>
+                                                                <span class="badge-sentiment negative"
+                                                                      style="font-size: 10px; padding: 2px 6px;">Tiêu cực</span>
                                                             </c:when>
                                                             <c:otherwise>
-                                                                <span class="badge-sentiment neutral" style="font-size: 10px; padding: 2px 6px;">Trung tính</span>
+                                                                <span class="badge-sentiment neutral"
+                                                                      style="font-size: 10px; padding: 2px 6px;">Trung tính</span>
                                                             </c:otherwise>
                                                         </c:choose>
                                                         <span style="font-size: 11px; color: #9ca3af;">
-                                                            <fmt:formatDate value="${reply.createdAt}" pattern="HH:mm dd/MM/yyyy"/>
+                                                            <fmt:formatDate value="${reply.createdAt}"
+                                                                            pattern="HH:mm dd/MM/yyyy"/>
                                                         </span>
                                                         <c:if test="${reply.edited}">
                                                             <span style="font-size: 10px; color: #6b7280; font-style: italic;">(Đã chỉnh sửa)</span>
                                                         </c:if>
                                                     </div>
 
-                                                    <div id="comment-text-${reply.commentId}" style="font-size: 13px; color: #4b5563; margin-bottom: 4px;">
+                                                    <div id="comment-text-${reply.commentId}"
+                                                         style="font-size: 13px; color: #4b5563; margin-bottom: 4px;">
                                                         <c:out value="${reply.content}"/>
                                                     </div>
 
                                                     <!-- Nút Sửa / Xóa cho câu trả lời con -->
                                                     <c:if test="${not empty sessionScope.user and sessionScope.user.id eq reply.userId}">
                                                         <div style="display: flex; gap: 10px; margin-bottom: 6px;">
-                                                            <button type="button" onclick="toggleEditForm(${reply.commentId})"
+                                                            <button type="button"
+                                                                    onclick="toggleEditForm(${reply.commentId})"
                                                                     style="background: none; border: none; color: #059669; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">
                                                                 Sửa
                                                             </button>
-                                                            <form action="${pageContext.request.contextPath}/comment/delete" method="POST" style="display: inline-flex; align-items: center; margin: 0;""
+                                                            <form action="${pageContext.request.contextPath}/comment/delete"
+                                                                  method="POST"
+                                                                  style="display: inline-flex; align-items: center; margin: 0;"
                                                                   onsubmit="return confirm('Bạn có chắc chắn muốn xóa câu trả lời này không?');">
-                                                                <input type="hidden" name="listingId" value="${product.productId}"/>
-                                                                <input type="hidden" name="commentId" value="${reply.commentId}"/>
-                                                                <button type="submit" style="background: none; border: none; color: #dc2626; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">
+                                                                <input type="hidden" name="listingId"
+                                                                       value="${product.productId}"/>
+                                                                <input type="hidden" name="commentId"
+                                                                       value="${reply.commentId}"/>
+                                                                <button type="submit"
+                                                                        style="background: none; border: none; color: #dc2626; font-size: 12px; font-weight: 600; cursor: pointer; padding: 0;">
                                                                     Xóa
                                                                 </button>
                                                             </form>
                                                         </div>
 
                                                         <!-- Form sửa cho câu trả lời con -->
-                                                        <div id="edit-form-${reply.commentId}" hidden style="margin-bottom: 8px;">
-                                                            <form action="${pageContext.request.contextPath}/comment/update" method="POST" style="display: flex; gap: 6px;">
-                                                                <input type="hidden" name="listingId" value="${product.productId}"/>
-                                                                <input type="hidden" name="commentId" value="${reply.commentId}"/>
-                                                                <input type="text" name="content" value="<c:out value='${reply.content}'/>" required
+                                                        <div id="edit-form-${reply.commentId}" hidden
+                                                             style="margin-bottom: 8px;">
+                                                            <form action="${pageContext.request.contextPath}/comment/update"
+                                                                  method="POST" style="display: flex; gap: 6px;">
+                                                                <input type="hidden" name="listingId"
+                                                                       value="${product.productId}"/>
+                                                                <input type="hidden" name="commentId"
+                                                                       value="${reply.commentId}"/>
+                                                                <input type="text" name="content"
+                                                                       value="<c:out value='${reply.content}'/>"
+                                                                       required
                                                                        style="flex: 1; padding: 6px 10px; border-radius: 4px; border: 1px solid #d1d5db; font-size: 12px;"/>
-                                                                <button type="submit" style="padding: 6px 12px; background: #059669; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer;">Lưu</button>
-                                                                <button type="button" onclick="toggleEditForm(${reply.commentId})" style="padding: 6px 10px; background: #9ca3af; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer;">Hủy</button>
+                                                                <button type="submit"
+                                                                        style="padding: 6px 12px; background: #059669; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                                                    Lưu
+                                                                </button>
+                                                                <button type="button"
+                                                                        onclick="toggleEditForm(${reply.commentId})"
+                                                                        style="padding: 6px 10px; background: #9ca3af; color: #fff; border: none; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                                                                    Hủy
+                                                                </button>
                                                             </form>
                                                         </div>
                                                     </c:if>
@@ -624,6 +671,7 @@
 
         quantityInput.addEventListener('input', updateSubtotal);
     }
+
     function toggleEditForm(commentId) {
         const editForm = document.getElementById('edit-form-' + commentId);
         const commentText = document.getElementById('comment-text-' + commentId);
@@ -634,6 +682,101 @@
             commentText.style.display = editForm.hidden ? 'block' : 'none';
         }
     }
+
+    //TỪ ĐÂY TRỞ ĐI LÀ CODE FETCH API CỦA BÌNH LUẬN
+    const contextPath = '${pageContext.request.contextPath}';
+
+    document.addEventListener('submit', async function (event) {
+
+        const form = event.target;
+
+        // Chỉ xử lý các form liên quan đến bình luận
+        if (!form.matches('form[action*="/comment/"]')) {
+            return;
+        }
+
+        // Ngăn trình duyệt reload trang
+        event.preventDefault();
+
+        const submitButton = form.querySelector('button[type="submit"]');
+
+        if (submitButton && submitButton.disabled) {
+            return;
+        }
+
+        try {
+            if (submitButton) {
+                submitButton.disabled = true;
+            }
+
+            // 1. Gửi dữ liệu đến CommentServlet
+            const formData = new FormData(form);
+
+            const response = await fetch(form.action, {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            });
+
+            const responseText = await response.text();
+
+            console.log("HTTP Status:", response.status);
+            console.log("Response:", responseText);
+
+            const result = JSON.parse(responseText);
+
+            // 2. Kiểm tra kết quả
+            if (!response.ok || !result.success) {
+                alert(result.message || 'Thao tác thất bại!');
+                return;
+            }
+
+            // 3. Lấy lại HTML mới nhất của trang chi tiết
+            const listingId = formData.get('listingId');
+
+            const pageResponse = await fetch(
+                contextPath + '/product-detail?id=' + encodeURIComponent(listingId)
+            );
+
+            if (!pageResponse.ok) {
+                throw new Error('Không thể tải lại danh sách bình luận!');
+            }
+
+            const html = await pageResponse.text();
+
+            // 4. Phân tích HTML trả về
+            const parser = new DOMParser();
+            const newDocument = parser.parseFromString(html, 'text/html');
+
+            const newCommentPanel = newDocument.getElementById('comment-panel');
+            const currentCommentPanel = document.getElementById('comment-panel');
+
+            if (!newCommentPanel || !currentCommentPanel) {
+                throw new Error('Không tìm thấy khu vực bình luận!');
+            }
+
+            // 5. Chỉ cập nhật nội dung khu vực bình luận
+            currentCommentPanel.innerHTML = newCommentPanel.innerHTML;
+
+            // 6. Cập nhật số lượng bình luận trên tab
+            const newCounter = newDocument.querySelector('.tab-counter-badge');
+            const currentCounter = document.querySelector('.tab-counter-badge');
+
+            if (newCounter && currentCounter) {
+                currentCounter.textContent = newCounter.textContent;
+            }
+
+        } catch (error) {
+
+            console.error('Comment error:', error);
+            alert('Đã xảy ra lỗi khi xử lý bình luận!');
+
+        } finally {
+
+            if (submitButton) {
+                submitButton.disabled = false;
+            }
+        }
+    });
 </script>
 </body>
 </html>
