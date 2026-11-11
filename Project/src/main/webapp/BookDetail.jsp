@@ -672,6 +672,29 @@
         quantityInput.addEventListener('input', updateSubtotal);
     }
 
+    // 3. Xử lý nút Mua ngay
+    const buyNowButton = document.getElementById('btn-buy-now');
+
+    if (buyNowButton) {
+        buyNowButton.addEventListener('click', function () {
+
+            const form = buyNowButton.closest('form');
+
+            const listingId = form.querySelector('input[name="listingId"]').value;
+            const quantity = quantityInput ? quantityInput.value : 1;
+
+            if (!listingId || quantity < 1) {
+                alert('Thông tin sản phẩm không hợp lệ!');
+                return;
+            }
+
+            window.location.href =
+                contextPath + '/checkout?buyNow=true'
+                + '&listingId=' + encodeURIComponent(listingId)
+                + '&quantity=' + encodeURIComponent(quantity);
+        });
+    }
+
     function toggleEditForm(commentId) {
         const editForm = document.getElementById('edit-form-' + commentId);
         const commentText = document.getElementById('comment-text-' + commentId);
