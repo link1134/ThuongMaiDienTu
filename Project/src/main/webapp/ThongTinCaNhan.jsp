@@ -89,7 +89,7 @@
                         <div class="nav-left-meta"><span class="material-symbols-outlined">local_shipping</span>
                             <span>Địa chỉ giao nhận</span>
                         </div>
-                        <span class="count-pill">01 địa chỉ</span>
+                        <span class="count-pill"><fmt:formatNumber value="${addressNumbers}" pattern="00"/> địa chỉ</span>
                     </a>
                     <a href="#followListSection" class="sidebar-nav-item"
                        data-section="followList">
@@ -178,7 +178,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="order-card">
+                <div class="order-list">
                     <!-- Trạng thái đơn hàng -->
                     <!-- DANH SÁCH ĐƠN HÀNG ĐỘNG -->
                     <c:choose>

@@ -53,10 +53,18 @@ body.site-body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    vertical-align: middle;
+
+.bookmark-btn .material-symbols-outlined {
+    font-size: 21px;
+    line-height: 1;
+
+    font-variation-settings:
+            'FILL' 1,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
 }
+
 .site-header {
     position: sticky;
     top: 0;
@@ -667,9 +675,8 @@ body.site-body {
 }
 
 .category-tabs-bar {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    width: 100%;
+    display: flex;
+    margin: 0px 15rem 0px 15rem;
     gap: 8px;
     border-bottom: 1px solid var(--color-border-default);
     padding-bottom: 20px;
@@ -1267,23 +1274,28 @@ body.site-body {
     position: absolute;
     top: 10px;
     right: 10px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     width: 30px;
     height: 30px;
     padding: 0;
-
-    border: none;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.95);
-
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
     color: #777783;
-    font-size: 20px;
     cursor: pointer;
+    transition: all 0.2s ease;
 }
+.bookmark-btn:hover {
+    transform: scale(1.1);
+}
+
+.bookmark-btn.active {
+    color: #ef4444;
+}
+
 
 /* Nội dung card */
 .product-info {

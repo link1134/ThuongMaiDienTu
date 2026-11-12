@@ -831,3 +831,29 @@ FROM dbo.ListingComments c
     JOIN dbo.Users u ON c.UserId = u.Id
 ORDER BY c.CommentId ASC;
 GO
+
+CREATE TABLE dbo.Favorites
+(
+    FavoriteId INT IDENTITY(1,1) NOT NULL
+        CONSTRAINT PK_Favorites PRIMARY KEY,
+    UserId INT NOT NULL,
+    ListingId INT NOT NULL,
+    CreatedAt DATETIME2 NOT NULL
+        CONSTRAINT DF_Favorites_CreatedAt DEFAULT SYSDATETIME(),
+    CONSTRAINT FK_Favorites_Users
+        FOREIGN KEY (UserId)
+            REFERENCES dbo.Users(Id)
+            ON DELETE CASCADE,
+    CONSTRAINT FK_Favorites_Listings
+        FOREIGN KEY (ListingId)
+            REFERENCES dbo.Listings(ListingId)
+            ON DELETE CASCADE,
+    CONSTRAINT UQ_Favorites_User_Listing
+        UNIQUE (UserId, ListingId)
+);
+GO
+CREATE INDEX IX_Favorites_ListingId
+    ON dbo.Favorites(ListingId);
+GO
+INSERT INTO dbo.Favorites (UserId, ListingId)
+VALUES (2, 1);

@@ -1,5 +1,6 @@
 package com.mangaz.controller;
 
+import com.mangaz.dao.DeliveryAddressDAO;
 import com.mangaz.dao.OrderDAO;
 import com.mangaz.dao.UserDAO;
 import com.mangaz.model.Order;
@@ -17,7 +18,7 @@ import java.util.List;
 
 @WebServlet("/profile")
 public class ThongTinCaNhanServlet extends HttpServlet {
-
+    private final DeliveryAddressDAO addressDAO = new DeliveryAddressDAO();
     private final UserDAO userDAO = new UserDAO();
     private final OrderDAO orderDAO = new OrderDAO();
     @Override
@@ -25,14 +26,11 @@ public class ThongTinCaNhanServlet extends HttpServlet {
             HttpServletRequest req,
             HttpServletResponse resp
     ) throws ServletException, IOException {
-
         HttpSession session = req.getSession(false);
-
         if (session == null || session.getAttribute("user") == null) {
             resp.sendRedirect(req.getContextPath() + "/Login.jsp");
             return;
         }
-
         try {
             User sessionUser = (User) session.getAttribute("user");
             User user = userDAO.findById(sessionUser.getId());
@@ -44,7 +42,7 @@ public class ThongTinCaNhanServlet extends HttpServlet {
             }
 
             req.setAttribute("profile", user);
-
+            int addressNumbers = addressDAO.findByUserId(sessionUser.getId()).size();
             List<Order> orders = orderDAO.getOrdersByUserId(user.getId());
             req.setAttribute("orders", orders);
             int pendingCount = 0;
@@ -60,6 +58,8 @@ public class ThongTinCaNhanServlet extends HttpServlet {
                 else if ("Completed".equalsIgnoreCase(status)) completedCount++;
                 else if ("Cancelled".equalsIgnoreCase(status)) cancelledCount++;
             }
+            req.setAttribute("addressNumbers", addressNumbers);
+            System.out.println(addressNumbers);
             req.setAttribute("totalOrdersCount", orders.size());
             req.setAttribute("pendingCount", pendingCount);
             req.setAttribute("processingCount", processingCount);
