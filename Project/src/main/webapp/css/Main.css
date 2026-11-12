@@ -1658,3 +1658,23 @@ a.buy-btn {
     text-align: center;
     color: #64748b;
 }
+.product-overall-rate{
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    text-align: center;
+    color: rgb(119, 119, 140);
+}
+.product-overall-rate h5{
+    display: flex;
+    align-items: center;
+}
+.positive-rate{
+    color: #16A34A !important;
+}
+.negative-rate{
+    color: #DC2626 !important;
+}
+.neutral-rate{
+    color: #64748B !important;
+}

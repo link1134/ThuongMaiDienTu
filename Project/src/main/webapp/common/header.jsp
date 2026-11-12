@@ -188,8 +188,8 @@
                             giá</span> </a> <a class="nav-item" href="#">Cộng đồng</a>
         </nav> <!-- Action Buttons & Utilities -->
         <div class="header-utilities">
-            <button class="btn-trade-post" type="button"> <span
-                    class="material-symbols-outlined">add_circle</span> <span>Đăng bài</span></button>
+<%--            <button class="btn-trade-post" type="button"> <span--%>
+<%--                    class="material-symbols-outlined">add_circle</span> <span>Đăng bài</span></button>--%>
             <div class="icon-utility-button" title="Yêu thích"> <span
                     class="material-symbols-outlined">favorite_border</span> <span
                     class="utility-badge">2</span></div>
