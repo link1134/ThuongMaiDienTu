@@ -16,12 +16,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import com.mangaz.dao.FavoriteDAO;
+import com.mangaz.model.User;
+import jakarta.servlet.http.HttpSession;
+import java.util.Set;
+import java.util.HashSet;
 
 @WebServlet("/main")
 public class MainServlet extends HttpServlet {
 
     private final ListingDAO listingDAO = new ListingDAO();
     private final TagDAO tagDAO = new TagDAO();
+    private final FavoriteDAO favoriteDAO = new FavoriteDAO();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -44,7 +50,23 @@ public class MainServlet extends HttpServlet {
                     product.setTags(tags);
                 }
             }
+            // Lấy danh sách sản phẩm yêu thích của người dùng
+            Set<Integer> favoriteIds = new HashSet<>();
+            int favoriteCount = 0;
+
+            HttpSession session = req.getSession(false);
+
+            if (session != null && session.getAttribute("user") != null) {
+
+                User user = (User) session.getAttribute("user");
+
+                favoriteIds = favoriteDAO.getFavoriteListingIds(user.getId());
+                favoriteCount = favoriteIds.size();
+            }
             req.setAttribute("products", products);
+            req.setAttribute("favoriteIds", favoriteIds);
+            req.setAttribute("favoriteCount", favoriteCount);
+
             req.getRequestDispatcher("/Main.jsp").forward(req, resp);
 
         } catch (SQLException e) {

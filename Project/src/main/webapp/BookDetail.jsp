@@ -30,8 +30,17 @@
                 href="#">One Piece</a> <span class="bc-sep">/</span> <span class="bc-current">One Piece – Tập 1 (Bản
                     in đầu 2003)</span></nav>
         <div class="detail-top-actions">
-            <button class="btn-save-shelf" type="button" title="Theo dõi"> <span
-                    class="material-symbols-outlined">favorite_border</span>
+            <button class="btn-save-shelf ${isFavorite ? 'active' : ''}"
+                    type="button"
+                    id="detailFavoriteButton"
+                    data-listing-id="${product.productId}"
+                    aria-label="Yêu thích sản phẩm"
+                    aria-pressed="${isFavorite}"
+                    title="Yêu thích">
+
+                <span class="material-symbols-outlined">
+                    ${isFavorite ? 'favorite' : 'favorite_border'}
+                </span>
             </button>
             <button class="btn-icon-action" type="button" title="Chia sẻ bài đăng"> <span
                     class="material-symbols-outlined">share</span></button>
@@ -708,6 +717,77 @@
 
     //TỪ ĐÂY TRỞ ĐI LÀ CODE FETCH API CỦA BÌNH LUẬN
     const contextPath = '${pageContext.request.contextPath}';
+    // Cập nhật số lượng sản phẩm yêu thích trên Header
+    function updateFavoriteCount(count) {
+        const favoriteCountElement = document.querySelector('.favorite-count');
+
+        if (!favoriteCountElement) {
+            return;
+        }
+
+        favoriteCountElement.textContent = count;
+    }
+    // Xử lý nút yêu thích ở trang chi tiết sản phẩm
+    const detailFavoriteButton = document.getElementById('detailFavoriteButton');
+
+    if (detailFavoriteButton) {
+        detailFavoriteButton.addEventListener('click', async function () {
+
+            const listingId = detailFavoriteButton.dataset.listingId;
+
+            try {
+                const response = await fetch(
+                    contextPath + '/favorite/toggle',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            listingId: listingId
+                        })
+                    }
+                );
+
+                if (response.status === 401) {
+                    window.location.href = contextPath + '/login';
+                    return;
+                }
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    alert(result.message || 'Không thể cập nhật yêu thích!');
+                    return;
+                }
+
+                // Cập nhật trạng thái trái tim
+                detailFavoriteButton.classList.toggle(
+                    'active',
+                    result.isFavorite
+                );
+
+                detailFavoriteButton.setAttribute(
+                    'aria-pressed',
+                    result.isFavorite
+                );
+
+                const icon = detailFavoriteButton.querySelector(
+                    '.material-symbols-outlined'
+                );
+
+                icon.textContent = result.isFavorite
+                    ? 'favorite'
+                    : 'favorite_border';
+
+                // Cập nhật số lượng trên Header
+                updateFavoriteCount(result.favoriteCount);
+            } catch (error) {
+                console.error('Favorite error:', error);
+                alert('Đã xảy ra lỗi khi cập nhật yêu thích!');
+            }
+        });
+    }
 
     document.addEventListener('submit', async function (event) {
 
