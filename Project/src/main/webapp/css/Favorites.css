@@ -1,0 +1,142 @@
+.favorites-container {
+    max-width: 1500px;
+    margin: 40px auto;
+    padding: 0 30px;
+    min-height: 600px;
+}
+
+.favorites-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.favorites-heading h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    color: #30394a;
+}
+
+.favorites-heading p {
+    margin: 0;
+    color: #8993a4;
+}
+
+.favorites-count {
+    color: #4050df;
+    font-weight: 600;
+}
+
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 24px;
+}
+
+.favorites-grid .product-card {
+    min-width: 0;
+}
+
+.favorites-grid .product-image {
+    position: relative;
+}
+
+.favorites-grid .product-image img {
+    width: 100%;
+    height: 360px;
+    object-fit: cover;
+}
+
+.favorites-grid .bookmark-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.favorites-grid .bookmark-btn.active {
+    color: #ef4444;
+}
+
+.favorites-grid .product-name a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.favorites-grid .product-price {
+    margin-top: 12px;
+    color: #e45b4f;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.favorites-actions {
+    margin-top: 15px;
+}
+
+.btn-view-product {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 6px;
+    background: #4050df;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.favorites-empty {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.favorites-empty .material-symbols-outlined {
+    font-size: 65px;
+    color: #aab1bd;
+}
+
+.favorites-empty h2 {
+    color: #30394a;
+}
+
+.favorites-empty p {
+    color: #8993a4;
+    margin-bottom: 25px;
+}
+
+.favorites-empty a {
+    display: inline-block;
+    padding: 11px 22px;
+    background: #4050df;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+@media (max-width: 1000px) {
+    .favorites-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .favorites-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .favorites-container {
+        padding: 0 15px;
+    }
+
+    .favorites-grid .product-image img {
+        height: 260px;
+    }
+}
+
+@media (max-width: 450px) {
+    .favorites-grid {
+        grid-template-columns: 1fr;
+    }
+}

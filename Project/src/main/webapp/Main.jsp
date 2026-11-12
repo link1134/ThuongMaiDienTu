@@ -147,13 +147,15 @@
                             <span class="product-condition">
                                 Rất tốt
                             </span>
-                                    <button class="bookmark-btn"
-                                            type="button"
-                                            aria-label="Lưu sản phẩm">
-                                <span class="material-symbols-outlined">
-                                    favorite
-                                </span>
-                                    </button>
+                                <button class="bookmark-btn ${favoriteIds.contains(product.listingId) ? 'active' : ''}"
+                                        type="button"
+                                        data-listing-id="${product.listingId}"
+                                        aria-label="Lưu sản phẩm"
+                                        aria-pressed="${favoriteIds.contains(product.listingId)}">
+                                    <span class="material-symbols-outlined">
+                                        favorite
+                                    </span>
+                                </button>
                                 </div>
                             </div>
 
@@ -420,6 +422,74 @@
             if (!menu.contains(e.target)) menu.classList.remove("open");
         });
     })();
+    // Xử lý nút yêu thích
+    function updateFavoriteCount(count) {
+        const favoriteLink = document.querySelector('.header-favorite');
+
+        if (!favoriteLink) return;
+
+        let badge = favoriteLink.querySelector('.favorite-count');
+
+        if (count > 0) {
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'favorite-count';
+                favoriteLink.appendChild(badge);
+            }
+
+            badge.textContent = count;
+        } else if (badge) {
+            badge.remove();
+        }
+    }
+
+    document.querySelectorAll('.bookmark-btn').forEach(function (button) {
+
+        button.addEventListener('click', async function () {
+
+            const listingId = button.dataset.listingId;
+            const contextPath = '${pageContext.request.contextPath}';
+
+            try {
+                const response = await fetch(
+                    contextPath + '/favorite/toggle',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        },
+                        body: new URLSearchParams({
+                            listingId: listingId
+                        })
+                    }
+                );
+
+                // Người dùng chưa đăng nhập
+                if (response.status === 401) {
+                    window.location.href = contextPath + '/login';
+                    return;
+                }
+
+                const result = await response.json();
+
+                if (!response.ok || !result.success) {
+                    alert(result.message || 'Không thể cập nhật yêu thích!');
+                    return;
+                }
+
+                // Cập nhật trạng thái trái tim
+                button.classList.toggle('active', result.isFavorite);
+                button.setAttribute('aria-pressed',result.isFavorite);
+                updateFavoriteCount(result.favoriteCount);
+
+            } catch (error) {
+                console.error('Favorite error:', error);
+                alert('Đã xảy ra lỗi khi cập nhật danh sách yêu thích!');
+            }
+
+        });
+
+    });
 </script>
 </body>
 

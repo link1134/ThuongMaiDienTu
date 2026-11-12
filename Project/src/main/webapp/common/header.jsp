@@ -152,6 +152,41 @@
     .icon-utility-button .material-symbols-outlined {
         font-size: 20px;
     }
+
+.header-favorite {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+    text-decoration: none;
+}
+
+.header-favorite .material-symbols-outlined {
+    font-size: 25px;
+}
+
+.favorite-count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+
+    min-width: 17px;
+    height: 17px;
+    padding: 0 4px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #ef4444;
+    color: white;
+
+    font-size: 10px;
+    font-weight: 600;
+}
+
 </style>
 <header class="site-header">
     <div class="header-inner"> <!-- Brand Logo --> <a class="brand-identity"
@@ -190,9 +225,21 @@
         <div class="header-utilities">
 <%--            <button class="btn-trade-post" type="button"> <span--%>
 <%--                    class="material-symbols-outlined">add_circle</span> <span>Đăng bài</span></button>--%>
-            <div class="icon-utility-button" title="Yêu thích"> <span
-                    class="material-symbols-outlined">favorite_border</span> <span
-                    class="utility-badge">2</span></div>
+            <a href="${pageContext.request.contextPath}/favorites"
+               class="header-favorite"
+               title="Sản phẩm yêu thích">
+
+                <span class="material-symbols-outlined">
+                    favorite_border
+                </span>
+
+                <c:if test="${favoriteCount > 0}">
+                    <span class="favorite-count">
+                        ${favoriteCount}
+                    </span>
+                </c:if>
+
+            </a>
             <a class="icon-utility-button"
                title="Giỏ hàng"
                href="${pageContext.request.contextPath}/cart">

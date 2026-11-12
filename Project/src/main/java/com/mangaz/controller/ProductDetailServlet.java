@@ -1,11 +1,13 @@
-
 package com.mangaz.controller;
 
 import com.mangaz.dao.CommentDAO;
 import com.mangaz.dao.ProductDAO;
 import com.mangaz.model.Comment;
 import com.mangaz.model.ProductDetail;
+import com.mangaz.dao.FavoriteDAO;
+import com.mangaz.model.User;
 
+import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,6 +21,7 @@ import java.util.List;
 public class ProductDetailServlet extends HttpServlet {
     private final ProductDAO productDAO = new ProductDAO();
     private final CommentDAO commentDAO = new CommentDAO();
+    private final FavoriteDAO favoriteDAO = new FavoriteDAO();
     @Override
     protected void doGet(HttpServletRequest request,
                          HttpServletResponse response)
@@ -67,12 +70,21 @@ public class ProductDetailServlet extends HttpServlet {
         for (Comment c : comments) {
             totalCommentCount += 1 + c.getReplies().size();
         }
+        // Kiểm tra trạng thái yêu thích
+        boolean isFavorite = false;
+
+        HttpSession session = request.getSession(false);
+
+        if (session != null && session.getAttribute("user") != null) {
+            User user = (User) session.getAttribute("user");
+            isFavorite = favoriteDAO.isFavorite(user.getId(), listingId);
+        }
+
         // Chuyển dữ liệu sang JSP
         request.setAttribute("comments", comments);
         request.setAttribute("commentCount", totalCommentCount);
         request.setAttribute("product", product);
-        request.getRequestDispatcher(
-                "/BookDetail.jsp"
-        ).forward(request, response);
+        request.setAttribute("isFavorite", isFavorite);
+        request.getRequestDispatcher("/BookDetail.jsp").forward(request, response);
     }
 }
