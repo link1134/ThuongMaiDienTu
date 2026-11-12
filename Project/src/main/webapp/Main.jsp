@@ -107,10 +107,10 @@
             <button class="category-tab-btn active-tab" type="button">
                 Mới nhất
             </button>
-            <button class="category-tab-btn" type="button">Kim Đồng</button>
-            <button class="category-tab-btn" type="button">Nhà xuất bản trẻ</button>
-            <button class="category-tab-btn" type="button">AMAKstore</button>
-            <button class="category-tab-btn" type="button">FAHASA</button>
+            <button class="category-tab-btn" type="button">Đánh giá tốt nhất</button>
+            <button class="category-tab-btn" type="button">Giá tốt nhất</button>
+<%--            <button class="category-tab-btn" type="button">AMAKstore</button>--%>
+<%--            <button class="category-tab-btn" type="button">FAHASA</button>--%>
         </div><!-- 9 Product Cards Grid -->
         <div class="product-grid">
             <c:choose>
@@ -151,7 +151,7 @@
                                             type="button"
                                             aria-label="Lưu sản phẩm">
                                 <span class="material-symbols-outlined">
-                                    bookmark
+                                    favorite
                                 </span>
                                     </button>
                                 </div>
@@ -177,7 +177,6 @@
         </span>
                                     </c:if>
                                 </div>
-
                                 <h3 class="product-name">
                                     <c:out value="${product.title}"/>
                                 </h3>

@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DeliveryAddressDAO {
+    public DeliveryAddressDAO() {
+    }
 
     public List<DeliveryAddress> findByUserId(int userId)
             throws SQLException {
-
         List<DeliveryAddress> addresses = new ArrayList<>();
-
         String sql = """
                 SELECT Id, UserId, RecipientName, PhoneNumber,
                        ProvinceCode, CityProvince,
@@ -26,16 +26,12 @@ public class DeliveryAddressDAO {
                 WHERE UserId = ?
                 ORDER BY IsDefault DESC, Id DESC
                 """;
-
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-
             ps.setInt(1, userId);
-
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     DeliveryAddress address = new DeliveryAddress();
-
                     address.setId(rs.getInt("Id"));
                     address.setUserId(rs.getInt("UserId"));
                     address.setRecipientName(rs.getString("RecipientName"));
@@ -43,13 +39,10 @@ public class DeliveryAddressDAO {
 
                     address.setProvinceCode(rs.getInt("ProvinceCode"));
                     address.setCityProvince(rs.getString("CityProvince"));
-
                     address.setWardCode(rs.getInt("WardCode"));
                     address.setWard(rs.getString("Ward"));
-
                     address.setAddressDetail(rs.getString("AddressDetail"));
                     address.setDefaultAddress(rs.getBoolean("IsDefault"));
-
                     addresses.add(address);
                 }
             }

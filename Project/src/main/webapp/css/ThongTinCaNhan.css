@@ -2098,3 +2098,10 @@ body.site-body {
     flex-direction: column;
     gap: 1rem;
 }
+.order-list{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 500px;
+    overflow: auto;
+}
