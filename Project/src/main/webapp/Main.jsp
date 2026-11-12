@@ -181,7 +181,9 @@
                                 <h3 class="product-name">
                                     <c:out value="${product.title}"/>
                                 </h3>
-
+                                <span class="product-overall-rate">
+                                    Đánh giá chung <h5 class="positive-rate">Tích cực (120 đánh giá/bình luận)</h5>
+                                </span>
                                 <div class="product-price">
                                     <span>Giá niêm yết</span>
 
