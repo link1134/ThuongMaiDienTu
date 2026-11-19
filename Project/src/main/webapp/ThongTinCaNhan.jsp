@@ -95,7 +95,7 @@
                        data-section="followList">
                         <div class="nav-left-meta"><span class="material-symbols-outlined">bookmark</span> <span>Dach sách theo dõi</span>
                         </div>
-                        <span class="count-pill">42 quyển</span>
+                        <span class="count-pill">${favoriteCount} quyển</span>
                     </a>
                     <%--                    <a href="#" class="sidebar-nav-item">--%>
                     <%--                        <div class="nav-left-meta"><span class="material-symbols-outlined">security</span>--%>
@@ -454,84 +454,97 @@
 
                 </div>
 
-
-            </div> <!-- 4. Favorite Bookshelf & Watchlist -->
+            </div>
+            <!-- 4. Favorite Products -->
             <div class="card-panel management-section" id="followListSection">
                 <div class="card-head-row">
                     <div>
-                        <h2 class="card-main-title">Tủ sách yêu thích &amp; Danh sách theo dõi</h2>
+                        <h2 class="card-main-title">Sản phẩm yêu thích</h2>
+                        <p class="book-author">
+                            Các sản phẩm bạn đã lưu vào danh sách yêu thích.
+                        </p>
                     </div>
-                    <a href="#" class="card-link-action"> <span>Xem tất cả (42 ấn phẩm)</span> <span
-                            class="material-symbols-outlined">arrow_forward</span> </a>
+
+                    <span class="card-link-action">
+                    <span id="favoriteCount">${favoriteCount} sản phẩm</span>
+                    </span>
                 </div>
-                <div class="bookshelf-grid"> <!-- Book 1 -->
-                    <div class="manga-shelf-item">
-                        <div class="book-cover-frame"><img
-                                src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=400&q=80"
-                                alt="Vagabond" class="book-cover-img"> <span class="book-status-tag owned">ĐÃ
-                                    MUA</span>
-                            <button class="book-bookmark-btn" type="button"> <span
-                                    class="material-symbols-outlined">bookmark</span></button>
-                        </div>
-                        <h3 class="book-title">Vagabond - Definitive...</h3>
-                        <p class="book-author">Takehiko Inoue</p>
-                        <div class="book-price-meta"><span class="book-price">1,850,000 đ</span> <span
-                                class="book-format-tag">Hardcover</span></div>
-                    </div> <!-- Book 2 -->
-                    <div class="manga-shelf-item">
-                        <div class="book-cover-frame"><img
-                                src="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=400&q=80"
-                                alt="Berserk" class="book-cover-img"> <span class="book-status-tag tracking">THEO
-                                    DÕI</span>
-                            <button class="book-bookmark-btn" type="button"> <span
-                                    class="material-symbols-outlined">bookmark</span></button>
-                        </div>
-                        <h3 class="book-title">Berserk - Deluxe ...</h3>
-                        <p class="book-author">Kentaro Miura</p>
-                        <div class="book-price-meta"><span class="book-price">1,420,000 đ</span> <span
-                                class="book-format-tag">Leather</span></div>
-                    </div> <!-- Book 3 -->
-                    <div class="manga-shelf-item">
-                        <div class="book-cover-frame"><img
-                                src="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=400&q=80"
-                                alt="Monster" class="book-cover-img"> <span class="book-status-tag saved">ĐÃ
-                                    LƯU</span>
-                            <button class="book-bookmark-btn" type="button"> <span
-                                    class="material-symbols-outlined">bookmark</span></button>
-                        </div>
-                        <h3 class="book-title">Monster - Perfect...</h3>
-                        <p class="book-author">Naoki Urasawa</p>
-                        <div class="book-price-meta"><span class="book-price">580,000 đ</span> <span
-                                class="book-format-tag">2-in-1 Omni</span></div>
-                    </div> <!-- Book 4 -->
-                    <div class="manga-shelf-item">
-                        <div class="book-cover-frame"><img
-                                src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=400&q=80"
-                                alt="20th Century Boys" class="book-cover-img"> <span
-                                class="book-status-tag owned">ĐÃ MUA</span>
-                            <button class="book-bookmark-btn"
-                                    type="button"><span class="material-symbols-outlined">bookmark</span></button>
-                        </div>
-                        <h3 class="book-title">20th Century Boy...</h3>
-                        <p class="book-author">Naoki Urasawa</p>
-                        <div class="book-price-meta"><span class="book-price">620,000 đ</span> <span
-                                class="book-format-tag">Deluxe</span></div>
-                    </div> <!-- Book 5 -->
-                    <div class="manga-shelf-item">
-                        <div class="book-cover-frame"><img
-                                src="https://images.unsplash.com/photo-1532012164546-f432f2e3777d?auto=format&fit=crop&w=400&q=80"
-                                alt="Chainsaw Man" class="book-cover-img"> <span
-                                class="book-status-tag tracking">THEO DÕI</span>
-                            <button class="book-bookmark-btn"
-                                    type="button"><span class="material-symbols-outlined">bookmark</span></button>
-                        </div>
-                        <h3 class="book-title">Chainsaw Man - ...</h3>
-                        <p class="book-author">Tatsuki Fujimoto</p>
-                        <div class="book-price-meta"><span class="book-price">2,100,000 đ</span> <span
-                                class="book-format-tag">Slipcase</span></div>
-                    </div>
+
+                <div class="bookshelf-grid" id="favoriteProductsGrid">
+
+                    <c:choose>
+                        <%-- Có sản phẩm yêu thích --%>
+                        <c:when test="${not empty favorites}">
+
+                            <c:forEach var="item" items="${favorites}">
+                                <div class="manga-shelf-item" data-listing-id="${item.listingId}">
+
+                                    <div class="book-cover-frame">
+
+                                        <c:choose>
+                                            <c:when test="${not empty item.imageUrl}">
+                                                <img src="${item.imageUrl}"
+                                                     alt="${fn:escapeXml(item.title)}"
+                                                     class="book-cover-img">
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <div class="favorite-no-image">
+                                                    <span class="material-symbols-outlined">image</span>
+                                                    <span>Chưa có hình ảnh</span>
+                                                </div>
+                                            </c:otherwise>
+                                        </c:choose>
+
+                                        <button class="book-bookmark-btn remove-favorite-btn"
+                                                type="button"
+                                                data-listing-id="${item.listingId}"
+                                                title="Bỏ yêu thích">
+                                        <span class="material-symbols-outlined">favorite</span>
+                                        </button>
+                                    </div>
+
+                                    <h3 class="book-title"
+                                        title="${fn:escapeXml(item.title)}">
+                                        <c:out value="${item.title}"/>
+                                    </h3>
+
+                                    <p class="book-author"><c:out value="${item.productTypeName}"/></p>
+
+                                    <div class="book-price-meta">
+                                        <span class="book-price">
+                                            <fmt:formatNumber value="${item.price}"
+                                                              type="number"
+                                                              groupingUsed="true"/> đ
+                                        </span>
+                                        <span class="book-format-tag">
+                                            <c:out value="${item.listingType}"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </c:when>
+
+                        <%-- Chưa có sản phẩm yêu thích --%>
+                        <c:otherwise>
+                            <div class="favorite-empty">
+                                <span class="material-symbols-outlined">
+                                    favorite_border
+                                </span>
+
+                                <h3>Chưa có sản phẩm yêu thích</h3>
+
+                                <p>
+                                    Hãy khám phá MangaZ và lưu những sản phẩm
+                                    bạn quan tâm nhé!
+                                </p>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+
                 </div>
-            </div> <!-- 5. Account Settings -->
+            </div>
+            <!-- 5. Account Settings -->
             <div class="card-panel management-section" id="settingsSection">
                 <div class="card-head-row">
                     <div><span class="eyebrow-text">TÙY CHỌN HỆ THỐNG</span>
@@ -879,6 +892,111 @@
             });
         });
     });
+</script>
+<script>
+    const contextPath = '${pageContext.request.contextPath}';
+</script>
+<script>
+    // Xử lý nút bỏ yêu thích
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const favoriteGrid = document.getElementById("favoriteProductsGrid");
+
+        if (!favoriteGrid) {
+            return;
+        }
+
+        favoriteGrid.addEventListener("click", function (event) {
+
+            const button = event.target.closest(".remove-favorite-btn");
+
+            if (!button) {
+                return;
+            }
+
+            const listingId = button.dataset.listingId;
+
+            if (!listingId) {
+                return;
+            }
+
+            // Tránh người dùng nhấn nhiều lần
+            button.disabled = true;
+
+            fetch(contextPath + "/favorite/toggle", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "listingId=" + encodeURIComponent(listingId)
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        throw new Error("Vui lòng đăng nhập để thực hiện thao tác này.");
+                    }
+
+                    if (!response.ok) {
+                        throw new Error("Không thể cập nhật danh sách yêu thích.");
+                    }
+
+                    return response.json();
+                })
+                .then(result => {
+
+                    if (!result.success) {
+                        throw new Error(result.message || "Có lỗi xảy ra.");
+                    }
+
+                    // Chỉ xóa khỏi giao diện khi sản phẩm đã được bỏ yêu thích
+                    if (!result.isFavorite) {
+
+                        const productItem = button.closest(".manga-shelf-item");
+
+                        if (productItem) {
+                            productItem.remove();
+                        }
+
+                        // Cập nhật số lượng yêu thích
+                        updateFavoriteCount(result.favoriteCount);
+
+                        // Nếu không còn sản phẩm nào, hiển thị thông báo trống
+                        if (!favoriteGrid.querySelector(".manga-shelf-item")) {
+                            favoriteGrid.innerHTML = `
+                            <div class="favorite-empty">
+                                <span class="material-symbols-outlined">
+                                    favorite_border
+                                </span>
+
+                                <h3>Chưa có sản phẩm yêu thích</h3>
+
+                                <p>
+                                    Hãy khám phá MangaZ và lưu những sản phẩm
+                                    bạn quan tâm nhé!
+                                </p>
+                            </div>
+                        `;
+                        }
+                    }
+                })
+                .catch(error => {
+                    alert(error.message);
+                })
+                .finally(() => {
+                    button.disabled = false;
+                });
+        });
+    });
+
+
+    // Cập nhật số lượng sản phẩm yêu thích
+    function updateFavoriteCount(count) {
+
+        const favoriteCountElement = document.getElementById("favoriteCount");
+
+        if (favoriteCountElement) {
+            favoriteCountElement.textContent = count;
+        }
+    }
 </script>
 </body>
 </html>

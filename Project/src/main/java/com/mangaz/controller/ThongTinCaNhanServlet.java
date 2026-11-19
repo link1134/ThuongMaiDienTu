@@ -11,6 +11,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import com.mangaz.dao.FavoriteDAO;
+import com.mangaz.model.Listing;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,6 +23,7 @@ public class ThongTinCaNhanServlet extends HttpServlet {
     private final DeliveryAddressDAO addressDAO = new DeliveryAddressDAO();
     private final UserDAO userDAO = new UserDAO();
     private final OrderDAO orderDAO = new OrderDAO();
+    private final FavoriteDAO favoriteDAO = new FavoriteDAO();
     @Override
     protected void doGet(
             HttpServletRequest req,
@@ -42,6 +45,12 @@ public class ThongTinCaNhanServlet extends HttpServlet {
             }
 
             req.setAttribute("profile", user);
+            // Lấy danh sách sản phẩm người dùng đã yêu thích
+            List<Listing> favorites = favoriteDAO.getFavoritesByUserId(user.getId());
+
+            req.setAttribute("favorites", favorites);
+            req.setAttribute("favoriteCount", favorites.size());
+
             int addressNumbers = addressDAO.findByUserId(sessionUser.getId()).size();
             List<Order> orders = orderDAO.getOrdersByUserId(user.getId());
             req.setAttribute("orders", orders);

@@ -2105,3 +2105,44 @@ body.site-body {
     max-height: 500px;
     overflow: auto;
 }
+/* Favorite products */
+.favorite-no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--color-text-slate-400);
+    font-size: 11px;
+    background-color: var(--color-bg-slate-100);
+}
+
+.favorite-no-image .material-symbols-outlined {
+    font-size: 30px;
+}
+
+.favorite-empty {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 35px 15px;
+    text-align: center;
+    color: var(--color-text-slate-500);
+}
+
+.favorite-empty > .material-symbols-outlined {
+    font-size: 42px;
+    color: var(--color-text-slate-400);
+}
+
+.favorite-empty h3 {
+    margin: 10px 0 6px;
+    font-size: 15px;
+    color: var(--color-text-dark);
+}
+
+.favorite-empty p {
+    margin: 0;
+    font-size: 12px;
+}
