@@ -56,6 +56,8 @@ public class AuthFilter implements Filter {
                 || path.equals("/google-login")
                 || path.equals("/google-callback")
                 || path.equals("/logout")
+                || path.equals("/vnpay-ipn")
+                || path.equals("/vnpay-return")
                 || path.startsWith("/css/")
                 || path.startsWith("/js/")
                 || path.startsWith("/images/")
