@@ -354,12 +354,15 @@ public class VNPayConfig {
                 .replace("\r", "\\r");
     }
 
+
     public static class RefundResponse {
+
         private final String responseCode;
         private final String message;
         private final String transactionStatus;
         private final String transactionNo;
         private final String txnRef;
+        private final String amount;
         private final boolean validSignature;
 
         public RefundResponse(
@@ -368,6 +371,7 @@ public class VNPayConfig {
                 String transactionStatus,
                 String transactionNo,
                 String txnRef,
+                String amount,
                 boolean validSignature
         ) {
             this.responseCode = responseCode;
@@ -375,6 +379,7 @@ public class VNPayConfig {
             this.transactionStatus = transactionStatus;
             this.transactionNo = transactionNo;
             this.txnRef = txnRef;
+            this.amount = amount;
             this.validSignature = validSignature;
         }
 
@@ -398,11 +403,16 @@ public class VNPayConfig {
             return txnRef;
         }
 
+        public String getAmount() {
+            return amount;
+        }
+
         public boolean isValidSignature() {
             return validSignature;
         }
     }
 
+    // Đọc và xác thực phản hồi hoàn tiền từ VNPay
     public static RefundResponse parseRefundResponse(String json)
             throws Exception {
 
@@ -423,17 +433,16 @@ public class VNPayConfig {
         String orderInfo = root.path("vnp_OrderInfo").asText("");
         String secureHash = root.path("vnp_SecureHash").asText("");
 
+        // Kiểm tra các trường cần thiết để xác thực phản hồi
         if (responseId.isBlank()
+                || command.isBlank()
                 || responseCode.isBlank()
                 || tmnCode.isBlank()
                 || txnRef.isBlank()
-                || amount.isBlank()
-                || transactionNo.isBlank()
-                || transactionType.isBlank()
-                || transactionStatus.isBlank()
                 || secureHash.isBlank()) {
+
             throw new IllegalArgumentException(
-                    "Phản hồi hoàn tiền từ VNPay thiếu dữ liệu bắt buộc."
+                    "Phản hồi hoàn tiền từ VNPay thiếu dữ liệu xác thực."
             );
         }
 
@@ -443,6 +452,7 @@ public class VNPayConfig {
             );
         }
 
+        // Tạo chuỗi dữ liệu theo thứ tự VNPay quy định
         String hashData = String.join("|",
                 responseId,
                 command,
@@ -459,7 +469,10 @@ public class VNPayConfig {
                 orderInfo
         );
 
-        String calculatedHash = hmacSHA512(VNP_HASH_SECRET, hashData);
+        String calculatedHash = hmacSHA512(
+                VNP_HASH_SECRET,
+                hashData
+        );
 
         boolean validSignature = MessageDigest.isEqual(
                 calculatedHash.toLowerCase().getBytes(StandardCharsets.UTF_8),
@@ -478,10 +491,8 @@ public class VNPayConfig {
                 transactionStatus,
                 transactionNo,
                 txnRef,
+                amount,
                 true
         );
     }
-
-
-
 }

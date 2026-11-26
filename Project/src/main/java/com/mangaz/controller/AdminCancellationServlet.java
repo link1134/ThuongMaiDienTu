@@ -2,6 +2,7 @@ package com.mangaz.controller;
 
 import com.mangaz.dao.OrderDAO;
 import com.mangaz.model.User;
+import com.mangaz.util.VNPayConfig;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -72,15 +73,99 @@ public class AdminCancellationServlet extends HttpServlet {
 
         if ("approve".equalsIgnoreCase(action)) {
 
-            success = orderDAO.approveCancellationRequest(
+            // Lấy OrderId trước khi duyệt yêu cầu
+            int orderId = orderDAO.getOrderIdByCancellationRequest(
                     requestId,
                     user.getId()
             );
 
-            message = success
-                    ? "Đã duyệt yêu cầu hủy đơn hàng."
-                    : "Không thể duyệt yêu cầu. Vui lòng kiểm tra lại trạng thái đơn hàng.";
+            if (orderId <= 0) {
+                message = "Không tìm thấy đơn hàng của yêu cầu hủy.";
+            } else {
 
+                // Bước 1: Duyệt yêu cầu hủy đơn hàng
+                success = orderDAO.approveCancellationRequest(
+                        requestId,
+                        user.getId()
+                );
+
+                if (!success) {
+                    message = "Không thể duyệt yêu cầu hủy đơn hàng.";
+                } else {
+
+                    // Bước 2: Chuẩn bị thông tin hoàn tiền
+                    OrderDAO.RefundData refundData =
+                            orderDAO.prepareRefund(orderId, user.getId());
+
+                    if (refundData == null) {
+
+                        message = "Đã duyệt hủy đơn hàng. "
+                                + "Không tạo được yêu cầu hoàn tiền "
+                                + "(đơn COD, chưa thanh toán hoặc thiếu thông tin giao dịch).";
+
+                    } else {
+
+                        try {
+                            // Bước 3: Gửi yêu cầu hoàn tiền đến VNPay
+                            String rawResponse = VNPayConfig.refundTransaction(
+                                    orderId,
+                                    refundData.getRequestId(),
+                                    refundData.getAmount(),
+                                    refundData.getTransactionNo(),
+                                    refundData.getTransactionDate(),
+                                    refundData.getCreatedBy(),
+                                    request.getRemoteAddr()
+                            );
+
+                            // Bước 4: Đọc phản hồi từ VNPay
+                            VNPayConfig.RefundResponse refundResponse =
+                                    VNPayConfig.parseRefundResponse(rawResponse);
+
+                            // Bước 5: Cập nhật kết quả vào database
+                            boolean updated = orderDAO.updateRefundResult(
+                                    orderId,
+                                    refundData.getRequestId(),
+                                    refundResponse
+                            );
+
+                            if (!updated) {
+                                message = "Đã duyệt hủy đơn hàng nhưng không thể "
+                                        + "cập nhật kết quả hoàn tiền.";
+                            } else {
+
+                                String refundStatus = "Processing";
+
+                                if ("00".equals(refundResponse.getResponseCode())
+                                        && "00".equals(refundResponse.getTransactionStatus())) {
+
+                                    refundStatus = "Succeeded";
+
+                                } else if ("09".equals(refundResponse.getTransactionStatus())
+                                        || "95".equals(refundResponse.getResponseCode())) {
+
+                                    refundStatus = "Failed";
+                                }
+
+                                if ("Succeeded".equals(refundStatus)) {
+                                    message = "Đã duyệt hủy đơn hàng và hoàn tiền thành công.";
+                                } else if ("Failed".equals(refundStatus)) {
+                                    message = "Đã duyệt hủy đơn hàng nhưng VNPay từ chối hoàn tiền.";
+                                } else {
+                                    message = "Đã duyệt hủy đơn hàng. "
+                                            + "Yêu cầu hoàn tiền đang được xử lý.";
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
+                            message = "Đã duyệt hủy đơn hàng nhưng chưa nhận được "
+                                    + "kết quả hoàn tiền từ VNPay. "
+                                    + "Vui lòng kiểm tra trạng thái giao dịch.";
+                        }
+                    }
+                }
+            }
         } else if ("reject".equalsIgnoreCase(action)) {
 
             String adminNote = request.getParameter("adminNote");

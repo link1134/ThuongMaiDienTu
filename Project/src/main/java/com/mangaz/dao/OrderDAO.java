@@ -3,6 +3,7 @@ package com.mangaz.dao;
 import com.mangaz.model.Order;
 import com.mangaz.model.OrderDetail;
 import com.mangaz.util.DBConnection;
+import com.mangaz.util.VNPayConfig;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -821,6 +822,40 @@ public class OrderDAO {
         }
     }
 
+    // Lấy OrderId từ mã yêu cầu hủy dành cho Admin
+    public int getOrderIdByCancellationRequest(
+            int requestId, int adminId) {
+
+        String sql = """
+        SELECT r.OrderId
+        FROM dbo.OrderCancellationRequests r
+        WHERE r.RequestId = ?
+          AND EXISTS (
+              SELECT 1
+              FROM dbo.Users
+              WHERE Id = ? AND Role = N'Admin'
+          )
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, requestId);
+            ps.setInt(2, adminId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("OrderId");
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return -1;
+    }
+
     // Admin xác nhận hủy đơn
     public boolean approveCancellationRequest(
             int requestId, int adminId) {
@@ -1098,19 +1133,22 @@ public class OrderDAO {
         private final BigDecimal amount;
         private final String transactionNo;
         private final String transactionDate;
+        private final String createdBy;
 
         public RefundData(
                 int orderId,
                 String requestId,
                 BigDecimal amount,
                 String transactionNo,
-                String transactionDate) {
+                String transactionDate,
+                String createdBy) {
 
             this.orderId = orderId;
             this.requestId = requestId;
             this.amount = amount;
             this.transactionNo = transactionNo;
             this.transactionDate = transactionDate;
+            this.createdBy = createdBy;
         }
 
         public int getOrderId() {
@@ -1131,6 +1169,10 @@ public class OrderDAO {
 
         public String getTransactionDate() {
             return transactionDate;
+        }
+
+        public String getCreatedBy() {
+            return createdBy;
         }
     }
 
@@ -1261,7 +1303,8 @@ public class OrderDAO {
                         requestId,
                         amount,
                         transactionNo,
-                        transactionDate
+                        transactionDate,
+                        String.valueOf(adminId)
                 );
 
             } catch (Exception e) {
@@ -1274,6 +1317,173 @@ public class OrderDAO {
             return null;
         }
     }
+
+    public boolean updateRefundResult(
+            int orderId,
+            String requestId,
+            VNPayConfig.RefundResponse response) {
+
+        if (response == null
+                || !response.isValidSignature()
+                || requestId == null
+                || requestId.isBlank()) {
+            return false;
+        }
+
+        String getDataSql = """
+        SELECT
+            o.Status,
+            o.PaymentMethod,
+            o.PaymentStatus,
+            vt.Amount,
+            vt.RefundStatus,
+            vt.RefundRequestId
+        FROM dbo.Orders o
+        JOIN dbo.VNPayTransactions vt
+            ON o.OrderId = vt.OrderId
+        WHERE o.OrderId = ?
+        """;
+
+        String updateSql = """
+        UPDATE dbo.VNPayTransactions
+        SET RefundStatus = ?,
+            RefundResponseCode = ?,
+            RefundMessage = ?,
+            RefundTransactionNo = ?,
+            RefundedAt = CASE
+                WHEN ? = N'Succeeded' THEN SYSDATETIME()
+                ELSE RefundedAt
+            END,
+            UpdatedAt = SYSDATETIME()
+        WHERE OrderId = ?
+          AND RefundRequestId = ?
+          AND RefundStatus = N'Processing'
+        """;
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+                BigDecimal amount;
+                String orderStatus;
+                String paymentMethod;
+                String paymentStatus;
+                String refundStatus;
+                String savedRequestId;
+
+                // 1. Lấy thông tin đơn hàng và giao dịch
+                try (PreparedStatement ps =
+                             conn.prepareStatement(getDataSql)) {
+
+                    ps.setInt(1, orderId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return false;
+                        }
+
+                        orderStatus = rs.getString("Status");
+                        paymentMethod = rs.getString("PaymentMethod");
+                        paymentStatus = rs.getString("PaymentStatus");
+                        amount = rs.getBigDecimal("Amount");
+                        refundStatus = rs.getString("RefundStatus");
+                        savedRequestId = rs.getString("RefundRequestId");
+                    }
+                }
+
+                // 2. Kiểm tra thông tin giao dịch
+                if (!"Cancelled".equalsIgnoreCase(orderStatus)
+                        || !"VNPay".equalsIgnoreCase(paymentMethod)
+                        || !"Paid".equalsIgnoreCase(paymentStatus)
+                        || !"Processing".equalsIgnoreCase(refundStatus)
+                        || !requestId.equals(savedRequestId)
+                        || amount == null) {
+
+                    conn.rollback();
+                    return false;
+                }
+
+                // 3. Kiểm tra mã đơn hàng VNPay trả về
+                String txnRef = response.getTxnRef();
+
+                if (!String.valueOf(orderId).equals(txnRef)) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // 4. Kiểm tra số tiền hoàn trả
+                BigDecimal expectedAmount = amount
+                        .multiply(BigDecimal.valueOf(100));
+
+                BigDecimal responseAmount;
+
+                try {
+                    responseAmount = new BigDecimal(response.getAmount());
+                } catch (Exception e) {
+                    conn.rollback();
+                    return false;
+                }
+
+                if (expectedAmount.compareTo(responseAmount) != 0) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // 5. Xác định trạng thái hoàn tiền
+                String responseCode = response.getResponseCode();
+                String transactionStatus = response.getTransactionStatus();
+
+                String newRefundStatus = "Processing";
+
+                if ("00".equals(responseCode)
+                        && "00".equals(transactionStatus)) {
+
+                    newRefundStatus = "Succeeded";
+
+                } else if ("09".equals(transactionStatus)
+                        || "95".equals(responseCode)) {
+
+                    newRefundStatus = "Failed";
+                }
+
+                // 05, 06 và các trạng thái chưa xác định:
+                // Giữ Processing để tiếp tục đối soát.
+
+                // 6. Cập nhật kết quả vào database
+                try (PreparedStatement ps =
+                             conn.prepareStatement(updateSql)) {
+
+                    ps.setString(1, newRefundStatus);
+                    ps.setString(2, responseCode);
+                    ps.setString(3, response.getMessage());
+                    ps.setString(4, response.getTransactionNo());
+                    ps.setString(5, newRefundStatus);
+                    ps.setInt(6, orderId);
+                    ps.setString(7, requestId);
+
+                    if (ps.executeUpdate() != 1) {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+
+                conn.commit();
+                return true;
+
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 
     // Dữ liệu một đơn hàng dành cho trang quản trị
     public static class AdminOrderData {
