@@ -472,11 +472,36 @@ public class OrderDAO {
     public List<Order> getOrdersByUserId(int userId) {
         List<Order> orders = new ArrayList<>();
         String sqlOrders = """
-            SELECT OrderId, UserId, RecipientName, PhoneNumber, ShippingAddress, 
-                   ShippingFee, TotalAmount, PaymentMethod, DeliveryMethod, Status, CreatedAt 
-            FROM dbo.Orders 
-            WHERE UserId = ? 
-            ORDER BY CreatedAt DESC
+            SELECT
+                o.OrderId,
+                o.UserId,
+                o.RecipientName,
+                o.PhoneNumber,
+                o.ShippingAddress,
+                o.ShippingFee,
+                o.TotalAmount,
+                o.PaymentMethod,
+                o.DeliveryMethod,
+                o.Status,
+                o.PaymentStatus,
+                o.CreatedAt,
+                cr.RequestStatus AS CancellationRequestStatus,
+                cr.Reason AS CancellationReason,
+                cr.AdminNote AS CancellationAdminNote
+                                   
+            FROM dbo.Orders o
+                OUTER APPLY (
+                    SELECT TOP 1
+                        r.RequestStatus,
+                        r.Reason,
+                        r.AdminNote
+                    FROM dbo.OrderCancellationRequests r
+                    WHERE r.OrderId = o.OrderId
+                    AND r.UserId = o.UserId
+                    ORDER BY r.RequestId DESC
+                    ) cr
+                WHERE o.UserId = ?
+                ORDER BY o.CreatedAt DESC
         """;
 
         String sqlDetails = """
@@ -506,7 +531,11 @@ public class OrderDAO {
                     order.setPaymentMethod(rsOrder.getString("PaymentMethod"));
                     order.setDeliveryMethod(rsOrder.getString("DeliveryMethod"));
                     order.setStatus(rsOrder.getString("Status"));
+                    order.setPaymentStatus(rsOrder.getString("PaymentStatus"));
                     order.setCreatedAt(rsOrder.getTimestamp("CreatedAt"));
+                    order.setCancellationRequestStatus(rsOrder.getString("CancellationRequestStatus"));
+                    order.setCancellationReason(rsOrder.getString("CancellationReason"));
+                    order.setCancellationAdminNote(rsOrder.getString("CancellationAdminNote"));
 
                     // Load danh sách OrderDetails cho đơn hàng này
                     List<OrderDetail> details = new ArrayList<>();
@@ -1659,4 +1688,3 @@ public class OrderDAO {
         return requests;
     }
 }
-

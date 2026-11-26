@@ -145,7 +145,7 @@
                             <div class="metric-top"><span class="material-symbols-outlined metric-icon">wallet</span>
                                 <span class="metric-number"><fmt:formatNumber value="${pendingCount}" pattern="00"/></span>
                             </div>
-                            <div class="metric-label">CHỜ THANH TOÁN</div>
+                            <div class="metric-label">CHỜ XỬ LÝ</div>
 
                         </div>
                         <div class="metric-card"data-status="Processing" style="cursor: pointer;">
@@ -210,9 +210,26 @@
                                                 <span class="material-symbols-outlined" style="color: #ef4444;">cancel</span>
                                                 <span>Đã hủy</span>
                                             </c:when>
+                                            <c:when test="${order.status eq 'Pending'}">
+                                                <span class="material-symbols-outlined metric-icon" style="color: #7c3aed">
+                                                    inventory
+                                                </span>
+                                                <span>Chờ xử lý</span>
+                                            </c:when>
                                             <c:otherwise>
                                                 <span class="material-symbols-outlined metric-icon" style="color: #7c3aed">wallet</span>
                                                 <span>Chờ thanh toán</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </div>
+
+                                    <div class="payment-status">
+                                        <c:choose>
+                                            <c:when test="${order.paymentStatus eq 'Paid'}">
+                                                <span>Đã thanh toán</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span>Chưa thanh toán</span>
                                             </c:otherwise>
                                         </c:choose>
                                     </div>
@@ -249,6 +266,17 @@
                                         </div>
 
                                         <div class="order-actions">
+                                            <!-- Trạng thái yêu cầu hủy đơn -->
+                                            <c:if test="${order.cancellationRequestStatus eq 'Pending'}">
+                                                <span style="color: #d97706; font-weight: 600;">
+                                                    Đang chờ duyệt yêu cầu hủy
+                                                </span>
+                                            </c:if>
+                                            <c:if test="${order.cancellationRequestStatus eq 'Rejected'}">
+                                                <span style="color: #dc2626; font-weight: 600;">
+                                                    Yêu cầu hủy đã bị từ chối
+                                                </span>
+                                            </c:if>
                                             <c:if test="${not empty order.details}">
                                                 <a href="${pageContext.request.contextPath}/product-detail?id=${order.details[0].listingId}" class="btn-order btn-buy-again" style="text-decoration:none; text-align:center;">
                                                     Mua lại
@@ -257,6 +285,14 @@
                                             <button type="button" class="btn-order btn-order-detail">
                                                 Xem chi tiết
                                             </button>
+                                            <c:if test="${(order.status eq 'Pending' || order.status eq 'Processing')
+                                                            && order.cancellationRequestStatus ne 'Pending'}">
+                                                <button type="button"
+                                                        class="btn-order btn-cancel-order"
+                                                        data-order-id="${order.orderId}">
+                                                    Yêu cầu hủy đơn
+                                                </button>
+                                            </c:if>
                                         </div>
                                     </div>
                                 </div>
@@ -687,6 +723,81 @@
     </div>
     </div>
 </main> <!-- ==================== FOOTER ==================== -->
+
+<!-- Popup yêu cầu hủy đơn hàng -->
+<dialog id="cancelOrderDialog"
+        style="width: min(500px, calc(100% - 32px));
+               border: none;
+               border-radius: 14px;
+               padding: 24px;
+               box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+
+    <h2 style="margin-top: 0;">Yêu cầu hủy đơn hàng</h2>
+
+    <p style="color: #666; font-size: 14px;">
+        Vui lòng cho chúng tôi biết lý do bạn muốn hủy đơn hàng.
+        Yêu cầu sẽ được gửi đến Admin để xem xét.
+    </p>
+
+    <form id="cancelOrderForm">
+
+        <input type="hidden"
+               id="cancelOrderId"
+               name="orderId">
+
+        <label for="cancelReason"
+               style="display: block;
+                      margin-bottom: 8px;
+                      font-weight: 600;">
+            Lý do hủy đơn hàng
+        </label>
+
+        <textarea id="cancelReason"
+                  name="reason"
+                  rows="5"
+                  maxlength="500"
+                  required
+                  placeholder="Nhập lý do bạn muốn hủy đơn hàng..."
+                  style="width: 100%;
+                         box-sizing: border-box;
+                         padding: 12px;
+                         border: 1px solid #ddd;
+                         border-radius: 8px;
+                         resize: vertical;
+                         font-family: inherit;"></textarea>
+
+        <div style="display: flex;
+                    justify-content: flex-end;
+                    gap: 10px;
+                    margin-top: 20px;">
+
+            <button type="button"
+                    id="closeCancelOrder"
+                    class="btn-order">
+                Đóng
+            </button>
+
+            <button type="submit"
+                    id="submitCancelOrder"
+                    class="btn-order btn-cancel-order">
+                Gửi yêu cầu
+            </button>
+
+        </div>
+
+    </form>
+</dialog>
+
+<style>
+    #cancelOrderDialog::backdrop {
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    #cancelOrderDialog textarea:focus {
+        outline: none;
+        border-color: #7c3aed;
+    }
+</style>
 
 <!-- Popup thêm địa chỉ giao hàng -->
 <div class="address-modal-overlay" id="addressModal" hidden>
