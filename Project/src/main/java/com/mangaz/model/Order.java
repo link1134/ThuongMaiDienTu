@@ -16,6 +16,10 @@ public class Order {
     private String paymentMethod;
     private String deliveryMethod;
     private String status;
+    private String paymentStatus;
+    private String cancellationRequestStatus;
+    private String cancellationReason;
+    private String cancellationAdminNote;
     private Timestamp createdAt;
     private List<OrderDetail> details;
 
@@ -122,5 +126,36 @@ public class Order {
 
     public void setDetails(List<OrderDetail> details) {
         this.details = details;
+    }
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+    public String getCancellationRequestStatus() {
+        return cancellationRequestStatus;
+    }
+
+    public void setCancellationRequestStatus(String cancellationRequestStatus) {
+        this.cancellationRequestStatus = cancellationRequestStatus;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
+    }
+
+    public String getCancellationAdminNote() {
+        return cancellationAdminNote;
+    }
+
+    public void setCancellationAdminNote(String cancellationAdminNote) {
+        this.cancellationAdminNote = cancellationAdminNote;
     }
 }

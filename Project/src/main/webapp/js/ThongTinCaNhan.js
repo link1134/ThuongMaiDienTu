@@ -747,3 +747,138 @@ provinceSelect.addEventListener("change", async function () {
 });
 
 loadProvinces();
+
+/* =========================================
+   XỬ LÝ YÊU CẦU HỦY ĐƠN HÀNG
+========================================= */
+
+(function () {
+
+    const dialog = document.getElementById("cancelOrderDialog");
+    const form = document.getElementById("cancelOrderForm");
+
+    const orderIdInput = document.getElementById("cancelOrderId");
+    const reasonInput = document.getElementById("cancelReason");
+
+    const closeButton = document.getElementById("closeCancelOrder");
+    const submitButton = document.getElementById("submitCancelOrder");
+
+    const contextPath = document.body.dataset.contextPath;
+
+    if (!dialog || !form || !closeButton) {
+        return;
+    }
+
+    // 1. Nhấn nút yêu cầu hủy đơn
+    document.addEventListener("click", function (event) {
+
+        const button = event.target.closest(".btn-cancel-order");
+
+        if (!button) {
+            return;
+        }
+
+        const orderId = button.dataset.orderId;
+
+        if (!orderId) {
+            alert("Không tìm thấy mã đơn hàng.");
+            return;
+        }
+
+        form.reset();
+
+        orderIdInput.value = orderId;
+
+        dialog.showModal();
+    });
+
+    // 2. Đóng popup
+    closeButton.addEventListener("click", function () {
+        dialog.close();
+    });
+
+    // 3. Nhấn ra ngoài popup
+    dialog.addEventListener("click", function (event) {
+
+        if (event.target === dialog) {
+            dialog.close();
+        }
+
+    });
+
+    // 4. Gửi yêu cầu hủy đơn
+    form.addEventListener("submit", async function (event) {
+
+        event.preventDefault();
+
+        const orderId = orderIdInput.value;
+        const reason = reasonInput.value.trim();
+
+        if (!reason) {
+            alert("Vui lòng nhập lý do hủy đơn.");
+            reasonInput.focus();
+            return;
+        }
+
+        if (reason.length > 500) {
+            alert("Lý do không được vượt quá 500 ký tự.");
+            return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Đang gửi...";
+
+        try {
+
+            const response = await fetch(
+                contextPath + "/order/cancellation-request",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded;charset=UTF-8"
+                    },
+
+                    body: new URLSearchParams({
+                        orderId: orderId,
+                        reason: reason
+                    })
+                }
+            );
+
+            const message = await response.text();
+
+            if (response.status === 401) {
+                alert("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+                window.location.href = contextPath + "/Login.jsp";
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(message);
+            }
+
+            alert(message);
+
+            dialog.close();
+
+            window.location.reload();
+
+        } catch (error) {
+
+            console.error("Lỗi gửi yêu cầu hủy đơn:", error);
+
+            alert(error.message ||
+                "Không thể gửi yêu cầu hủy đơn. Vui lòng thử lại.");
+
+        } finally {
+
+            submitButton.disabled = false;
+            submitButton.textContent = "Gửi yêu cầu";
+
+        }
+
+    });
+
+})();
