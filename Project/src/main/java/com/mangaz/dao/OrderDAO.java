@@ -8,6 +8,8 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
+import java.util.UUID;
 
 public class OrderDAO {
     public boolean createOrder(Order order) {
@@ -217,10 +219,15 @@ public class OrderDAO {
     }
 
     // Xác nhận thanh toán VNPay thành công
-    public boolean confirmVnpayPayment(int orderId, java.math.BigDecimal paidAmount) {
+    public boolean confirmVnpayPayment(
+            int orderId,
+            java.math.BigDecimal paidAmount,
+            String transactionNo,
+            String payDate) {
 
         String checkOrderSql = """
-        SELECT TotalAmount, PaymentStatus, PaymentMethod, IsBuyNow
+        SELECT TotalAmount, PaymentStatus, PaymentMethod,
+               IsBuyNow, Status
         FROM dbo.Orders WITH (UPDLOCK, ROWLOCK)
         WHERE OrderId = ?
         """;
@@ -237,6 +244,24 @@ public class OrderDAO {
         WHERE ListingId = ? AND Quantity >= ?
         """;
 
+        String updatePaymentSql = """
+        UPDATE dbo.Orders
+        SET PaymentStatus = N'Paid',
+            UpdatedAt = SYSDATETIME()
+        WHERE OrderId = ? AND PaymentStatus = N'Unpaid'
+        """;
+
+        String insertTransactionSql = """
+        INSERT INTO dbo.VNPayTransactions
+        (OrderId, VnpTransactionNo, VnpPayDate, Amount, RefundStatus)
+        SELECT ?, ?, ?, ?, ?
+        WHERE NOT EXISTS (
+            SELECT 1
+            FROM dbo.VNPayTransactions WITH (UPDLOCK, HOLDLOCK)
+            WHERE OrderId = ?
+        )
+        """;
+
         String clearCartSql = """
         DELETE ci
         FROM dbo.CartItems ci
@@ -244,13 +269,6 @@ public class OrderDAO {
         WHERE c.UserId = (
             SELECT UserId FROM dbo.Orders WHERE OrderId = ?
         )
-        """;
-
-        String updatePaymentSql = """
-        UPDATE dbo.Orders
-        SET PaymentStatus = N'Paid',
-            UpdatedAt = SYSDATETIME()
-        WHERE OrderId = ? AND PaymentStatus = N'Unpaid'
         """;
 
         try (Connection conn = DBConnection.getConnection()) {
@@ -261,9 +279,10 @@ public class OrderDAO {
                 java.math.BigDecimal totalAmount;
                 String paymentStatus;
                 String paymentMethod;
+                String orderStatus;
                 boolean isBuyNow;
 
-                // 1. Kiểm tra đơn hàng và khóa bản ghi
+                // 1. Lấy thông tin đơn hàng và khóa bản ghi
                 try (PreparedStatement ps = conn.prepareStatement(checkOrderSql)) {
 
                     ps.setInt(1, orderId);
@@ -279,62 +298,126 @@ public class OrderDAO {
                         paymentStatus = rs.getString("PaymentStatus");
                         paymentMethod = rs.getString("PaymentMethod");
                         isBuyNow = rs.getBoolean("IsBuyNow");
+                        orderStatus = rs.getString("Status");
                     }
                 }
 
-                // Chỉ chấp nhận đơn hàng thanh toán bằng VNPay
+                // 2. Kiểm tra phương thức thanh toán
                 if (!"VNPay".equalsIgnoreCase(paymentMethod)) {
                     conn.rollback();
                     return false;
                 }
 
-                // Kiểm tra số tiền VNPay trả về
+                // 3. Kiểm tra số tiền
                 if (totalAmount == null || paidAmount == null
                         || totalAmount.compareTo(paidAmount) != 0) {
                     conn.rollback();
                     return false;
                 }
 
-                // Nếu đã thanh toán trước đó thì không trừ kho lần nữa
+                // 4. Kiểm tra thông tin giao dịch
+                if (transactionNo == null || transactionNo.isBlank()
+                        || payDate == null || !payDate.matches("\\d{14}")) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // Xác định trạng thái hoàn tiền
+                // Đơn đã hủy: chờ hoàn tiền.
+                // Đơn chưa hủy: chưa cần hoàn tiền.
+                String refundStatus = "Cancelled".equalsIgnoreCase(orderStatus)
+                        ? "Pending"
+                        : "NotRequested";
+
+                // 5. Nếu đơn đã thanh toán trước đó
+                // Không trừ kho thêm lần nữa.
                 if ("Paid".equalsIgnoreCase(paymentStatus)) {
+
+                    // Nếu chưa có giao dịch được lưu thì bổ sung.
+                    try (PreparedStatement ps =
+                                 conn.prepareStatement(insertTransactionSql)) {
+
+                        ps.setInt(1, orderId);
+                        ps.setString(2, transactionNo);
+                        ps.setString(3, payDate);
+                        ps.setBigDecimal(4, paidAmount);
+                        ps.setString(5, refundStatus);
+                        ps.setInt(6, orderId);
+
+                        ps.executeUpdate();
+                    }
+
+                    // Nếu đơn đã bị hủy nhưng giao dịch trước đó
+                    // chưa được đưa vào hàng chờ hoàn tiền.
+                    if ("Cancelled".equalsIgnoreCase(orderStatus)) {
+
+                        String updateRefundSql = """
+                        UPDATE dbo.VNPayTransactions
+                        SET RefundStatus = N'Pending',
+                            UpdatedAt = SYSDATETIME()
+                        WHERE OrderId = ?
+                          AND RefundStatus = N'NotRequested'
+                        """;
+
+                        try (PreparedStatement ps =
+                                     conn.prepareStatement(updateRefundSql)) {
+
+                            ps.setInt(1, orderId);
+                            ps.executeUpdate();
+                        }
+                    }
+
                     conn.commit();
                     return true;
                 }
 
+                // 6. Chỉ xử lý đơn chưa thanh toán
                 if (!"Unpaid".equalsIgnoreCase(paymentStatus)) {
                     conn.rollback();
                     return false;
                 }
 
-                // 2. Trừ tồn kho sau khi xác nhận thanh toán
-                try (PreparedStatement psDetail = conn.prepareStatement(getDetailsSql);
-                     PreparedStatement psStock = conn.prepareStatement(updateStockSql)) {
+                // 7. Nếu đơn chưa bị hủy, tiến hành trừ tồn kho.
+                // Nếu đơn đã hủy, tuyệt đối không trừ tồn kho.
+                if (!"Cancelled".equalsIgnoreCase(orderStatus)) {
 
-                    psDetail.setInt(1, orderId);
+                    if (!"Pending".equalsIgnoreCase(orderStatus)
+                            && !"Processing".equalsIgnoreCase(orderStatus)) {
 
-                    try (ResultSet rs = psDetail.executeQuery()) {
+                        conn.rollback();
+                        return false;
+                    }
 
-                        while (rs.next()) {
+                    try (PreparedStatement psDetail =
+                                 conn.prepareStatement(getDetailsSql);
+                         PreparedStatement psStock =
+                                 conn.prepareStatement(updateStockSql)) {
 
-                            int listingId = rs.getInt("ListingId");
-                            int quantity = rs.getInt("Quantity");
+                        psDetail.setInt(1, orderId);
 
-                            psStock.setInt(1, quantity);
-                            psStock.setInt(2, listingId);
-                            psStock.setInt(3, quantity);
+                        try (ResultSet rs = psDetail.executeQuery()) {
 
-                            int updatedRows = psStock.executeUpdate();
+                            while (rs.next()) {
 
-                            if (updatedRows == 0) {
-                                conn.rollback();
-                                return false;
+                                int listingId = rs.getInt("ListingId");
+                                int quantity = rs.getInt("Quantity");
+
+                                psStock.setInt(1, quantity);
+                                psStock.setInt(2, listingId);
+                                psStock.setInt(3, quantity);
+
+                                if (psStock.executeUpdate() == 0) {
+                                    conn.rollback();
+                                    return false;
+                                }
                             }
                         }
                     }
                 }
 
-                // 3. Đánh dấu đã thanh toán
-                try (PreparedStatement ps = conn.prepareStatement(updatePaymentSql)) {
+                // 8. Cập nhật trạng thái thanh toán
+                try (PreparedStatement ps =
+                             conn.prepareStatement(updatePaymentSql)) {
 
                     ps.setInt(1, orderId);
 
@@ -344,9 +427,27 @@ public class OrderDAO {
                     }
                 }
 
-                // 4. Xóa giỏ hàng sau khi thanh toán thành công
-                if (!isBuyNow) {
-                    try (PreparedStatement ps = conn.prepareStatement(clearCartSql)) {
+                // 9. Lưu thông tin giao dịch VNPay
+                try (PreparedStatement ps =
+                             conn.prepareStatement(insertTransactionSql)) {
+
+                    ps.setInt(1, orderId);
+                    ps.setString(2, transactionNo);
+                    ps.setString(3, payDate);
+                    ps.setBigDecimal(4, paidAmount);
+                    ps.setString(5, refundStatus);
+                    ps.setInt(6, orderId);
+
+                    ps.executeUpdate();
+                }
+
+                // 10. Chỉ xóa giỏ hàng nếu đơn chưa bị hủy
+                if (!isBuyNow
+                        && !"Cancelled".equalsIgnoreCase(orderStatus)) {
+
+                    try (PreparedStatement ps =
+                                 conn.prepareStatement(clearCartSql)) {
+
                         ps.setInt(1, orderId);
                         ps.executeUpdate();
                     }
@@ -634,5 +735,718 @@ public class OrderDAO {
         return details;
     }
 
+    // Người mua gửi yêu cầu hủy đơn
+    public boolean createCancellationRequest(
+            int orderId, int userId, String reason) {
+
+        String checkOrderSql = """
+        SELECT Status
+        FROM dbo.Orders WITH (UPDLOCK, ROWLOCK)
+        WHERE OrderId = ? AND UserId = ?
+        """;
+
+        String checkPendingSql = """
+        SELECT RequestId
+        FROM dbo.OrderCancellationRequests
+        WHERE OrderId = ? AND RequestStatus = N'Pending'
+        """;
+
+        String insertSql = """
+        INSERT INTO dbo.OrderCancellationRequests
+        (OrderId, UserId, Reason)
+        VALUES (?, ?, ?)
+        """;
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+                // 1. Kiểm tra đơn hàng thuộc về người dùng
+                String orderStatus;
+
+                try (PreparedStatement ps = conn.prepareStatement(checkOrderSql)) {
+                    ps.setInt(1, orderId);
+                    ps.setInt(2, userId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return false;
+                        }
+
+                        orderStatus = rs.getString("Status");
+                    }
+                }
+
+                // 2. Chỉ cho phép hủy Pending hoặc Processing
+                if (!"Pending".equalsIgnoreCase(orderStatus)
+                        && !"Processing".equalsIgnoreCase(orderStatus)) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // 3. Kiểm tra yêu cầu đang chờ xử lý
+                try (PreparedStatement ps = conn.prepareStatement(checkPendingSql)) {
+                    ps.setInt(1, orderId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (rs.next()) {
+                            conn.rollback();
+                            return false;
+                        }
+                    }
+                }
+
+                // 4. Tạo yêu cầu hủy
+                try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+                    ps.setInt(1, orderId);
+                    ps.setInt(2, userId);
+                    ps.setString(3, reason.trim());
+
+                    ps.executeUpdate();
+                }
+
+                conn.commit();
+                return true;
+
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Admin xác nhận hủy đơn
+    public boolean approveCancellationRequest(
+            int requestId, int adminId) {
+
+        String checkRequestSql = """
+        SELECT
+            r.OrderId,
+            r.RequestStatus,
+            o.Status,
+            o.PaymentMethod,
+            o.PaymentStatus
+        FROM dbo.OrderCancellationRequests r
+        WITH (UPDLOCK, ROWLOCK)
+        JOIN dbo.Orders o
+        WITH (UPDLOCK, ROWLOCK)
+            ON r.OrderId = o.OrderId
+        WHERE r.RequestId = ?
+        """;
+
+        String checkAdminSql = """
+        SELECT Id
+        FROM dbo.Users
+        WHERE Id = ? AND Role = N'Admin'
+        """;
+
+        String updateOrderSql = """
+        UPDATE dbo.Orders
+        SET Status = N'Cancelled',
+            UpdatedAt = SYSDATETIME()
+        WHERE OrderId = ?
+          AND Status IN (N'Pending', N'Processing')
+        """;
+
+        String updateRequestSql = """
+        UPDATE dbo.OrderCancellationRequests
+        SET RequestStatus = N'Approved',
+            AdminId = ?,
+            ProcessedAt = SYSDATETIME()
+        WHERE RequestId = ?
+          AND RequestStatus = N'Pending'
+        """;
+
+        String restoreStockSql = """
+        UPDATE l
+        SET l.Quantity = l.Quantity + d.TotalQuantity
+        FROM dbo.Listings l
+        JOIN (
+            SELECT ListingId, SUM(Quantity) AS TotalQuantity
+            FROM dbo.OrderDetails
+            WHERE OrderId = ?
+            GROUP BY ListingId
+        ) d ON l.ListingId = d.ListingId
+        """;
+
+        String queueRefundSql = """
+            UPDATE dbo.VNPayTransactions
+            SET RefundStatus = N'Pending',
+                UpdatedAt = SYSDATETIME()
+            WHERE OrderId = ?
+              AND RefundStatus = N'NotRequested'
+            """;
+
+        String checkRefundSql = """
+            SELECT RefundStatus
+            FROM dbo.VNPayTransactions
+            WHERE OrderId = ?
+            """;
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+                // 1. Kiểm tra quyền Admin
+                try (PreparedStatement ps = conn.prepareStatement(checkAdminSql)) {
+                    ps.setInt(1, adminId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return false;
+                        }
+                    }
+                }
+
+                // 2. Lấy thông tin yêu cầu và khóa đơn hàng
+                int orderId;
+                String requestStatus;
+                String orderStatus;
+                String paymentMethod;
+                String paymentStatus;
+
+                try (PreparedStatement ps = conn.prepareStatement(checkRequestSql)) {
+                    ps.setInt(1, requestId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return false;
+                        }
+
+                        orderId = rs.getInt("OrderId");
+                        requestStatus = rs.getString("RequestStatus");
+                        orderStatus = rs.getString("Status");
+                        paymentMethod = rs.getString("PaymentMethod");
+                        paymentStatus = rs.getString("PaymentStatus");
+                    }
+                }
+
+                // 3. Chỉ duyệt yêu cầu đang chờ
+                if (!"Pending".equalsIgnoreCase(requestStatus)) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // 4. Kiểm tra trạng thái đơn hàng
+                if (!"Pending".equalsIgnoreCase(orderStatus)
+                        && !"Processing".equalsIgnoreCase(orderStatus)) {
+                    conn.rollback();
+                    return false;
+                }
+
+                // 5. Xác nhận hủy đơn
+                try (PreparedStatement ps = conn.prepareStatement(updateOrderSql)) {
+                    ps.setInt(1, orderId);
+
+                    if (ps.executeUpdate() == 0) {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+
+                // 6. Cập nhật yêu cầu hủy
+                try (PreparedStatement ps = conn.prepareStatement(updateRequestSql)) {
+                    ps.setInt(1, adminId);
+                    ps.setInt(2, requestId);
+
+                    if (ps.executeUpdate() == 0) {
+                        conn.rollback();
+                        return false;
+                    }
+                }
+
+                // 7. Chỉ hoàn kho nếu đơn đã từng trừ tồn kho
+                boolean stockWasDeducted =
+                        "COD".equalsIgnoreCase(paymentMethod)
+                                || "Paid".equalsIgnoreCase(paymentStatus);
+
+                if (stockWasDeducted) {
+                    try (PreparedStatement ps = conn.prepareStatement(restoreStockSql)) {
+                        ps.setInt(1, orderId);
+                        ps.executeUpdate();
+                    }
+                }
+
+                // 8. Nếu đơn đã thanh toán bằng VNPay, đưa vào hàng chờ hoàn tiền
+                if ("VNPay".equalsIgnoreCase(paymentMethod)
+                        && "Paid".equalsIgnoreCase(paymentStatus)) {
+
+                    boolean refundQueued = false;
+
+                    try (PreparedStatement ps = conn.prepareStatement(queueRefundSql)) {
+                        ps.setInt(1, orderId);
+                        refundQueued = ps.executeUpdate() > 0;
+                    }
+
+                    // Nếu chưa cập nhật được, kiểm tra trạng thái hiện tại
+                    if (!refundQueued) {
+                        try (PreparedStatement ps = conn.prepareStatement(checkRefundSql)) {
+                            ps.setInt(1, orderId);
+
+                            try (ResultSet rs = ps.executeQuery()) {
+                                if (!rs.next()) {
+                                    throw new SQLException(
+                                            "Không tìm thấy giao dịch VNPay của đơn hàng: " + orderId
+                                    );
+                                }
+
+                                String refundStatus = rs.getString("RefundStatus");
+
+                                if (!"Pending".equalsIgnoreCase(refundStatus)
+                                        && !"Processing".equalsIgnoreCase(refundStatus)
+                                        && !"Succeeded".equalsIgnoreCase(refundStatus)) {
+
+                                    throw new SQLException(
+                                            "Trạng thái hoàn tiền không hợp lệ: " + refundStatus
+                                    );
+                                }
+                            }
+                        }
+                    }
+                }
+
+                conn.commit();
+                return true;
+
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Admin từ chối yêu cầu hủy đơn
+    public boolean rejectCancellationRequest(
+            int requestId, int adminId, String adminNote) {
+
+        String sql = """
+        UPDATE dbo.OrderCancellationRequests
+        SET RequestStatus = N'Rejected',
+            AdminId = ?,
+            AdminNote = ?,
+            ProcessedAt = SYSDATETIME()
+        WHERE RequestId = ?
+          AND RequestStatus = N'Pending'
+          AND EXISTS (
+              SELECT 1
+              FROM dbo.Users
+              WHERE Id = ? AND Role = N'Admin'
+          )
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, adminId);
+            ps.setString(2, adminNote);
+            ps.setInt(3, requestId);
+            ps.setInt(4, adminId);
+
+            return ps.executeUpdate() > 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean updateVnpCreateDate(int orderId, String createDate) {
+
+        if (createDate == null || !createDate.matches("\\d{14}")) {
+            return false;
+        }
+
+        String sql = """
+        UPDATE dbo.Orders
+        SET VnpCreateDate = ?
+        WHERE OrderId = ?
+          AND PaymentMethod = N'VNPay'
+          AND VnpCreateDate IS NULL
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, createDate);
+            ps.setInt(2, orderId);
+
+            return ps.executeUpdate() == 1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // Thông tin cần thiết để gửi yêu cầu hoàn tiền VNPay
+    public static class RefundData {
+        private final int orderId;
+        private final String requestId;
+        private final BigDecimal amount;
+        private final String transactionNo;
+        private final String transactionDate;
+
+        public RefundData(
+                int orderId,
+                String requestId,
+                BigDecimal amount,
+                String transactionNo,
+                String transactionDate) {
+
+            this.orderId = orderId;
+            this.requestId = requestId;
+            this.amount = amount;
+            this.transactionNo = transactionNo;
+            this.transactionDate = transactionDate;
+        }
+
+        public int getOrderId() {
+            return orderId;
+        }
+
+        public String getRequestId() {
+            return requestId;
+        }
+
+        public BigDecimal getAmount() {
+            return amount;
+        }
+
+        public String getTransactionNo() {
+            return transactionNo;
+        }
+
+        public String getTransactionDate() {
+            return transactionDate;
+        }
+    }
+
+    // Chuẩn bị thông tin trước khi gửi yêu cầu hoàn tiền VNPay
+    public RefundData prepareRefund(int orderId, int adminId) {
+
+        String checkAdminSql = """
+        SELECT Id
+        FROM dbo.Users
+        WHERE Id = ? AND Role = N'Admin'
+        """;
+
+        String getRefundDataSql = """
+        SELECT
+            o.Status,
+            o.PaymentMethod,
+            o.PaymentStatus,
+            o.VnpCreateDate,
+            vt.Amount,
+            vt.VnpTransactionNo,
+            vt.RefundStatus,
+            vt.RefundRequestId
+        FROM dbo.Orders o WITH (UPDLOCK, ROWLOCK)
+        JOIN dbo.VNPayTransactions vt WITH (UPDLOCK, ROWLOCK)
+            ON o.OrderId = vt.OrderId
+        WHERE o.OrderId = ?
+        """;
+
+        String updateRefundSql = """
+        UPDATE dbo.VNPayTransactions
+        SET RefundStatus = N'Processing',
+            RefundRequestId = ?,
+            UpdatedAt = SYSDATETIME()
+        WHERE OrderId = ?
+          AND RefundStatus = N'Pending'
+          AND RefundRequestId IS NULL
+        """;
+
+        try (Connection conn = DBConnection.getConnection()) {
+
+            conn.setAutoCommit(false);
+
+            try {
+                // 1. Kiểm tra quyền Admin
+                try (PreparedStatement ps = conn.prepareStatement(checkAdminSql)) {
+                    ps.setInt(1, adminId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return null;
+                        }
+                    }
+                }
+
+                // 2. Lấy thông tin đơn hàng và giao dịch VNPay
+                BigDecimal amount;
+                String orderStatus;
+                String paymentMethod;
+                String paymentStatus;
+                String transactionNo;
+                String transactionDate;
+                String refundStatus;
+                String oldRequestId;
+
+                try (PreparedStatement ps = conn.prepareStatement(getRefundDataSql)) {
+                    ps.setInt(1, orderId);
+
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return null;
+                        }
+
+                        orderStatus = rs.getString("Status");
+                        paymentMethod = rs.getString("PaymentMethod");
+                        paymentStatus = rs.getString("PaymentStatus");
+                        transactionDate = rs.getString("VnpCreateDate");
+                        amount = rs.getBigDecimal("Amount");
+                        transactionNo = rs.getString("VnpTransactionNo");
+                        refundStatus = rs.getString("RefundStatus");
+                        oldRequestId = rs.getString("RefundRequestId");
+                    }
+                }
+
+                // 3. Chỉ hoàn tiền cho đơn đã hủy và đã thanh toán VNPay
+                if (!"Cancelled".equalsIgnoreCase(orderStatus)
+                        || !"VNPay".equalsIgnoreCase(paymentMethod)
+                        || !"Paid".equalsIgnoreCase(paymentStatus)
+                        || !"Pending".equalsIgnoreCase(refundStatus)
+                        || oldRequestId != null) {
+
+                    conn.rollback();
+                    return null;
+                }
+
+                // 4. Kiểm tra thông tin giao dịch
+                if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0
+                        || transactionNo == null || transactionNo.isBlank()
+                        || transactionDate == null
+                        || !transactionDate.matches("\\d{14}")) {
+
+                    conn.rollback();
+                    return null;
+                }
+
+                // 5. Tạo mã yêu cầu hoàn tiền
+                String requestId = UUID.randomUUID()
+                        .toString()
+                        .replace("-", "");
+
+                // 6. Chuyển trạng thái sang Processing và lưu RequestId
+                try (PreparedStatement ps = conn.prepareStatement(updateRefundSql)) {
+                    ps.setString(1, requestId);
+                    ps.setInt(2, orderId);
+
+                    if (ps.executeUpdate() != 1) {
+                        conn.rollback();
+                        return null;
+                    }
+                }
+
+                conn.commit();
+
+                // 7. Trả về dữ liệu để gửi đến VNPay
+                return new RefundData(
+                        orderId,
+                        requestId,
+                        amount,
+                        transactionNo,
+                        transactionDate
+                );
+
+            } catch (Exception e) {
+                conn.rollback();
+                throw e;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    // Dữ liệu một đơn hàng dành cho trang quản trị
+    public static class AdminOrderData {
+        private Order order;
+        private String buyerName;
+        private String paymentStatus;
+
+        public AdminOrderData(Order order, String buyerName, String paymentStatus) {
+            this.order = order;
+            this.buyerName = buyerName;
+            this.paymentStatus = paymentStatus;
+        }
+
+        public Order getOrder() {
+            return order;
+        }
+
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        public String getPaymentStatus() {
+            return paymentStatus;
+        }
+    }
+
+    // Dữ liệu yêu cầu hủy đơn dành cho Admin
+    public static class AdminCancellationData {
+        private int requestId;
+        private int orderId;
+        private String buyerName;
+        private String reason;
+        private String requestStatus;
+        private String orderStatus;
+
+        public AdminCancellationData(
+                int requestId,
+                int orderId,
+                String buyerName,
+                String reason,
+                String requestStatus,
+                String orderStatus) {
+
+            this.requestId = requestId;
+            this.orderId = orderId;
+            this.buyerName = buyerName;
+            this.reason = reason;
+            this.requestStatus = requestStatus;
+            this.orderStatus = orderStatus;
+        }
+
+        public int getRequestId() {
+            return requestId;
+        }
+
+        public int getOrderId() {
+            return orderId;
+        }
+
+        public String getBuyerName() {
+            return buyerName;
+        }
+
+        public String getReason() {
+            return reason;
+        }
+
+        public String getRequestStatus() {
+            return requestStatus;
+        }
+
+        public String getOrderStatus() {
+            return orderStatus;
+        }
+    }
+
+    // Admin lấy toàn bộ đơn hàng trong hệ thống
+    public List<AdminOrderData> getAllOrdersForAdmin() throws SQLException {
+
+        List<AdminOrderData> orders = new ArrayList<>();
+
+        String sql = """
+        SELECT
+            o.OrderId,
+            o.UserId,
+            o.RecipientName,
+            o.PhoneNumber,
+            o.ShippingAddress,
+            o.ShippingFee,
+            o.TotalAmount,
+            o.PaymentMethod,
+            o.DeliveryMethod,
+            o.Status,
+            o.PaymentStatus,
+            o.CreatedAt,
+            COALESCE(u.FullName, u.Username) AS BuyerName
+        FROM dbo.Orders o
+        JOIN dbo.Users u ON o.UserId = u.Id
+        ORDER BY o.CreatedAt DESC, o.OrderId DESC
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                Order order = new Order();
+
+                order.setOrderId(rs.getInt("OrderId"));
+                order.setUserId(rs.getInt("UserId"));
+                order.setRecipientName(rs.getString("RecipientName"));
+                order.setPhoneNumber(rs.getString("PhoneNumber"));
+                order.setShippingAddress(rs.getString("ShippingAddress"));
+                order.setShippingFee(rs.getBigDecimal("ShippingFee"));
+                order.setTotalAmount(rs.getBigDecimal("TotalAmount"));
+                order.setPaymentMethod(rs.getString("PaymentMethod"));
+                order.setDeliveryMethod(rs.getString("DeliveryMethod"));
+                order.setStatus(rs.getString("Status"));
+                order.setCreatedAt(rs.getTimestamp("CreatedAt"));
+
+                String buyerName = rs.getString("BuyerName");
+                String paymentStatus = rs.getString("PaymentStatus");
+
+                orders.add(new AdminOrderData(
+                        order,
+                        buyerName,
+                        paymentStatus
+                ));
+            }
+        }
+
+        return orders;
+    }
+
+    // Admin lấy danh sách yêu cầu hủy đơn hàng
+    public List<AdminCancellationData> getCancellationRequestsForAdmin()
+            throws SQLException {
+
+        List<AdminCancellationData> requests = new ArrayList<>();
+
+        String sql = """
+        SELECT
+            r.RequestId,
+            r.OrderId,
+            COALESCE(u.FullName, u.Username) AS BuyerName,
+            r.Reason,
+            r.RequestStatus,
+            o.Status AS OrderStatus
+        FROM dbo.OrderCancellationRequests r
+        JOIN dbo.Users u ON r.UserId = u.Id
+        JOIN dbo.Orders o ON r.OrderId = o.OrderId
+        ORDER BY
+            CASE WHEN r.RequestStatus = N'Pending' THEN 0 ELSE 1 END,
+            r.RequestId DESC
+        """;
+
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                requests.add(new AdminCancellationData(
+                        rs.getInt("RequestId"),
+                        rs.getInt("OrderId"),
+                        rs.getString("BuyerName"),
+                        rs.getString("Reason"),
+                        rs.getString("RequestStatus"),
+                        rs.getString("OrderStatus")
+                ));
+            }
+        }
+
+        return requests;
+    }
 }
 

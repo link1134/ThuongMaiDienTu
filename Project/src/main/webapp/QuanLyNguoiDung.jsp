@@ -45,7 +45,12 @@
                         <li> <a href="#" class="admin-nav-item"> <span
                                     class="material-symbols-outlined">menu_book</span> <span>Master Catalog</span> </a>
                         </li>
-                        <li> <a href="#" class="admin-nav-item active"> <span class="material-symbols-outlined">group</span>
+                        <li><a href="${pageContext.request.contextPath}/admin/orderManager"
+                               class="admin-nav-item">
+                            <span class="material-symbols-outlined">local_shipping</span>
+                            <span>Quản lý Đơn hàng</span>
+                        </a></li>
+                        <li> <a href="${pageContext.request.contextPath}/admin/userManager" class="admin-nav-item active"> <span class="material-symbols-outlined">group</span>
                                 <span>Quản lý Người dùng &amp; Collector</span> </a> </li>
                     </ul>
                 </div> <!-- Menu Phụ: Kiểm toán & Hệ thống -->

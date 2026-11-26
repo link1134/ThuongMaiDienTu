@@ -254,15 +254,28 @@ public class CheckoutServlet extends HttpServlet {
                     ipAddress = req.getRemoteAddr();
                 }
 
-                // 3. Tạo URL thanh toán VNPay
-                String paymentUrl = VNPayConfig.createPaymentUrl(
+                // 3. Tạo dữ liệu thanh toán VNPay
+                VNPayConfig.PaymentData paymentData =
+                        VNPayConfig.createPaymentData(
+                                order.getOrderId(),
+                                order.getTotalAmount(),
+                                ipAddress
+                        );
+
+                // 4. Lưu thời gian tạo giao dịch vào database
+                boolean dateSaved = orderDAO.updateVnpCreateDate(
                         order.getOrderId(),
-                        order.getTotalAmount(),
-                        ipAddress
+                        paymentData.getCreateDate()
                 );
 
-                // 4. Chuyển khách hàng đến cổng thanh toán
-                resp.sendRedirect(paymentUrl);
+                if (!dateSaved) {
+                    throw new Exception(
+                            "Không thể lưu thời gian tạo giao dịch VNPay."
+                    );
+                }
+
+                // 5. Chuyển khách hàng đến cổng thanh toán
+                resp.sendRedirect(paymentData.getPaymentUrl());
 
             } catch (Exception e) {
                 e.printStackTrace();

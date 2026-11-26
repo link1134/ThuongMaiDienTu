@@ -81,16 +81,29 @@ public class VNPayIPNServlet extends HttpServlet {
 
             // 6. Kiểm tra kết quả giao dịch
             String responseCode = params.get("vnp_ResponseCode");
-            String transactionStatus =
-                    params.get("vnp_TransactionStatus");
+            String transactionStatus = params.get("vnp_TransactionStatus");
+
+            String transactionNo = params.get("vnp_TransactionNo");
+            String payDate = params.get("vnp_PayDate");
 
             if ("00".equals(responseCode)
                     && "00".equals(transactionStatus)) {
 
                 // 7. Xác nhận thanh toán và cập nhật database
+                // Kiểm tra thông tin giao dịch
+                if (transactionNo == null || transactionNo.isBlank()
+                        || payDate == null || !payDate.matches("\\d{14}")) {
+
+                    sendResponse(resp, "99", "Invalid Transaction Information");
+                    return;
+                }
+
+                // Xác nhận thanh toán và lưu thông tin giao dịch
                 boolean success = orderDAO.confirmVnpayPayment(
                         orderId,
-                        paidAmount
+                        paidAmount,
+                        transactionNo,
+                        payDate
                 );
 
                 if (success) {
