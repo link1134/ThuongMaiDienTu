@@ -104,8 +104,6 @@ public class QuanLyNguoiDungServlet extends HttpServlet {
                 handleToggleLock(req, admin, target);
             } else if ("delete".equals(action)) {
                 handleDelete(req, admin, target);
-            } else if ("update".equals(action)) {
-                handleUpdate(req, admin, target);
             } else {
                 flash(req, "error", "Thao tác không hợp lệ.");
             }
@@ -155,42 +153,6 @@ public class QuanLyNguoiDungServlet extends HttpServlet {
                 flash(req, "error", "Không thể xóa tài khoản, vui lòng thử lại.");
             }
         }
-    }
-
-    private void handleUpdate(HttpServletRequest req, User admin, UserRow target)
-            throws SQLException {
-        String fullName = trim(req.getParameter("fullName"));
-        String phone = trim(req.getParameter("phoneNumber"));
-        String role = req.getParameter("role");
-        boolean enabled = "1".equals(req.getParameter("enabled"));
-
-        if (fullName.length() > 100) {
-            flash(req, "error", "Họ tên tối đa 100 ký tự.");
-            return;
-        }
-        if (!phone.isEmpty() && !phone.matches("[0-9+()\\-\\s]{1,20}")) {
-            flash(req, "error", "Số điện thoại không hợp lệ.");
-            return;
-        }
-
-        // Với chính mình: giữ nguyên vai trò và trạng thái (tránh tự hạ quyền / tự khóa)
-        if (target.getId() == admin.getId()) {
-            role = target.getRole();
-            enabled = target.isEnabled();
-        } else if (!"Admin".equals(role) && !"User".equals(role)) {
-            flash(req, "error", "Vai trò không hợp lệ.");
-            return;
-        }
-        // Tài khoản quản trị khác không bị khóa từ trang này
-        if ("Admin".equals(role)) {
-            enabled = true;
-        }
-
-        userDAO.updateUser(target.getId(),
-                fullName.isEmpty() ? null : fullName,
-                phone.isEmpty() ? null : phone,
-                role, enabled);
-        flash(req, "success", "Đã cập nhật tài khoản @" + target.getUsername() + ".");
     }
 
     // =========================================================
