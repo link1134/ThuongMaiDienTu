@@ -8,469 +8,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Người Dùng & Collector Hội Viên - MangaVault Admin</title>
-    <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
+    <title>Quản lý người dùng - MangaVault Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
-        rel="stylesheet">
-    <!-- Google Material Symbols Outlined -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap"
+          rel="stylesheet">
     <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <!-- File CSS riêng biệt -->
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/QuanLyNguoiDung.css">
 </head>
 
 <body class="site-body">
 <jsp:include page="/common/header.jsp"/>
-    <main class="admin-page-container">
-        <div class="admin-layout-grid">
+<c:set var="ctx" value="${pageContext.request.contextPath}"/>
+<main class="admin-page-container">
+    <div class="admin-layout-grid">
 
-            <aside class="admin-sidebar"> <!-- Brand Badge MangaVault Admin -->
-                <div class="admin-brand-badge-card">
-                    <div class="admin-shield-icon-box"> <span class="material-symbols-outlined">shield_person</span>
-                    </div>
-                    <div class="admin-badge-meta"> <span class="admin-badge-title">MangaVault Admin</span> <span
-                            class="admin-badge-subtitle">Collector Exchange Portal</span> </div>
-                </div> <!-- Menu Quản trị chính -->
-                <div class="admin-nav-card">
-                    <ul class="admin-nav-list">
-                        <li> <a href="#" class="admin-nav-item"> <span
-                                    class="material-symbols-outlined">dashboard</span> <span>Dashboard Thống kê</span>
-                            </a> </li>
-                        <li> <a href="#" class="admin-nav-item "> <span
-                                    class="material-symbols-outlined">category</span> <span>Quản lý Danh mục</span> </a>
-                        </li>
-                        <li> <a href="#" class="admin-nav-item"> <span
-                                    class="material-symbols-outlined">menu_book</span> <span>Master Catalog</span> </a>
-                        </li>
-                        <li><a href="${pageContext.request.contextPath}/admin/orderManager"
-                               class="admin-nav-item">
-                            <span class="material-symbols-outlined">local_shipping</span>
-                            <span>Quản lý Đơn hàng</span>
-                        </a></li>
-                        <li> <a href="${pageContext.request.contextPath}/admin/userManager" class="admin-nav-item active"> <span class="material-symbols-outlined">group</span>
-                                <span>Quản lý Người dùng &amp; Collector</span> </a> </li>
-                    </ul>
-                </div> <!-- Menu Phụ: Kiểm toán & Hệ thống -->
-                <div class="admin-secondary-nav-card">
-                    <ul class="admin-nav-list">
-<%--                        <li> <a href="#" class="admin-nav-item"> <span class="material-symbols-outlined">verified</span>--%>
-<%--                                <span>Báo cáo kiểm toán</span> </a> </li>--%>
-                        <li> <a href="#" class="admin-nav-item"> <span class="material-symbols-outlined">settings</span>
-                                <span>Cài đặt hệ thống</span> </a> </li>
-<%--                        <li> <a href="#" class="admin-nav-item"> <span class="material-symbols-outlined">security</span>--%>
-<%--                                <span>Nhật ký Escrow</span> </a> </li>--%>
-                    </ul>
+        <aside class="admin-sidebar">
+            <div class="admin-brand-badge-card">
+                <div class="admin-shield-icon-box">
+                    <span class="material-symbols-outlined">shield_person</span>
                 </div>
-            </aside>
-            <section class="admin-main-content">
-                <!-- Header Trang: Tiêu đề & Nút Thao Tác -->
-                <div class="admin-page-header">
-                    <div class="admin-header-titles">
-                        <h1 class="admin-page-title">Quản Lý Người Dùng &amp; Collector Hội Viên</h1>
-                    </div>
-                    <div class="admin-header-actions">
-                        <button type="button" class="btn-export-outline">
-                            <span class="material-symbols-outlined">download</span>
-                            <span>Xuất dữ liệu KYC</span>
-                        </button>
-                        <button type="button" class="btn-batch-kyc">
-                            <span class="material-symbols-outlined">verified</span>
-                            <span>Duyệt KYC Hàng loạt</span>
-                        </button>
-                    </div>
+                <div class="admin-badge-meta">
+                    <span class="admin-badge-title">MangaVault Admin</span>
+                    <span class="admin-badge-subtitle">Collector Exchange Portal</span>
                 </div>
-
-                <!-- 4 Thẻ Chỉ Số KPI Tổng Quan (Metrics Cards) -->
-                <div class="admin-metrics-grid">
-                    <!-- KPI 1 -->
-                    <div class="metric-kpi-card">
-                        <div class="metric-info-col">
-                            <span class="metric-kpi-label">Tổng số lượng người dùng</span>
-                            <span class="metric-kpi-value">48.920</span>
-                            <span class="metric-kpi-subtext">
-                                <span class="material-symbols-outlined" style="font-size:14px;">trending_up</span>
-                                +420 tuần này
-                            </span>
-                        </div>
-                        <div class="metric-icon-box amber-box">
-                            <span class="material-symbols-outlined">menu_book</span>
-                        </div>
-                    </div>
-
-                    <!-- KPI 2 -->
-<%--                    <div class="metric-kpi-card">--%>
-<%--                        <div class="metric-info-col">--%>
-<%--                            <span class="metric-kpi-label">Thành viên Gold Verified</span>--%>
-<%--                            <span class="metric-kpi-value">3.250</span>--%>
-<%--                            <span class="metric-kpi-subtext amber-text">--%>
-<%--                                <span class="material-symbols-outlined" style="font-size:14px;">military_tech</span>--%>
-<%--                                Định danh CCCD Chip--%>
-<%--                            </span>--%>
-<%--                        </div>--%>
-<%--                        <div class="metric-icon-box amber-box">--%>
-<%--                            <span class="material-symbols-outlined">workspace_premium</span>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-<%--                    <!-- KPI 3 -->--%>
-<%--                    <div class="metric-kpi-card">--%>
-<%--                        <div class="metric-info-col">--%>
-<%--                            <span class="metric-kpi-label">Ký Quỹ Đang Hoạt Động</span>--%>
-<%--                            <span class="metric-kpi-value">5.420</span>--%>
-<%--                            <span class="metric-kpi-subtext blue-text">--%>
-<%--                                <span class="material-symbols-outlined" style="font-size:14px;">verified_user</span>--%>
-<%--                                100% Escrow bảo hiểm--%>
-<%--                            </span>--%>
-<%--                        </div>--%>
-<%--                        <div class="metric-icon-box blue-box">--%>
-<%--                            <span class="material-symbols-outlined">account_balance_wallet</span>--%>
-<%--                        </div>--%>
-<%--                    </div>--%>
-
-                    <!-- KPI 4 -->
-                    <div class="metric-kpi-card">
-                        <div class="metric-info-col">
-                            <span class="metric-kpi-label">Cần Xử Lý / Khóa</span>
-                            <span class="metric-kpi-value" style="color: #ef4444;">18</span>
-                            <span class="metric-kpi-subtext danger-text">
-                                <span class="material-symbols-outlined" style="font-size:14px;">warning</span>
-                                3 tranh chấp cần duyệt
-                            </span>
-                        </div>
-                        <div class="metric-icon-box red-box">
-                            <span class="material-symbols-outlined">lock_person</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Thanh Công Cụ Tìm Kiếm & Dropdown Bộ Lọc -->
-                <div class="admin-toolbar-row">
-                    <div class="admin-search-box">
-                        <span class="material-symbols-outlined">search</span>
-                        <input type="text" class="admin-search-input"
-                            placeholder="Tìm theo Mã User, Tên Collector, Email, SĐT (#MV-...)">
-                    </div>
-
-                    <div class="filter-select-cluster">
-                        <select class="filter-select">
-                            <option>Tất cả phân hạng</option>
-                            <option>Gold Verified</option>
-                            <option>Collector Bạc</option>
-                            <option>Thành viên Thường</option>
-                            <option>Đang duyệt Slab Pro</option>
-                        </select>
-
-                        <select class="filter-select">
-                            <option>Tất cả trạng thái</option>
-                            <option>Hoạt động</option>
-                            <option>Đã khóa</option>
-                            <option>Cần kiểm tra</option>
-                        </select>
-
-                        <button type="button" class="btn-icon-refresh" title="Làm mới bộ lọc">
-                            <span class="material-symbols-outlined">refresh</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Bảng Dữ Liệu Collector & Hội Viên (Data Table) -->
-                <div class="admin-table-card">
-                    <div class="table-responsive-wrapper">
-                        <table class="admin-data-table">
-                            <thead>
-                                <tr>
-                                    <th>COLLECTOR ID</th>
-                                    <th>HỌ TÊN &amp; AVATAR</th>
-                                    <th>CẤP BẬC THẨM ĐỊNH</th>
-                                    <th>TỔNG DOANH THU / SỐ LƯỢNG GIAO DỊCH</th>
-                                    <th>ĐIỂM UY TÍN</th>
-                                    <th class="col-status-fixed">TRẠNG THÁI</th>
-                                    <th>THAO TÁC</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Dòng 1: Hoàng Nam -->
-                                <tr>
-                                    <td>
-                                        <span class="collector-id-code">#MV-8829</span>
-                                    </td>
-                                    <td>
-                                        <div class="user-identity-cell">
-                                            <div class="user-avatar-frame">
-                                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
-                                                    alt="Hoàng Nam" class="user-avatar-img">
-                                                <div class="avatar-verified-check">
-                                                    <span class="material-symbols-outlined">check</span>
-                                                </div>
-                                            </div>
-                                            <div class="user-name-meta">
-                                                <div class="user-fullname-row">
-                                                    <span class="user-fullname">Hoàng Nam</span>
-                                                    <span class="seller-tier-badge">Top Seller</span>
-                                                </div>
-                                                <span class="user-email-text">hoangnam.vault@gmail.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="tier-level-badge gold">
-                                            <span class="material-symbols-outlined">stars</span>
-                                            <span>Gold Verified</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="escrow-balance-cell">
-                                            <span class="balance-amount-strong">185.000.000 đ</span>
-                                            <span class="balance-subtext">
-                                                <span class="status-dot-green"></span>
-                                                126 đơn thành công
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="reputation-score-cell">
-                                            <div class="reputation-header-row">
-                                                <span class="reputation-percent">99.4%</span>
-                                                <span class="reputation-details">(5 sao)</span>
-                                            </div>
-                                            <div class="reputation-progress-track">
-                                                <div class="reputation-progress-fill" style="width: 99.4%;"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="col-status-fixed">
-                                        <span class="status-indicator-badge active">
-                                            <span class="status-dot-bullet"></span>
-                                            <span>Hoạt động</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons-cell">
-                                            <button type="button" class="btn-row-detail">
-                                                <span class="material-symbols-outlined">visibility</span>
-                                                <span>Chi Tiết</span>
-                                            </button>
-                                            <button type="button" class="btn-row-lock" title="Khóa tài khoản">
-                                                <span class="material-symbols-outlined">lock</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Dòng 2: Lê Tuấn Minh -->
-                                <tr>
-                                    <td>
-                                        <span class="collector-id-code">#MV-5120</span>
-                                    </td>
-                                    <td>
-                                        <div class="user-identity-cell">
-                                            <div class="user-avatar-frame">
-                                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
-                                                    alt="Lê Tuấn Minh" class="user-avatar-img">
-                                            </div>
-                                            <div class="user-name-meta">
-                                                <div class="user-fullname-row">
-                                                    <span class="user-fullname">Lê Tuấn Minh</span>
-                                                </div>
-                                                <span class="user-email-text">tuanminh.slab@outlook.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="tier-level-badge silver">
-                                            <span class="material-symbols-outlined">verified</span>
-                                            <span>Collector Bạc</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="escrow-balance-cell">
-                                            <span class="balance-amount-strong">42.500.000 đ</span>
-                                            <span class="balance-subtext">
-                                                <span class="status-dot-green"></span>
-                                                45 đơn thành công
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="reputation-score-cell">
-                                            <div class="reputation-header-row">
-                                                <span class="reputation-percent">96%</span>
-                                                <span class="reputation-details">(45 đơn)</span>
-                                            </div>
-                                            <div class="reputation-progress-track">
-                                                <div class="reputation-progress-fill" style="width: 96%;"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="col-status-fixed">
-                                        <span class="status-indicator-badge active">
-                                            <span class="status-dot-bullet"></span>
-                                            <span>Hoạt động</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons-cell">
-                                            <button type="button" class="btn-row-detail">
-                                                <span class="material-symbols-outlined">visibility</span>
-                                                <span>Chi Tiết</span>
-                                            </button>
-                                            <button type="button" class="btn-row-lock" title="Khóa tài khoản">
-                                                <span class="material-symbols-outlined">lock</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Dòng 3: Đỗ Quang Khải (Khóa) -->
-                                <tr>
-                                    <td>
-                                        <span class="collector-id-code danger-id">#MV-1092</span>
-                                    </td>
-                                    <td>
-                                        <div class="user-identity-cell">
-                                            <div class="user-avatar-frame">
-                                                <div class="avatar-initial-circle">ĐK</div>
-                                            </div>
-                                            <div class="user-name-meta">
-                                                <div class="user-fullname-row">
-                                                    <span class="user-fullname">Đỗ Quang Khải</span>
-                                                    <span class="material-symbols-outlined icon-lock-inline">lock</span>
-                                                </div>
-                                                <span class="user-email-text">khai.collector99@yahoo.com</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <span class="tier-level-badge standard">
-                                            <span>Thành viên Thường</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="escrow-balance-cell">
-                                            <span class="balance-amount-strong frozen-balance">0 đ (Đóng băng)</span>
-
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="reputation-score-cell">
-                                            <div class="reputation-header-row">
-                                                <span class="reputation-percent warning">64%</span>
-                                                <span class="reputation-details danger">(2 vi phạm)</span>
-                                            </div>
-                                            <div class="reputation-progress-track">
-                                                <div class="reputation-progress-fill warning" style="width: 64%;"></div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="col-status-fixed">
-                                        <span class="status-indicator-badge locked">
-                                            <span class="status-dot-bullet"></span>
-                                            <span>Đã khóa</span>
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <div class="action-buttons-cell">
-                                            <button type="button" class="btn-row-detail">
-                                                <span class="material-symbols-outlined">visibility</span>
-                                                <span>Chi Tiết</span>
-                                            </button>
-                                            <button type="button" class="btn-row-lock btn-row-lock-active"
-                                                title="Mở khóa tài khoản">
-                                                <span class="material-symbols-outlined">lock</span>
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-
-
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Dải Phân Trang (Pagination) -->
-                    <div class="admin-pagination-row">
-                        <div class="pagination-info-text">
-                            Hiển thị <strong>1 – 4</strong> trên tổng số <strong>48.920</strong> tài khoản
-                        </div>
-                        <div class="pagination-controls-group">
-                            <button type="button" class="btn-page-nav" title="Trang trước">
-                                <span class="material-symbols-outlined">chevron_left</span>
-                            </button>
-                            <button type="button" class="btn-page-nav active">1</button>
-                            <button type="button" class="btn-page-nav">2</button>
-                            <button type="button" class="btn-page-nav">3</button>
-                            <span class="pagination-dots">...</span>
-                            <button type="button" class="btn-page-nav">122</button>
-                            <button type="button" class="btn-page-nav" title="Trang sau">
-                                <span class="material-symbols-outlined">chevron_right</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
-        </div>
-    </main>
-
-    <footer class="site-main-footer">
-        <div class="footer-inner-shell">
-            <div class="footer-top-columns"> <!-- Brand Description -->
-                <div class="footer-brand-column">
-                    <div class="footer-brand-title">MangaVault</div>
-                    <p class="footer-brand-mission"> Sàn giao dịch truyện tranh, ấn bản hiếm &amp; vật phẩm sưu tầm
-                        xác thực bản quyền số 1 tại Đông Nam Á. </p>
-                    <div class="escrow-cert-tag"> <span class="material-symbols-outlined">verified_user</span>
-                        <span>100% Bảo Chứng Escrow</span>
-                    </div>
-                </div> <!-- Col 1 -->
-                <div class="footer-nav-column">
-                    <h4 class="footer-col-header">DANH MỤC LƯU TRỮ</h4>
-                    <ul class="footer-nav-list">
-                        <li><a class="footer-link-item" href="#">Shonen Originals</a></li>
-                        <li><a class="footer-link-item" href="#">Seinen Masterpieces</a></li>
-                        <li><a class="footer-link-item" href="#">Shojo Vintage Classics</a></li>
-                        <li><a class="footer-link-item" href="#">Tankōbon First Editions</a></li>
-                    </ul>
-                </div> <!-- Col 2 -->
-                <div class="footer-nav-column">
-                    <h4 class="footer-col-header">DỊCH VỤ COLLECTOR</h4>
-                    <ul class="footer-nav-list">
-                        <li><a class="footer-link-item" href="#">Đấu Giá Trực Tiếp</a></li>
-                        <li><a class="footer-link-item" href="#">Thẩm Định &amp; Đóng Slab</a></li>
-                        <li><a class="footer-link-item" href="#">Lịch Private Drops</a></li>
-                        <li><a class="footer-link-item" href="#">Ký Quỹ Ví Vault</a></li>
-                    </ul>
-                </div> <!-- Col 3 -->
-                <div class="footer-nav-column">
-                    <h4 class="footer-col-header">KÝ QUỸ &amp; PHÁP LÝ</h4>
-                    <ul class="footer-nav-list">
-                        <li><a class="footer-link-item" href="#">Bảo Hiểm Ký Quỹ Escrow</a></li>
-                        <li><a class="footer-link-item" href="#">Quy Trình Giám Định CGC/CBCS</a></li>
-                        <li><a class="footer-link-item" href="#">Chính Sách Hoàn Tiền 100%</a></li>
-                        <li><a class="footer-link-item" href="#">Điều Khoản Sử Dụng Sàn</a></li>
-                    </ul>
-                </div> <!-- Col 4 -->
-                <div class="footer-nav-column">
-                    <h4 class="footer-col-header">TRUNG TÂM HỖ TRỢ</h4>
-                    <ul class="footer-nav-list">
-                        <li><a class="footer-link-item" href="#">Yêu Cầu Hỗ Trợ 24/7</a></li>
-                        <li><a class="footer-link-item" href="#">Quy Chuẩn Đóng Gói Manga</a></li>
-                        <li><a class="footer-link-item" href="#">Tra Cứu Mã Chứng Thư (API)</a></li>
-                        <li><a class="footer-link-item" href="#">Quan Hệ Đối Tác &amp; NXB</a></li>
-                    </ul>
-                </div>
-            </div> <!-- Footer Bottom Bar -->
-            <div class="footer-legal-bar">
-                <p>© 2025 MangaVault Exchange Inc. Mọi quyền được bảo lưu.</p>
-                <p class="footer-security-tags"> <span>Bảo mật dữ liệu ISO 27001</span> <span>•</span> <span>Chứng
-                        thực chữ ký số SHA-256</span> </p>
             </div>
-        </div>
-    </footer> <!-- END: SiteFooter -->
+
+            <div class="admin-nav-card">
+                <ul class="admin-nav-list">
+                    <li><a href="#" class="admin-nav-item">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span>Dashboard Thống kê</span>
+                    </a></li>
+                    <li><a href="${ctx}/admin/categories" class="admin-nav-item">
+                        <span class="material-symbols-outlined">category</span>
+                        <span>Quản lý Danh mục</span>
+                    </a></li>
+                    <li><a href="#" class="admin-nav-item">
+                        <span class="material-symbols-outlined">menu_book</span>
+                        <span>Master Catalog</span>
+                    </a></li>
+                    <li><a href="${ctx}/admin/orderManager" class="admin-nav-item">
+                        <span class="material-symbols-outlined">local_shipping</span>
+                        <span>Quản lý Đơn hàng</span>
+                    </a></li>
+                    <li><a href="${ctx}/admin/userManager" class="admin-nav-item active">
+                        <span class="material-symbols-outlined">group</span>
+                        <span>Quản lý Người dùng</span>
+                    </a></li>
+                </ul>
+            </div>
+
+            <div class="admin-secondary-nav-card">
+                <ul class="admin-nav-list">
+                    <li><a href="#" class="admin-nav-item">
+                        <span class="material-symbols-outlined">verified</span>
+                        <span>Báo cáo kiểm toán</span>
+                    </a></li>
+                    <li><a href="#" class="admin-nav-item">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span>Cài đặt hệ thống</span>
+                    </a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <section class="admin-main-content">
+
+            <!-- Thông báo kết quả thao tác -->
+            <c:if test="${not empty flashMessage}">
+                <div class="admin-flash ${flashType eq 'success' ? 'is-success' : 'is-error'}" role="alert">
+                    <span class="material-symbols-outlined">${flashType eq 'success' ? 'check_circle' : 'error'}</span>
+                    <span><c:out value="${flashMessage}"/></span>
+                </div>
+            </c:if>
+
+            <!-- Thanh Công Cụ Tìm Kiếm & Bộ Lọc -->
+            <form method="get" action="${pageContext.request.contextPath}/admin/userManager"
+                  class="admin-toolbar-row">
+                <div class="admin-search-box">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" name="q" class="admin-search-input"
+                           value="<c:out value='${keyword}'/>"
+                           placeholder="Tìm tên, email hoặc username...">
+                </div>
+
+                <div class="filter-select-cluster">
+                    <select name="status" class="filter-select filter-select-wide">
+                        <option value="" ${empty status ? 'selected' : ''}>Tất cả trạng thái</option>
+                        <option value="active" ${status eq 'active' ? 'selected' : ''}>Hoạt động</option>
+                        <option value="locked" ${status eq 'locked' ? 'selected' : ''}>Đã khóa</option>
+                    </select>
+
+                    <button type="submit" class="btn-filter-submit">
+                        <span class="material-symbols-outlined">filter_alt</span>
+                        <span>Lọc</span>
+                    </button>
+
+                    <a href="${pageContext.request.contextPath}/admin/userManager"
+                       class="btn-icon-refresh" title="Làm mới bộ lọc">
+                        <span class="material-symbols-outlined">refresh</span>
+                    </a>
+                </div>
+            </form>
+
+            <!-- Bảng Danh Sách Tài Khoản -->
+            <div class="admin-table-card">
+                <div class="table-card-head">
+                    <div>
+                        <h2 class="table-card-title">Danh sách tài khoản</h2>
+                        <p class="table-card-sub">Dữ liệu được cung cấp bởi QuanLyNguoiDungServlet.</p>
+                    </div>
+                    <span class="table-card-tag">
+                            <span class="material-symbols-outlined">dns</span>
+                            <span>Người dùng</span>
+                        </span>
+                </div>
+
+                <div class="table-responsive-wrapper">
+                    <table class="admin-data-table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>THÔNG TIN NGƯỜI DÙNG</th>
+                            <th>VAI TRÒ</th>
+                            <th class="col-status-fixed">TRẠNG THÁI</th>
+                            <th>NGÀY ĐĂNG KÝ</th>
+                            <th class="col-actions-head">THAO TÁC</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <c:forEach var="u" items="${users}">
+                            <c:set var="isAdminRow" value="${u.role eq 'Admin'}"/>
+                            <c:set var="isSelf" value="${u.id == currentUserId}"/>
+                            <c:set var="displayName" value="${empty u.fullName ? u.username : u.fullName}"/>
+                            <tr>
+                                <td><span class="collector-id-code">#${u.id}</span></td>
+                                <td>
+                                    <div class="user-identity-cell">
+                                        <div class="user-avatar-frame">
+                                            <div class="avatar-person-circle">
+                                                <span class="material-symbols-outlined">person</span>
+                                            </div>
+                                        </div>
+                                        <div class="user-name-meta">
+                                            <div class="user-fullname-row">
+                                                <span class="user-fullname"><c:out value="${displayName}"/></span>
+                                            </div>
+                                            <span class="user-email-text"><c:out value="${u.email}"/></span>
+                                            <span class="user-handle-text">@<c:out value="${u.username}"/></span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <c:choose>
+                                        <c:when test="${isAdminRow}">
+                                                    <span class="role-badge admin">
+                                                        <span class="material-symbols-outlined">shield</span>
+                                                        <span>Quản trị</span>
+                                                    </span>
+                                        </c:when>
+                                        <c:when test="${u.seller}">
+                                                    <span class="role-badge seller">
+                                                        <span class="material-symbols-outlined">storefront</span>
+                                                        <span>Người bán</span>
+                                                    </span>
+                                        </c:when>
+                                        <c:otherwise>
+                                                    <span class="role-badge buyer">
+                                                        <span class="material-symbols-outlined">person</span>
+                                                        <span>Người mua</span>
+                                                    </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td class="col-status-fixed">
+                                    <c:choose>
+                                        <c:when test="${u.enabled}">
+                                                    <span class="status-indicator-badge active">
+                                                        <span class="status-dot-bullet"></span>
+                                                        <span>Hoạt động</span>
+                                                    </span>
+                                        </c:when>
+                                        <c:otherwise>
+                                                    <span class="status-indicator-badge locked">
+                                                        <span class="status-dot-bullet"></span>
+                                                        <span>Đã khóa</span>
+                                                    </span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </td>
+                                <td>
+                                            <span class="user-date-text"><fmt:formatDate value="${u.createdAt}"
+                                                                                         pattern="yyyy-MM-dd'T'HH:mm:ss"/></span>
+                                </td>
+                                <td>
+                                    <div class="action-buttons-cell">
+                                        <button type="button" class="btn-icon-action edit js-edit-user"
+                                                title="Chỉnh sửa"
+                                                data-id="${u.id}"
+                                                data-username="<c:out value='${u.username}'/>"
+                                                data-email="<c:out value='${u.email}'/>"
+                                                data-fullname="<c:out value='${u.fullName}'/>"
+                                                data-phone="<c:out value='${u.phoneNumber}'/>"
+                                                data-role="${u.role}"
+                                                data-enabled="${u.enabled ? '1' : '0'}"
+                                                data-self="${isSelf}">
+                                            <span class="material-symbols-outlined">edit</span>
+                                        </button>
+
+                                        <c:if test="${not isAdminRow}">
+                                            <button type="button"
+                                                    class="btn-icon-action ${u.enabled ? 'lock' : 'unlock'} js-row-action"
+                                                    title="${u.enabled ? 'Khóa tài khoản' : 'Mở khóa tài khoản'}"
+                                                    data-action="toggleLock"
+                                                    data-id="${u.id}"
+                                                    data-confirm="${u.enabled ? 'Khóa' : 'Mở khóa'} tài khoản @<c:out value='${u.username}'/>?">
+                                                <span class="material-symbols-outlined">${u.enabled ? 'lock' : 'lock_open'}</span>
+                                            </button>
+
+                                            <button type="button" class="btn-icon-action delete js-row-action"
+                                                    title="Xóa tài khoản"
+                                                    data-action="delete"
+                                                    data-id="${u.id}"
+                                                    data-confirm="Xóa vĩnh viễn tài khoản @<c:out value='${u.username}'/>? Hành động này không thể hoàn tác.">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </c:if>
+                                    </div>
+                                </td>
+                            </tr>
+                        </c:forEach>
+
+                        <c:if test="${empty users}">
+                            <tr>
+                                <td colspan="6" class="table-empty-cell">
+                                    Không tìm thấy tài khoản nào phù hợp.
+                                </td>
+                            </tr>
+                        </c:if>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Dải Phân Trang -->
+                <c:url var="pageBase" value="/admin/userManager">
+                    <c:param name="q" value="${keyword}"/>
+                    <c:param name="status" value="${status}"/>
+                </c:url>
+                <div class="admin-pagination-row">
+                    <div class="pagination-info-text">
+                        Hiển thị <strong>${fromIndex} – ${toIndex}</strong> trên tổng số
+                        <strong>${totalUsers}</strong> tài khoản
+                    </div>
+                    <c:if test="${totalPages > 1}">
+                        <div class="pagination-controls-group">
+                            <c:choose>
+                                <c:when test="${currentPage > 1}">
+                                    <a class="btn-page-nav" title="Trang trước"
+                                       href="${pageBase}&amp;page=${currentPage - 1}">
+                                        <span class="material-symbols-outlined">chevron_left</span>
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                        <span class="btn-page-nav is-disabled">
+                                            <span class="material-symbols-outlined">chevron_left</span>
+                                        </span>
+                                </c:otherwise>
+                            </c:choose>
+
+                            <c:forEach var="p" begin="${startPage}" end="${endPage}">
+                                <a class="btn-page-nav ${p == currentPage ? 'active' : ''}"
+                                   href="${pageBase}&amp;page=${p}">${p}</a>
+                            </c:forEach>
+
+                            <c:choose>
+                                <c:when test="${currentPage < totalPages}">
+                                    <a class="btn-page-nav" title="Trang sau"
+                                       href="${pageBase}&amp;page=${currentPage + 1}">
+                                        <span class="material-symbols-outlined">chevron_right</span>
+                                    </a>
+                                </c:when>
+                                <c:otherwise>
+                                        <span class="btn-page-nav is-disabled">
+                                            <span class="material-symbols-outlined">chevron_right</span>
+                                        </span>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+                    </c:if>
+                </div>
+            </div>
+
+            <!-- Form ẩn dùng chung cho khóa / mở khóa / xóa -->
+            <form id="rowActionForm" method="post"
+                  action="${pageContext.request.contextPath}/admin/userManager" hidden>
+                <input type="hidden" name="action" id="rowActionName">
+                <input type="hidden" name="id" id="rowActionId">
+                <input type="hidden" name="q" value="<c:out value='${keyword}'/>">
+                <input type="hidden" name="status" value="<c:out value='${status}'/>">
+                <input type="hidden" name="page" value="${currentPage}">
+            </form>
+
+            <!-- Hộp thoại chỉnh sửa người dùng -->
+            <div class="user-modal-overlay" id="editUserModal" hidden>
+                <div class="user-modal" role="dialog" aria-modal="true" aria-labelledby="editUserTitle">
+                    <div class="user-modal-head">
+                        <h3 id="editUserTitle">Chỉnh sửa tài khoản</h3>
+                        <button type="button" class="user-modal-close" id="editUserClose" aria-label="Đóng">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <form method="post" action="${pageContext.request.contextPath}/admin/userManager">
+                        <input type="hidden" name="action" value="update">
+                        <input type="hidden" name="id" id="editUserId">
+                        <input type="hidden" name="q" value="<c:out value='${keyword}'/>">
+                        <input type="hidden" name="status" value="<c:out value='${status}'/>">
+                        <input type="hidden" name="page" value="${currentPage}">
+
+                        <div class="user-modal-body">
+                            <div class="user-modal-field">
+                                <label>Tài khoản</label>
+                                <div class="user-modal-readonly" id="editUserIdentity"></div>
+                            </div>
+                            <div class="user-modal-field">
+                                <label for="editUserFullName">Họ và tên</label>
+                                <input type="text" id="editUserFullName" name="fullName" maxlength="100">
+                            </div>
+                            <div class="user-modal-field">
+                                <label for="editUserPhone">Số điện thoại</label>
+                                <input type="text" id="editUserPhone" name="phoneNumber" maxlength="20">
+                            </div>
+                            <div class="user-modal-row">
+                                <div class="user-modal-field">
+                                    <label for="editUserRole">Vai trò</label>
+                                    <select id="editUserRole" name="role">
+                                        <option value="User">Người dùng</option>
+                                        <option value="Admin">Quản trị</option>
+                                    </select>
+                                </div>
+                                <div class="user-modal-field">
+                                    <label for="editUserEnabled">Trạng thái</label>
+                                    <select id="editUserEnabled" name="enabled">
+                                        <option value="1">Hoạt động</option>
+                                        <option value="0">Đã khóa</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <p class="user-modal-note" id="editUserSelfNote" hidden>
+                                Đây là tài khoản của bạn nên không thể đổi vai trò hoặc trạng thái.
+                            </p>
+                        </div>
+                        <div class="user-modal-actions">
+                            <button type="button" class="btn-modal-cancel" id="editUserCancel">Hủy</button>
+                            <button type="submit" class="btn-modal-save">Lưu thay đổi</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                (function () {
+                    // Khóa / mở khóa / xóa: xác nhận rồi gửi form ẩn
+                    var actionForm = document.getElementById('rowActionForm');
+                    document.querySelectorAll('.js-row-action').forEach(function (btn) {
+                        btn.addEventListener('click', function () {
+                            if (!window.confirm(btn.dataset.confirm)) return;
+                            document.getElementById('rowActionName').value = btn.dataset.action;
+                            document.getElementById('rowActionId').value = btn.dataset.id;
+                            actionForm.submit();
+                        });
+                    });
+
+                    // Hộp thoại chỉnh sửa
+                    var modal = document.getElementById('editUserModal');
+                    var roleSel = document.getElementById('editUserRole');
+                    var enabledSel = document.getElementById('editUserEnabled');
+                    var selfNote = document.getElementById('editUserSelfNote');
+
+                    function closeModal() { modal.hidden = true; }
+
+                    document.querySelectorAll('.js-edit-user').forEach(function (btn) {
+                        btn.addEventListener('click', function () {
+                            var d = btn.dataset;
+                            var isSelf = d.self === 'true';
+                            document.getElementById('editUserId').value = d.id;
+                            document.getElementById('editUserIdentity').textContent =
+                                '@' + d.username + ' · ' + d.email;
+                            document.getElementById('editUserFullName').value = d.fullname || '';
+                            document.getElementById('editUserPhone').value = d.phone || '';
+                            roleSel.value = d.role === 'Admin' ? 'Admin' : 'User';
+                            enabledSel.value = d.enabled;
+                            roleSel.disabled = isSelf;
+                            enabledSel.disabled = isSelf;
+                            selfNote.hidden = !isSelf;
+                            modal.hidden = false;
+                        });
+                    });
+
+                    document.getElementById('editUserClose').addEventListener('click', closeModal);
+                    document.getElementById('editUserCancel').addEventListener('click', closeModal);
+                    modal.addEventListener('click', function (e) {
+                        if (e.target === modal) closeModal();
+                    });
+                    document.addEventListener('keydown', function (e) {
+                        if (e.key === 'Escape') closeModal();
+                    });
+                })();
+            </script>
+
+        </section>
+    </div>
+</main>
 </body>
 
 </html>
