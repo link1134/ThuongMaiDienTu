@@ -175,27 +175,6 @@ public class AdminUserDAO {
     }
 
     // ---------------------------------------------------------
-    // Cập nhật thông tin (admin sửa)
-    // ---------------------------------------------------------
-    public boolean updateUser(int id, String fullName, String phone, String role, boolean enabled)
-            throws SQLException {
-        String sql = """
-                UPDATE dbo.Users
-                SET FullName = ?, PhoneNumber = ?, Role = ?, Enabled = ?, UpdatedAt = SYSDATETIME()
-                WHERE Id = ?
-                """;
-        try (Connection c = DBConnection.getConnection();
-             PreparedStatement ps = c.prepareStatement(sql)) {
-            ps.setString(1, fullName);
-            ps.setString(2, phone);
-            ps.setString(3, role);
-            ps.setBoolean(4, enabled);
-            ps.setInt(5, id);
-            return ps.executeUpdate() > 0;
-        }
-    }
-
-    // ---------------------------------------------------------
     // Xóa tài khoản.
     // Xóa trong 1 transaction; nếu còn dữ liệu liên quan (đơn hàng,
     // bài đăng, bình luận...) SQL Server báo lỗi khóa ngoại (547) và

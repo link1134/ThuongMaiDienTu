@@ -205,19 +205,6 @@
                                 </td>
                                 <td>
                                     <div class="action-buttons-cell">
-                                        <button type="button" class="btn-icon-action edit js-edit-user"
-                                                title="Chỉnh sửa"
-                                                data-id="${u.id}"
-                                                data-username="<c:out value='${u.username}'/>"
-                                                data-email="<c:out value='${u.email}'/>"
-                                                data-fullname="<c:out value='${u.fullName}'/>"
-                                                data-phone="<c:out value='${u.phoneNumber}'/>"
-                                                data-role="${u.role}"
-                                                data-enabled="${u.enabled ? '1' : '0'}"
-                                                data-self="${isSelf}">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
-
                                         <c:if test="${not isAdminRow}">
                                             <button type="button"
                                                     class="btn-icon-action ${u.enabled ? 'lock' : 'unlock'} js-row-action"
@@ -311,63 +298,6 @@
                 <input type="hidden" name="page" value="${currentPage}">
             </form>
 
-            <!-- Hộp thoại chỉnh sửa người dùng -->
-            <div class="user-modal-overlay" id="editUserModal" hidden>
-                <div class="user-modal" role="dialog" aria-modal="true" aria-labelledby="editUserTitle">
-                    <div class="user-modal-head">
-                        <h3 id="editUserTitle">Chỉnh sửa tài khoản</h3>
-                        <button type="button" class="user-modal-close" id="editUserClose" aria-label="Đóng">
-                            <span class="material-symbols-outlined">close</span>
-                        </button>
-                    </div>
-                    <form method="post" action="${pageContext.request.contextPath}/admin/userManager">
-                        <input type="hidden" name="action" value="update">
-                        <input type="hidden" name="id" id="editUserId">
-                        <input type="hidden" name="q" value="<c:out value='${keyword}'/>">
-                        <input type="hidden" name="status" value="<c:out value='${status}'/>">
-                        <input type="hidden" name="page" value="${currentPage}">
-
-                        <div class="user-modal-body">
-                            <div class="user-modal-field">
-                                <label>Tài khoản</label>
-                                <div class="user-modal-readonly" id="editUserIdentity"></div>
-                            </div>
-                            <div class="user-modal-field">
-                                <label for="editUserFullName">Họ và tên</label>
-                                <input type="text" id="editUserFullName" name="fullName" maxlength="100">
-                            </div>
-                            <div class="user-modal-field">
-                                <label for="editUserPhone">Số điện thoại</label>
-                                <input type="text" id="editUserPhone" name="phoneNumber" maxlength="20">
-                            </div>
-                            <div class="user-modal-row">
-                                <div class="user-modal-field">
-                                    <label for="editUserRole">Vai trò</label>
-                                    <select id="editUserRole" name="role">
-                                        <option value="User">Người dùng</option>
-                                        <option value="Admin">Quản trị</option>
-                                    </select>
-                                </div>
-                                <div class="user-modal-field">
-                                    <label for="editUserEnabled">Trạng thái</label>
-                                    <select id="editUserEnabled" name="enabled">
-                                        <option value="1">Hoạt động</option>
-                                        <option value="0">Đã khóa</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <p class="user-modal-note" id="editUserSelfNote" hidden>
-                                Đây là tài khoản của bạn nên không thể đổi vai trò hoặc trạng thái.
-                            </p>
-                        </div>
-                        <div class="user-modal-actions">
-                            <button type="button" class="btn-modal-cancel" id="editUserCancel">Hủy</button>
-                            <button type="submit" class="btn-modal-save">Lưu thay đổi</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <script>
                 (function () {
                     // Khóa / mở khóa / xóa: xác nhận rồi gửi form ẩn
@@ -379,41 +309,6 @@
                             document.getElementById('rowActionId').value = btn.dataset.id;
                             actionForm.submit();
                         });
-                    });
-
-                    // Hộp thoại chỉnh sửa
-                    var modal = document.getElementById('editUserModal');
-                    var roleSel = document.getElementById('editUserRole');
-                    var enabledSel = document.getElementById('editUserEnabled');
-                    var selfNote = document.getElementById('editUserSelfNote');
-
-                    function closeModal() { modal.hidden = true; }
-
-                    document.querySelectorAll('.js-edit-user').forEach(function (btn) {
-                        btn.addEventListener('click', function () {
-                            var d = btn.dataset;
-                            var isSelf = d.self === 'true';
-                            document.getElementById('editUserId').value = d.id;
-                            document.getElementById('editUserIdentity').textContent =
-                                '@' + d.username + ' · ' + d.email;
-                            document.getElementById('editUserFullName').value = d.fullname || '';
-                            document.getElementById('editUserPhone').value = d.phone || '';
-                            roleSel.value = d.role === 'Admin' ? 'Admin' : 'User';
-                            enabledSel.value = d.enabled;
-                            roleSel.disabled = isSelf;
-                            enabledSel.disabled = isSelf;
-                            selfNote.hidden = !isSelf;
-                            modal.hidden = false;
-                        });
-                    });
-
-                    document.getElementById('editUserClose').addEventListener('click', closeModal);
-                    document.getElementById('editUserCancel').addEventListener('click', closeModal);
-                    modal.addEventListener('click', function (e) {
-                        if (e.target === modal) closeModal();
-                    });
-                    document.addEventListener('keydown', function (e) {
-                        if (e.key === 'Escape') closeModal();
                     });
                 })();
             </script>
